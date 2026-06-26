@@ -1,0 +1,256 @@
+/* ========================================================================== 01. Astero ========================================================================== */
+.astero { width: 100%; background: none; position: relative; color: #222; font-size: 13px; font-weight: 300; line-height: 1.5; word-wrap: normal; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+.astero a, .astero a:hover { text-decoration: none !important; outline: none; color: inherit; }
+.astero ul, .astero li { list-style: none; padding: 0; margin: 0; }
+.astero span { display: inline; }
+.astero .margin10 { margin-bottom: 10px; }
+.astero .margin20 { margin-bottom: 20px; }
+.astero .margin30 { margin-bottom: 30px; }
+.astero .small-font-size, .astero .astero-details li { font-size: 0.8em; margin: 0; padding: 0; }
+.astero .hide-for-small, .astero .hide, .astero .astero-full.astero-eq-xsmall .astero-eq-xsmall-hide, .astero .astero-full.astero-eq-small .astero-eq-small-hide, .astero .astero-full.astero-eq-medium .astero-eq-medium-hide { display: none !important; }
+.astero .astero-background { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 0; overflow: hidden; background: #fff; }
+.astero .astero-background video { position: absolute; min-width: 100%; min-height: 100%; max-width: none; max-height: none; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */ -ms-transform: translate(-50%, -50%); /* IE 9 */ transform: translate(-50%, -50%); }
+.astero .astero-background img { /* Set rules to fill background */ min-height: 100%; min-width: 1024px; /* Set up proportionate scaling */ width: 100%; height: auto; /* Set up positioning */ top: -50%; left: -50%; position: absolute; }
+.astero .astero-background iframe { position: absolute; max-width: none; max-height: none; left: -1px; top: 0; }
+.astero .astero-background iframe .controls, .astero .astero-background iframe .sidedock { display: none; }
+.astero .astero-small { padding: 20px 30px 40px; position: relative; z-index: 1; -webkit-transform: scale(1); transform: scale(1); -webkit-transition: all 0.2s; transition: all 0.2s; }
+.astero .astero-small .astero-temp { font-size: 30px; line-height: 1; margin-bottom: 1em; }
+.astero .astero-small .astero-code { font-size: 3em; line-height: 1.5; }
+.astero .astero-small .astero-condition { font-size: 0.9em; }
+.astero .astero-small .astero-loading { padding-top: 3px; }
+.astero .astero-small .astero-location { font-size: 1.0em; }
+.astero .astero-small, .astero .astero-large { background: url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7); }
+.astero .astero-location, .astero .astero-fc-condition { text-transform: uppercase; }
+.astero .astero-condition { text-transform: capitalize; }
+.astero .astero-more, .astero .astero-more-placeholder { left: 30px; bottom: 27px; position: absolute; }
+.astero .astero-more:hover .asterofont-dot:before, .astero .astero-loading .asterofont-dot:before { position: relative; -webkit-animation: jump 1s infinite; animation: jump 1s infinite; }
+.astero .astero-more:hover span:nth-child(2).asterofont-dot:before, .astero .astero-loading span:nth-child(2).asterofont-dot:before { -webkit-animation-delay: 200ms; animation-delay: 200ms; }
+.astero .astero-more:hover span:nth-child(3).asterofont-dot:before, .astero .astero-loading span:nth-child(3).asterofont-dot:before { -webkit-animation-delay: 400ms; animation-delay: 400ms; }
+
+.astero .astero-search { position: absolute; right: 30px; bottom: 27px; width: 1.01em; }
+.astero .astero-form { position: absolute; width: 100%; height: 100%; visibility: hidden; opacity: 0; left: 0; top: 0; padding: 20px 30px; font-size: 2em; }
+.astero .astero-form form { -webkit-backface-visibility: hidden; position: relative; top: 50%; text-align: center; -webkit-transform: translateY(-50%); -ms-transform: translateY(-50%); transform: translateY(-50%); }
+.astero .astero-form form button { background: transparent; border: none; position: relative; font-size: inherit; color: inherit; }
+.astero .astero-form form button:focus { outline: none;}
+.astero .astero-form input { width: 220px; max-width: 100%; }
+.astero .astero-form input::-webkit-input-placeholder { /* WebKit browsers */ color: #aaa; }
+.astero .astero-form input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */ color: #aaa; opacity: 1; }
+.astero .astero-form input::-moz-placeholder { /* Mozilla Firefox 19+ */ color: #aaa; opacity: 1; }
+.astero .astero-form input:-ms-input-placeholder { /* Internet Explorer 10+ */ color: #aaa; }
+.astero .astero-form select { width: auto; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+.astero .astero-form select option { color: #000; background: #fff; }
+.astero .astero-form select::-ms-expand { display: none; }
+.astero .astero-form input, .astero .astero-form select { display: inline-block; border: none; border-bottom: 1px solid #000; background: transparent; text-align: center; box-shadow: none; background-image: none; color: #aaa; font-size: inherit; border-radius: 0; padding: 1px 0; margin: 0; line-height: normal; }
+.astero .astero-form input:focus, .astero .astero-form select:focus { outline: none; background: transparent; border: none; border-bottom: 1px solid #000; }
+.astero .astero-form .astero-closeform { position: absolute; right: 15px; line-height: 1; top: 10px; font-size: 2em; }
+.astero .astero-form .astero-closeform:hover { -webkit-animation: scaleUp 0.5s; animation: scaleUp 0.5s; }
+.astero .astero-search .astero-searchicon, .astero .astero-form form button .astero-searchicon { position: relative; }
+.astero .astero-search .astero-searchicon:after, .astero .astero-form form button .astero-searchicon:after { content: "\e623"; font-family: 'astero'; opacity: 0; top: 0; left: 0; position: absolute; width: 100%; }
+.astero .astero-search:hover .astero-searchicon:before, .astero .astero-form form button:hover .astero-searchicon:before { transform: rotate(180deg); opacity: 0; -webkit-transition: all 0.5s ease; transition: all 0.5s ease; }
+.astero .astero-search:hover .astero-searchicon:after, .astero .astero-form form button:hover .astero-searchicon:after { opacity: 1; -webkit-transition: opacity 1s ease; transition: opacity 1s ease; }
+.astero .astero-full .astero-search { top: 30px; }
+.astero.astero-img .astero-form input::-webkit-input-placeholder { /* WebKit browsers */ color: #fff; }
+.astero.astero-img .astero-form input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */ color: #fff; opacity: 1; }
+.astero.astero-img .astero-form input::-moz-placeholder { /* Mozilla Firefox 19+ */ color: #fff; opacity: 1; }
+.astero.astero-img .astero-form input:-ms-input-placeholder { /* Internet Explorer 10+ */ color: #fff; }
+.astero.astero-img .astero-form input, .astero.astero-img .astero-form select { color: #fff; border-bottom-color: #fff; }
+.astero.astero-openform .astero-form { z-index: 10; visibility: visible; opacity: 1; -webkit-transform: scale(1); transform: scale(1); -webkit-transition: -webkit-transform 0.4s, opacity 0.4s; transition: transform 0.4s, opacity 0.4s; }
+.astero.astero-openform .astero-small, .astero.astero-openform .astero-full { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; /** IE8 **/ opacity: 0; -webkit-transform: scale(0.8); transform: scale(0.8); -webkit-transition: -webkit-transform 0.4s, opacity 0.4s; transition: transform 0.4s, opacity 0.4s; }
+.astero .astero-credit { font-size: 0.8em; }
+.astero .astero-small .astero-credit { padding-top: 10px; }
+
+.astero .astero-fixed { width: 100%; height: 100%; top: 0; left: 0; z-index: 102; position: fixed; overflow-y: scroll; visibility: hidden; }
+.astero .astero-fixed .astero-details { margin-bottom: 20px !important; }
+.astero .astero-fixed .astero-details li { font-size: 0.9em; }
+.astero .astero-fixed .astero-large-container { width: 100%; height: 100%; display: table; }
+.astero .astero-fixed .astero-content { display: table-cell; vertical-align: middle; position: relative; }
+.astero .astero-fixed .astero-inner { max-width: 960px; margin: auto; opacity: 0; -webkit-transform: scale(0.9); transform: scale(0.9); }
+.astero .astero-fixed .astero-close { position: absolute; right: 10px; line-height: 1; top: -10px; font-size: 3em; }
+.astero .astero-fixed .astero-close:hover { -webkit-animation: scaleUp 0.5s; animation: scaleUp 0.5s; }
+.astero .astero-full { position: relative; width: 100%; height: 100%; }
+.astero .astero-full.astero-eq-xsmall { padding: 1.5em; }
+.astero .astero-full.astero-eq-xsmall .astero-temp { font-size: 2.5em; }
+.astero .astero-full.astero-eq-xsmall .astero-details { display: block; padding: 0; margin: 0 -0.625rem 10px; }
+.astero .astero-full.astero-eq-xsmall .astero-details:before, .astero .astero-full.astero-eq-xsmall .astero-details:after { content: " "; display: table; }
+.astero .astero-full.astero-eq-xsmall .astero-details:after { clear: both; }
+.astero .astero-full.astero-eq-xsmall .astero-details > li { display: block; height: auto; float: left; }
+.astero .astero-full.astero-eq-xsmall .astero-details > li { width: 100%; list-style: none; }
+.astero .astero-full.astero-eq-xsmall .astero-details > li:nth-of-type(1n) { clear: none; }
+.astero .astero-full.astero-eq-xsmall .astero-details > li:nth-of-type(1n+1) { clear: both; }
+.astero .astero-full.astero-eq-xsmall .astero-icon { margin-bottom: 20px; }
+.astero .astero-full.astero-eq-xsmall .astero-credit, .astero .astero-full.astero-eq-small .astero-credit { margin: 15px 0 5px; }
+.astero .astero-full.astero-eq-medium .astero-details, .astero .astero-full.astero-eq-medium .astero-fc ul { display: block; padding: 0; margin: 0 -0.625rem 10px; }
+.astero .astero-full.astero-eq-medium .astero-details:before, .astero .astero-full.astero-eq-medium .astero-details:after, .astero .astero-full.astero-eq-medium .astero-fc ul:before, .astero .astero-full.astero-eq-medium .astero-fc ul:after { content: " "; display: table; }
+.astero .astero-full.astero-eq-medium .astero-details:after, .astero .astero-full.astero-eq-medium .astero-fc ul:after { clear: both; }
+.astero .astero-full.astero-eq-medium .astero-details > li, .astero .astero-full.astero-eq-medium .astero-fc ul > li { display: block; height: auto; float: left; }
+.astero .astero-full.astero-eq-medium .astero-details > li, .astero .astero-full.astero-eq-medium .astero-fc ul > li { width: 25%; list-style: none; }
+.astero .astero-full.astero-eq-medium .astero-details > li:nth-of-type(1n), .astero .astero-full.astero-eq-medium .astero-fc ul > li:nth-of-type(1n) { clear: none; }
+.astero .astero-full.astero-eq-medium .astero-details > li:nth-of-type(4n+1), .astero .astero-full.astero-eq-medium .astero-fc ul > li:nth-of-type(4n+1) { clear: both; }
+.astero .astero-full.astero-eq-medium .astero-eq-medium-12 { padding-left: 0.9375rem; padding-right: 0.9375rem; width: 100%; float: left; }
+.astero .astero-full.astero-eq-large .astero-details, .astero .astero-full.astero-eq-large .astero-fc ul { display: block; padding: 0; margin: 0 -0.625rem 10px; }
+.astero .astero-full.astero-eq-large .astero-details:before, .astero .astero-full.astero-eq-large .astero-details:after, .astero .astero-full.astero-eq-large .astero-fc ul:before, .astero .astero-full.astero-eq-large .astero-fc ul:after { content: " "; display: table; }
+.astero .astero-full.astero-eq-large .astero-details:after, .astero .astero-full.astero-eq-large .astero-fc ul:after { clear: both; }
+.astero .astero-full.astero-eq-large .astero-details > li, .astero .astero-full.astero-eq-large .astero-fc ul > li { display: block; height: auto; float: left; }
+.astero .astero-full.astero-eq-large .astero-details > li, .astero .astero-full.astero-eq-large .astero-fc ul > li { width: 16.66667%; list-style: none; }
+.astero .astero-full.astero-eq-large .astero-details > li:nth-of-type(1n), .astero .astero-full.astero-eq-large .astero-fc ul > li:nth-of-type(1n) { clear: none; }
+.astero .astero-full.astero-eq-large .astero-details > li:nth-of-type(6n+1), .astero .astero-full.astero-eq-large .astero-fc ul > li:nth-of-type(6n+1) { clear: both; }
+.astero .astero-full.astero-eq-medium .astero-fc, .astero .astero-full.astero-eq-large .astero-fc { text-align: center; }
+.astero .astero-full.astero-eq-large .astero-credit, .astero .astero-full.astero-eq-medium .astero-credit { text-align: right; }
+
+.astero .astero-large { padding: 30px 30px 20px; }
+.astero .astero-large .astero-temp { font-size: 6em; line-height: 1; }
+.astero .astero-large .astero-date { font-size: 0.8em; }
+.astero .astero-large .astero-fc { padding-top: 2em; border-top: 2px solid; }
+.astero .astero-large .astero-fc li { margin: 0; }
+.astero .astero-large .astero-details li { padding-left: 0; }
+.astero.radius, .astero.radius .astero-background { border-radius: 4px; }
+.astero.astero-img { color: #fff; }
+.astero.astero-img a, .astero.astero-img a:hover { color: #fff; }
+.astero.astero-img .astero-background { background: #000 no-repeat top left; background: no-repeat center center fixed \0; /* IE8 HACK */ background-size: cover; }
+.astero.astero-img .astero-background.astero-i-sun { background-image: url(../imgs/sun.jpg); }
+.astero.astero-img .astero-background.astero-i-night { background-image: url(../imgs/night.jpg); }
+.astero.astero-img .astero-background.astero-i-clouds { background-image: url(../imgs/clouds.jpg); }
+.astero.astero-img .astero-background.astero-i-rain { background-image: url(../imgs/rain.jpg); }
+.astero.astero-img .astero-background.astero-i-thunderstorm { background-image: url(../imgs/thunderstorm.jpg); }
+.astero.astero-img .astero-background.astero-i-snow { background-image: url(../imgs/snow.jpg); }
+.astero.astero-img .astero-background.astero-i-fog { background-image: url(../imgs/fog.jpg); }
+.astero.open .astero-background { position: fixed; border-radius: 0; z-index: 1000; }
+.astero.open .astero-fixed { visibility: visible; z-index: 1001; }
+.astero.open .astero-fixed .astero-inner { opacity: 1; -webkit-transform: scale(1); transform: scale(1); -webkit-transition: -webkit-transform 0.4s, opacity 0.4s; transition: transform 0.4s, opacity 0.4s; }
+.astero *, .astero *:before, .astero *:after { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+
+.astero.astero-5days .astero-full.astero-eq-large .astero-fc ul > li { width: 25%; }
+.astero.astero-5days .astero-full.astero-eq-large .astero-fc ul > li:nth-of-type(6n+1) { clear: none; }
+.astero.astero-5days .astero-full.astero-eq-large .astero-fc ul > li:nth-of-type(4n+1) { clear: both; }
+.astero.astero-5days .astero-full.astero-eq-large .astero-fc ul > li:last-child, .astero.astero-5days .astero-full.astero-eq-large .astero-fc ul > li:nth-last-child(2),
+.astero.astero-5days .astero-fc .astero-medium-blck-grid-6 > li:last-child, .astero.astero-5days .astero-fc .astero-medium-blck-grid-6 > li:nth-last-child(2) { display: none; }
+
+.astero-noscroll { position: fixed; overflow-y: hidden; width: 100%; }
+@-webkit-keyframes jump { 0% { top: -5px; }
+  25% { top: 2px; }
+  35% { top: -3px; }
+  45% { top: 1px; }
+  50% { top: 0; }
+  100% { top: 0; } }
+
+@keyframes jump { 0% { top: -5px; }
+  25% { top: 2px; }
+  35% { top: -3px; }
+  45% { top: 1px; }
+  50% { top: 0; }
+  100% { top: 0; } }
+
+@-webkit-keyframes scaleUp { 80% { opacity: 0; -webkit-transform: scale(2); }
+  100% { opacity: 0; -webkit-transform: scale(2); } }
+
+@keyframes scaleUp { 80% { opacity: 0; transform: scale(2); }
+  100% { opacity: 0; transform: scale(2); } }
+
+/* ========================================================================== 02. Astero Responsive Classes ========================================================================== */
+.astero-row { width: 100%; margin-left: auto; margin-right: auto; margin-top: 0; margin-bottom: 0; max-width: none; }
+.astero-row:before, .astero-row:after { content: " "; display: table; }
+.astero-row:after { clear: both; }
+.astero-row .astero-row { width: auto; margin-left: -0.9375rem; margin-right: -0.9375rem; margin-top: 0; margin-bottom: 0; max-width: none; }
+.astero-row .astero-row:before, .astero-row .astero-row:after { content: " "; display: table; }
+.astero-row .astero-row:after { clear: both; }
+
+.astero-small-2, .astero .astero-full.astero-eq-small .astero-eq-small-2 { padding-left: 0.9375rem; padding-right: 0.9375rem; width: 16.66667%; float: left; }
+
+.astero-small-3, .astero .astero-full.astero-eq-small .astero-eq-small-3 { padding-left: 0.9375rem; padding-right: 0.9375rem; width: 25%; float: left; }
+
+.astero-small-4, .astero .astero-full.astero-eq-small .astero-eq-small-4 { padding-left: 0.9375rem; padding-right: 0.9375rem; width: 33.33333%; float: left; }
+
+.astero-small-8 { padding-left: 0.9375rem; padding-right: 0.9375rem; width: 66.66667%; float: left; }
+
+[class*="blck-grid-"] { display: block; padding: 0; margin: 0 -0.625rem; }
+[class*="blck-grid-"]:before, [class*="blck-grid-"]:after { content: " "; display: table; }
+[class*="blck-grid-"]:after { clear: both; }
+[class*="blck-grid-"] > li { display: block; height: auto; float: left; padding: 0 0.625rem 1.25rem; }
+
+.astero-small-blck-grid-1, .astero-full.astero-eq-xsmall .astero-details { display: block; padding: 0; margin: 0 -0.625rem; }
+.astero-small-blck-grid-1:before, .astero-small-blck-grid-1:after, .astero-full.astero-eq-xsmall .astero-details:before, .astero-full.astero-eq-xsmall .astero-details:after { content: " "; display: table; }
+.astero-small-blck-grid-1:after, .astero-full.astero-eq-xsmall .astero-details:after { clear: both; }
+.astero-small-blck-grid-1 > li, .astero-full.astero-eq-xsmall .astero-details > li { display: block; height: auto; float: left; }
+.astero-small-blck-grid-1 > li, .astero-full.astero-eq-xsmall .astero-details > li { width: 100%; list-style: none; }
+.astero-small-blck-grid-1 > li:nth-of-type(1n), .astero-full.astero-eq-xsmall .astero-details > li:nth-of-type(1n) { clear: none; }
+.astero-small-blck-grid-1 > li:nth-of-type(1n+1), .astero-full.astero-eq-xsmall .astero-details > li:nth-of-type(1n+1) { clear: both; }
+
+.astero-small-blck-grid-2 { display: block; padding: 0; margin: 0 -0.625rem; }
+.astero-small-blck-grid-2:before, .astero-small-blck-grid-2:after { content: " "; display: table; }
+.astero-small-blck-grid-2:after { clear: both; }
+.astero-small-blck-grid-2 > li { display: block; height: auto; float: left; }
+.astero-small-blck-grid-2 > li { width: 50%; list-style: none; }
+.astero-small-blck-grid-2 > li:nth-of-type(1n) { clear: none; }
+.astero-small-blck-grid-2 > li:nth-of-type(2n+1) { clear: both; }
+
+@media only screen and (min-width: 40.063em) { .astero .hide-for-small { display: inherit !important; }
+  .astero .astero-medium-12 { padding-left: 0.9375rem; padding-right: 0.9375rem; width: 100%; float: left; }
+  .astero .astero-medium-blck-grid-4 { display: block; padding: 0; margin: 0 -0.625rem; }
+  .astero .astero-medium-blck-grid-4:before, .astero .astero-medium-blck-grid-4:after { content: " "; display: table; }
+  .astero .astero-medium-blck-grid-4:after { clear: both; }
+  .astero .astero-medium-blck-grid-4 > li { display: block; height: auto; float: left; }
+  .astero .astero-medium-blck-grid-4 > li { width: 25%; list-style: none; }
+  .astero .astero-medium-blck-grid-4 > li:nth-of-type(1n) { clear: none; }
+  .astero .astero-medium-blck-grid-4 > li:nth-of-type(4n+1) { clear: both; }
+  .astero .astero-medium-blck-grid-6 { display: block; padding: 0; margin: 0 -0.625rem; }
+  .astero .astero-medium-blck-grid-6:before, .astero .astero-medium-blck-grid-6:after { content: " "; display: table; }
+  .astero .astero-medium-blck-grid-6:after { clear: both; }
+  .astero .astero-medium-blck-grid-6 > li { display: block; height: auto; float: left; }
+  .astero .astero-medium-blck-grid-6 > li { width: 16.66667%; list-style: none; }
+  .astero .astero-medium-blck-grid-6 > li:nth-of-type(1n) { clear: none; }
+  .astero .astero-medium-blck-grid-6 > li:nth-of-type(6n+1) { clear: both; }
+  .astero .astero-fixed .astero-temp { font-size: 6em; }
+  .astero .astero-fixed .astero-fc-icon { font-size: 3em; line-height: 2; }
+  .astero .astero-fixed .astero-condition, .astero .astero-fixed .astero-details-icon, .astero .astero-fixed .astero-code { font-size: 2em; line-height: 1; }
+  .astero .astero-large .astero-icon { margin-bottom: 50px; }
+  .astero .astero-large:not(.astero-eq-small) .astero-details li { padding-left: 0.625rem; }
+  .astero .astero-small .astero-credit { float: right; }
+  .astero.astero-5days .astero-fc .astero-medium-blck-grid-6 > li { width: 25%; }
+  .astero.astero-5days .astero-fc .astero-medium-blck-grid-6 > li:nth-of-type(6n+1) { clear: none; }
+  .astero.astero-5days .astero-fc .astero-medium-blck-grid-6 > li:nth-of-type(4n+1) { clear: both; }
+}
+@media only screen and (min-width: 64.063em) { .astero .astero-large-3 { padding-left: 0.9375rem; padding-right: 0.9375rem; width: 25%; float: left; }
+  .astero .astero-large-9 { padding-left: 0.9375rem; padding-right: 0.9375rem; width: 75%; float: left; }
+  .astero .astero-large .astero-location, .astero .astero-large .astero-fc-temp { font-size: 1.5em; }
+  .astero .astero-large .astero-fc-date { font-size: 1.1em; }
+  .astero .astero-large .astero-close { font-size: 6em; }
+  .astero .astero-large .astero-fc { text-align: center; }
+}
+  
+/* ========================================================================== 03. Astero Font ========================================================================== */
+@font-face { font-family: "astero"; src: url("../font/astero.eot"); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'astero'; src: url("../font/astero.eot"); src: url("../font/astero.eot%3F") format("embedded-opentype"), url("../font/astero.woff") format("woff"), url("../font/astero.ttf") format("truetype"), url("../font/astero.svg") format("svg"); font-weight: normal; font-style: normal; }
+.asterofont { font-family: 'astero'; display: inline-block; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+[class^="asterofont-"]:before, [class*=" asterofont-"]:before { font-family: "astero"; font-style: normal; font-weight: normal; speak: none; display: inline-block; text-decoration: inherit; text-align: center; /* For safety - reset parent styles, that can break glyph codes*/ font-variant: normal; text-transform: none; /* fix buttons height, for twitter bootstrap */ line-height: 1em; /* Better Font Rendering =========== */ -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.asterofont-sunrise:before { content: "\e600"; }
+.asterofont-sunset:before { content: "\e601"; }
+.asterofont-windy:before { content: "\46"; }
+.asterofont-heavy-cloud:before { content: "\59"; }
+.asterofont-thermometer:before { content: "\e622"; }
+.asterofont-location:before { content: "\e623"; }
+.asterofont-droplet:before { content: "\e625"; }
+.asterofont-droplets:before { content: "\e626"; }
+.asterofont-dot:before { content: "\e627"; }
+.asterofont-search:before { content: "\e602"; }
+
+/* ========================================================================== 04. IE8 ========================================================================== */
+@media \0screen { .astero-row, [class*=large-blck-grid-] { *zoom: 1; }
+  .astero-row:before, .astero-row:after, [class*=large-blck-grid-]:before, [class*=large-blck-grid-]:after, [class*=small-blck-grid-]:before, [class*=small-blck-grid-]:after { content: " "; display: table; }
+  .astero-row:after, [class*=large-blck-grid-]:after, [class*=small-blck-grid-]:after { clear: both; }
+  .astero-large-3 { width: 25%; }
+  .astero-large-9 { width: 75%; }
+  .astero-medium-12 { width: 100%; }
+  .astero-large-blck-grid-3, .astero-large-blck-grid-9, .astero-small-blck-grid-1, .astero-small-blck-grid-2, .astero-medium-blck-grid-6 { list-style: none; }
+  .astero-large-blck-grid-3 > li, .astero-large-blck-grid-9 > li, .astero-small-blck-grid-1 > li, .astero-small-blck-grid-2 > li, .astero-medium-blck-grid-6 > li { float: left; padding: 0 0.625rem 0.625rem; }
+  .astero-large-blck-grid-3 > li, .small-block-grid-3 > li { width: 33.33333%; }
+  .astero-large-blck-grid-9 > li { width: 11.11111%; }
+  .astero-medium-blck-grid-6 > li { width: 16.66667%; }
+  .astero-large-blck-grid-2 > li:first-child + li, .astero-medium-blck-grid-6 > li:first-child + li + li + li + li + li, .astero-large-blck-grid-9 > li:first-child + li + li + li + li + li + li + li + li { float: right; }
+  .astero-large-blck-grid-2 > li:first-child + li + li, .astero-medium-blck-grid-6 > li:first-child + li + li + li + li + li + li, .astero-large-blck-grid-9 > li:first-child + li + li + li + li + li + li + li + li + li { clear: both; }
+  .hide-for-small { display: block !important; }
+  .astero-fc { text-align: center; }
+  .asterofont, [class^="asterofont-"]:before, [class*=" asterofont-"]:before { display: inline; }
+  .astero-form form { margin-top: -4.5em; }
+  .astero-form button { display: inline; }
+  .astero-search .astero-searchicon:after, .astero-form button .astero-searchicon:after { display: none; } }
+}

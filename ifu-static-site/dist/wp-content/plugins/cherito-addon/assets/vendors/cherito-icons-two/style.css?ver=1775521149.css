@@ -1,0 +1,252 @@
+@font-face {
+  font-family: 'cherito-icons-two';
+  src:  url('fonts/cherito-icons-two.eot%3Furyjr');
+  src:  url('fonts/cherito-icons-two.eot%3Furyjr') format('embedded-opentype'),
+    url('fonts/cherito-icons-two.ttf%3Furyjr') format('truetype'),
+    url('fonts/cherito-icons-two.woff%3Furyjr') format('woff'),
+    url('fonts/cherito-icons-two.svg%3Furyjr') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="cherito-icons-two-"], [class*=" cherito-icons-two-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'cherito-icons-two' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.cherito-icons-two-team:before {
+  content: "\e911";
+}
+.cherito-icons-two-quote:before {
+  content: "\e913";
+}
+.cherito-icons-two-acupuncture:before {
+  content: "\e919";
+}
+.cherito-icons-two-acupuncture1:before {
+  content: "\e91a";
+}
+.cherito-icons-two-aroma:before {
+  content: "\e91b";
+}
+.cherito-icons-two-aromatherapy:before {
+  content: "\e91c";
+}
+.cherito-icons-two-acupuncture2:before {
+  content: "\e91d";
+}
+.cherito-icons-two-bamboo:before {
+  content: "\e91e";
+}
+.cherito-icons-two-bathrope:before {
+  content: "\e91f";
+}
+.cherito-icons-two-bathtub:before {
+  content: "\e920";
+}
+.cherito-icons-two-beauty-treatment:before {
+  content: "\e921";
+}
+.cherito-icons-two-spa-bed:before {
+  content: "\e922";
+}
+.cherito-icons-two-body-scrub:before {
+  content: "\e923";
+}
+.cherito-icons-two-hot-stone:before {
+  content: "\e924";
+}
+.cherito-icons-two-Booking:before {
+  content: "\e925";
+}
+.cherito-icons-two-candle:before {
+  content: "\e926";
+}
+.cherito-icons-two-coconut-oil:before {
+  content: "\e927";
+}
+.cherito-icons-two-skincare:before {
+  content: "\e928";
+}
+.cherito-icons-two-therapy:before {
+  content: "\e929";
+}
+.cherito-icons-two-essential-oil:before {
+  content: "\e92a";
+}
+.cherito-icons-two-eye-treatment:before {
+  content: "\e92b";
+}
+.cherito-icons-two-facial-mask:before {
+  content: "\e92c";
+}
+.cherito-icons-two-treatment:before {
+  content: "\e92d";
+}
+.cherito-icons-two-massage:before {
+  content: "\e92e";
+}
+.cherito-icons-two-flower:before {
+  content: "\e92f";
+}
+.cherito-icons-two-foot-massage:before {
+  content: "\e930";
+}
+.cherito-icons-two-foot-spa:before {
+  content: "\e931";
+}
+.cherito-icons-two-reflexology:before {
+  content: "\e932";
+}
+.cherito-icons-two-massage1:before {
+  content: "\e933";
+}
+.cherito-icons-two-herb:before {
+  content: "\e934";
+}
+.cherito-icons-two-herbal-massage:before {
+  content: "\e935";
+}
+.cherito-icons-two-honey:before {
+  content: "\e936";
+}
+.cherito-icons-two-spa-candles:before {
+  content: "\e937";
+}
+.cherito-icons-two-hot-tub:before {
+  content: "\e938";
+}
+.cherito-icons-two-incense-sticks:before {
+  content: "\e939";
+}
+.cherito-icons-two-jacuzzi:before {
+  content: "\e93a";
+}
+.cherito-icons-two-massage-therapist:before {
+  content: "\e93b";
+}
+.cherito-icons-two-lotion:before {
+  content: "\e93c";
+}
+.cherito-icons-two-body-scrub1:before {
+  content: "\e93d";
+}
+.cherito-icons-two-mortar:before {
+  content: "\e93e";
+}
+.cherito-icons-two-body-massage1:before {
+  content: "\e93f";
+}
+.cherito-icons-two-sauna:before {
+  content: "\e940";
+}
+.cherito-icons-two-slippers:before {
+  content: "\e941";
+}
+.cherito-icons-two-soap:before {
+  content: "\e942";
+}
+.cherito-icons-two-sponge:before {
+  content: "\e943";
+}
+.cherito-icons-two-stones:before {
+  content: "\e944";
+}
+.cherito-icons-two-pool:before {
+  content: "\e945";
+}
+.cherito-icons-two-tea-pot:before {
+  content: "\e946";
+}
+.cherito-icons-two-towels:before {
+  content: "\e947";
+}
+.cherito-icons-two-facial-treatment:before {
+  content: "\e948";
+}
+.cherito-icons-two-wax:before {
+  content: "\e949";
+}
+.cherito-icons-two-wrapping:before {
+  content: "\e94a";
+}
+.cherito-icons-two-alarm:before {
+  content: "\e900";
+}
+.cherito-icons-two-aroma1:before {
+  content: "\e901";
+}
+.cherito-icons-two-arrow-left:before {
+  content: "\e902";
+}
+.cherito-icons-two-arrow-left1:before {
+  content: "\e903";
+}
+.cherito-icons-two-balance:before {
+  content: "\e904";
+}
+.cherito-icons-two-body-massage:before {
+  content: "\e905";
+}
+.cherito-icons-two-cart:before {
+  content: "\e906";
+}
+.cherito-icons-two-check:before {
+  content: "\e907";
+}
+.cherito-icons-two-client:before {
+  content: "\e908";
+}
+.cherito-icons-two-comments:before {
+  content: "\e909";
+}
+.cherito-icons-two-discount:before {
+  content: "\e90a";
+}
+.cherito-icons-two-face-massage:before {
+  content: "\e90b";
+}
+.cherito-icons-two-herbal:before {
+  content: "\e90c";
+}
+.cherito-icons-two-logo:before {
+  content: "\e90d";
+}
+.cherito-icons-two-paper-plane:before {
+  content: "\e90e";
+}
+.cherito-icons-two-phone-call:before {
+  content: "\e90f";
+}
+.cherito-icons-two-play:before {
+  content: "\e910";
+}
+.cherito-icons-two-search:before {
+  content: "\e912";
+}
+.cherito-icons-two-up-right-arrow:before {
+  content: "\e914";
+}
+.cherito-icons-two-up-right-arrow1:before {
+  content: "\e915";
+}
+.cherito-icons-two-down-right-arrow:before {
+  content: "\e916";
+}
+.cherito-icons-two-down-left-arrow:before {
+  content: "\e917";
+}
+.cherito-icons-two-user:before {
+  content: "\e918";
+}

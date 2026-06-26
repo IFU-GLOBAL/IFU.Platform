@@ -1,0 +1,12 @@
+version: 1
+applications:
+  - appRoot: ifu-static-site
+    frontend:
+      phases:
+        build:
+          commands:
+            - echo "No build required"
+      artifacts:
+        baseDirectory: dist
+        files:
+          - '**/*'

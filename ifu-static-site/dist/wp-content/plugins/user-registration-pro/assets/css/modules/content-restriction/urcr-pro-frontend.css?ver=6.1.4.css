@@ -1,0 +1,173 @@
+.urcr-restriction-modal::backdrop {
+  backdrop-filter: blur(2px);
+}
+.urcr-restriction-modal {
+  position: fixed;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0px 6px 26px 0px rgba(10, 10, 10, 0.0784313725);
+  background: #fff;
+  z-index: 100000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  border: 1px solid #edf2f7;
+}
+.urcr-restriction-modal:not([open]) {
+  display: none;
+}
+.urcr-restriction-modal:focus {
+  outline: none;
+}
+
+.urcr-restriction-modal__wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 48px;
+  position: relative;
+  gap: 12px;
+}
+
+.urcr-restriction-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.urcr-restriction-modal__title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 600;
+  color: #131313;
+  line-height: 100%;
+}
+
+.urcr-restriction-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  color: #131313;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+.urcr-restriction-modal__close span {
+  line-height: 1;
+}
+
+.urcr-restriction-modal__body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.urcr-restriction-modal__description {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #646464;
+}
+.urcr-restriction-modal__description p {
+  margin: 0 0 16px 0;
+}
+.urcr-restriction-modal__description p:last-child {
+  margin-bottom: 0;
+}
+
+.urcr-restriction-message {
+  margin: 0;
+}
+.urcr-restriction-message p {
+  margin: 0 0 12px 0;
+}
+.urcr-restriction-message p:last-child {
+  margin-bottom: 0;
+}
+.urcr-restriction-message ul {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+.urcr-restriction-message ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+.urcr-restriction-message a {
+  color: #2271b1;
+  text-decoration: underline;
+}
+.urcr-restriction-message a:hover {
+  color: #135e96;
+}
+
+.urcr-restriction-modal__footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.urcr-restriction-modal__button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #2271b1;
+  background: #2271b1;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.urcr-restriction-modal__button:hover {
+  background: #135e96;
+  border-color: #135e96;
+  color: #fff;
+  outline: none;
+}
+.urcr-restriction-modal__button:focus {
+  background: #135e96;
+  border-color: #135e96;
+  color: #fff;
+  outline: none;
+}
+.urcr-restriction-modal__button:active {
+  background: #0a4b78;
+  border-color: #0a4b78;
+}
+.urcr-restriction-modal__button:focus-visible {
+  outline: 2px solid #2271b1;
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .urcr-restriction-modal {
+    width: 95%;
+    max-width: none;
+  }
+  .urcr-restriction-modal__header {
+    padding: 16px;
+  }
+  .urcr-restriction-modal__body {
+    padding: 16px;
+  }
+  .urcr-restriction-modal__footer {
+    padding: 16px;
+  }
+  .urcr-restriction-modal__title {
+    font-size: 18px;
+  }
+}

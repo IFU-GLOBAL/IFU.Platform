@@ -1,0 +1,568 @@
+        <!DOCTYPE html>
+        <html lang="en-US">
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>IFU Donation Form</title>
+            <link rel='stylesheet' id='givewp-campaign-blocks-fonts-css' href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&#038;display=swap&#038;ver=7.0' media='all' />
+<link rel='stylesheet' id='give-donation-summary-style-frontend-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/assets/dist/css/give-donation-summary.css?ver=4.14.6' media='all' />
+<link rel='stylesheet' id='givewp-campaign-comments-block-style-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/campaignCommentsBlockApp.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='givewp-campaign-cover-block-style-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/campaignCoverBlock.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='givewp-campaign-donations-style-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/campaignDonationsBlockApp.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='givewp-campaign-donors-style-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/campaignDonorsBlockApp.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='givewp-campaign-form-style-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/campaignFormBlock.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='givewp-campaign-goal-style-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/campaignGoalBlockApp.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='givewp-campaign-stats-block-style-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/campaignStatsBlockApp.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='givewp-campaign-donate-button-style-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/campaignDonateButtonBlockApp.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='give-styles-css' href='../wp-content/plugins/give/build/assets/dist/css/give.css%3Fver=4.14.6.css' media='all' />
+<link rel='stylesheet' id='givewp-design-system-foundation-css' href='../wp-content/plugins/give/build/assets/dist/css/design-system/foundation.css%3Fver=1.2.0.css' media='all' />
+<link rel='stylesheet' id='give-sequoia-template-css-css' href='https://internationalfarmunion.com/wp-content/plugins/give/build/assets/dist/css/give-sequoia-template.css?ver=4.14.6' media='all' />
+<style id="give-sequoia-template-css-inline-css">
+
+			.seperator {
+				background: #36a043 !important;
+			}
+			.give-btn {
+				border: 2px solid #36a043 !important;
+				background: #36a043 !important;
+			}
+			.give-btn:hover {
+				background: #36a043 !important;
+			}
+			.give-btn:focus {
+				box-shadow: 0 0 8px #36a043;
+			}
+			.payment .give-gateway-option-selected:focus-within .give-gateway-option::before,
+			.choose-amount .give-total-wrap .give-donation-amount:focus-within {
+				border-color: #36a043 !important;
+			}
+			.give-donation-level-btn {
+				border: 2px solid #36a043 !important;
+			}
+			.give-donation-level-btn.give-default-level {
+				color: #36a043 !important;
+				background: #fff !important;
+				transition: background 0.2s ease, color 0.2s ease;
+			}
+			.give-donation-level-btn.give-default-level:hover {
+				color: #36a043 !important; background: #fff !important;
+			}
+			.give-input:focus, .give-select:focus {
+				border: 1px solid #36a043 !important;
+			}
+			.checkmark {
+				border-color: #36a043 !important;
+				color: #36a043 !important;
+			}
+			input[type='radio'] + label::after,
+			[data-field-type='radio'] label::after{
+				background: #36a043 !important;
+			}
+			input[type='radio']:focus + label::before{
+				border-color: #36a043;
+			}
+			a {
+				color: #36a043;
+			}
+			.give-square-cc-fields:focus,
+			.give-stripe-cc-field:focus,
+			.give-stripe-single-cc-field-wrap:focus,
+			form[id*="give-form"] .form-row textarea:focus,
+			form[id*="give-form"] .form-row textarea.required:focus,
+			form[id*="give-form"] .form-row input:focus,
+			form[id*="give-form"] .form-row input.required:focus,
+			#give-recurring-form .form-row textarea:focus,
+			#give-recurring-form .form-row textarea.required:focus,
+			#give-recurring-form .form-row input:focus,
+			#give-recurring-form .form-row input.required:focus,
+			form.give-form .form-row textarea:focus,
+			form.give-form .form-row textarea.required:focus,
+			form.give-form .form-row input:focus,
+			form.give-form .form-row input.required:focus,
+			.form-row select, #give-recurring-form .form-row select:focus,
+			form.give-form .form-row select:focus,
+			.form-row select.required:focus,
+			#give-recurring-form .form-row select.required:focus,
+			form.give-form .form-row select.required:focus,
+			.give-select:focus,
+			.give-input-field-wrapper.has-focus,
+			[data-field-type="checkbox"] label:focus-within::before,
+			[data-field-type="radio"] label:focus-within::before {
+				border-color: #36a043 !important;
+			}
+			
+			.payment [id*='give-create-account-wrap-'] label::after {
+				background-image: url("data:image/svg+xml,%3Csvg width='15' height='11' viewBox='0 0 15 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.73047 10.7812C6.00391 11.0547 6.46875 11.0547 6.74219 10.7812L14.7812 2.74219C15.0547 2.46875 15.0547 2.00391 14.7812 1.73047L13.7969 0.746094C13.5234 0.472656 13.0859 0.472656 12.8125 0.746094L6.25 7.30859L3.16016 4.24609C2.88672 3.97266 2.44922 3.97266 2.17578 4.24609L1.19141 5.23047C0.917969 5.50391 0.917969 5.96875 1.19141 6.24219L5.73047 10.7812Z' fill='%2336a043'/%3E%3C/svg%3E%0A");
+			}
+			#give_terms_agreement:hover,
+			#give_terms_agreement:focus-within,
+			#give_terms_agreement.active {
+				border: 1px solid #36a043 !important;
+			}
+			#give_terms_agreement input[type='checkbox']:focus + label::before {
+				border-color: #36a043;
+			}
+			#give_terms_agreement input[type='checkbox'] + label::after,
+			#give-anonymous-donation-wrap label::after,
+			[data-field-type='checkbox'] label.active:after {
+				background-image: url("data:image/svg+xml,%3Csvg width='15' height='11' viewBox='0 0 15 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.73047 10.7812C6.00391 11.0547 6.46875 11.0547 6.74219 10.7812L14.7812 2.74219C15.0547 2.46875 15.0547 2.00391 14.7812 1.73047L13.7969 0.746094C13.5234 0.472656 13.0859 0.472656 12.8125 0.746094L6.25 7.30859L3.16016 4.24609C2.88672 3.97266 2.44922 3.97266 2.17578 4.24609L1.19141 5.23047C0.917969 5.50391 0.917969 5.96875 1.19141 6.24219L5.73047 10.7812Z' fill='%2336a043'/%3E%3C/svg%3E%0A") !important;
+			}
+			#give-anonymous-donation-wrap label:focus-within::before {
+				border-color: #36a043 !important;
+			}
+		
+
+			.seperator {
+				background: #36a043 !important;
+			}
+			.give-btn {
+				border: 2px solid #36a043 !important;
+				background: #36a043 !important;
+			}
+			.give-btn:hover {
+				background: #36a043 !important;
+			}
+			.give-btn:focus {
+				box-shadow: 0 0 8px #36a043;
+			}
+			.payment .give-gateway-option-selected:focus-within .give-gateway-option::before,
+			.choose-amount .give-total-wrap .give-donation-amount:focus-within {
+				border-color: #36a043 !important;
+			}
+			.give-donation-level-btn {
+				border: 2px solid #36a043 !important;
+			}
+			.give-donation-level-btn.give-default-level {
+				color: #36a043 !important;
+				background: #fff !important;
+				transition: background 0.2s ease, color 0.2s ease;
+			}
+			.give-donation-level-btn.give-default-level:hover {
+				color: #36a043 !important; background: #fff !important;
+			}
+			.give-input:focus, .give-select:focus {
+				border: 1px solid #36a043 !important;
+			}
+			.checkmark {
+				border-color: #36a043 !important;
+				color: #36a043 !important;
+			}
+			input[type='radio'] + label::after,
+			[data-field-type='radio'] label::after{
+				background: #36a043 !important;
+			}
+			input[type='radio']:focus + label::before{
+				border-color: #36a043;
+			}
+			a {
+				color: #36a043;
+			}
+			.give-square-cc-fields:focus,
+			.give-stripe-cc-field:focus,
+			.give-stripe-single-cc-field-wrap:focus,
+			form[id*="give-form"] .form-row textarea:focus,
+			form[id*="give-form"] .form-row textarea.required:focus,
+			form[id*="give-form"] .form-row input:focus,
+			form[id*="give-form"] .form-row input.required:focus,
+			#give-recurring-form .form-row textarea:focus,
+			#give-recurring-form .form-row textarea.required:focus,
+			#give-recurring-form .form-row input:focus,
+			#give-recurring-form .form-row input.required:focus,
+			form.give-form .form-row textarea:focus,
+			form.give-form .form-row textarea.required:focus,
+			form.give-form .form-row input:focus,
+			form.give-form .form-row input.required:focus,
+			.form-row select, #give-recurring-form .form-row select:focus,
+			form.give-form .form-row select:focus,
+			.form-row select.required:focus,
+			#give-recurring-form .form-row select.required:focus,
+			form.give-form .form-row select.required:focus,
+			.give-select:focus,
+			.give-input-field-wrapper.has-focus,
+			[data-field-type="checkbox"] label:focus-within::before,
+			[data-field-type="radio"] label:focus-within::before {
+				border-color: #36a043 !important;
+			}
+			
+			.payment [id*='give-create-account-wrap-'] label::after {
+				background-image: url("data:image/svg+xml,%3Csvg width='15' height='11' viewBox='0 0 15 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.73047 10.7812C6.00391 11.0547 6.46875 11.0547 6.74219 10.7812L14.7812 2.74219C15.0547 2.46875 15.0547 2.00391 14.7812 1.73047L13.7969 0.746094C13.5234 0.472656 13.0859 0.472656 12.8125 0.746094L6.25 7.30859L3.16016 4.24609C2.88672 3.97266 2.44922 3.97266 2.17578 4.24609L1.19141 5.23047C0.917969 5.50391 0.917969 5.96875 1.19141 6.24219L5.73047 10.7812Z' fill='%2336a043'/%3E%3C/svg%3E%0A");
+			}
+			#give_terms_agreement:hover,
+			#give_terms_agreement:focus-within,
+			#give_terms_agreement.active {
+				border: 1px solid #36a043 !important;
+			}
+			#give_terms_agreement input[type='checkbox']:focus + label::before {
+				border-color: #36a043;
+			}
+			#give_terms_agreement input[type='checkbox'] + label::after,
+			#give-anonymous-donation-wrap label::after,
+			[data-field-type='checkbox'] label.active:after {
+				background-image: url("data:image/svg+xml,%3Csvg width='15' height='11' viewBox='0 0 15 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.73047 10.7812C6.00391 11.0547 6.46875 11.0547 6.74219 10.7812L14.7812 2.74219C15.0547 2.46875 15.0547 2.00391 14.7812 1.73047L13.7969 0.746094C13.5234 0.472656 13.0859 0.472656 12.8125 0.746094L6.25 7.30859L3.16016 4.24609C2.88672 3.97266 2.44922 3.97266 2.17578 4.24609L1.19141 5.23047C0.917969 5.50391 0.917969 5.96875 1.19141 6.24219L5.73047 10.7812Z' fill='%2336a043'/%3E%3C/svg%3E%0A") !important;
+			}
+			#give-anonymous-donation-wrap label:focus-within::before {
+				border-color: #36a043 !important;
+			}
+		
+/*# sourceURL=give-sequoia-template-css-inline-css */
+</style>
+<script id="wp-hooks-js" src="../wp-includes/js/dist/hooks.min.js%3Fver=7496969728ca0f95732d"></script>
+<script id="wp-i18n-js" src="../wp-includes/js/dist/i18n.min.js%3Fver=781d11515ad3d91786ec"></script>
+<script id="wp-i18n-js-after">
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+//# sourceURL=wp-i18n-js-after
+</script>
+<script id="jquery-core-js" src="../wp-includes/js/jquery/jquery.min.js%3Fver=3.7.1"></script>
+<script id="jquery-migrate-js" src="../wp-includes/js/jquery/jquery-migrate.min.js%3Fver=3.4.1"></script>
+<script id="give-js-extra">
+var give_global_vars = {"ajaxurl":"https://internationalfarmunion.com/wp-admin/admin-ajax.php","checkout_nonce":"7c5eec1dab","currency":"USD","currency_sign":"$","currency_pos":"before","thousands_separator":",","decimal_separator":".","no_gateway":"Please select a payment method.","bad_minimum":"The minimum custom donation amount for this form is","bad_maximum":"The maximum custom donation amount for this form is","general_loading":"Loading...","purchase_loading":"Please Wait...","textForOverlayScreen":"\u003Ch3\u003EProcessing...\u003C/h3\u003E\u003Cp\u003EThis will only take a second!\u003C/p\u003E","number_decimals":"0","is_test_mode":"1","give_version":"4.14.6","magnific_options":{"main_class":"give-modal","close_on_bg_click":false},"form_translation":{"payment-mode":"Please select payment mode.","give_first":"Please enter your first name.","give_last":"Please enter your last name.","give_email":"Please enter a valid email address.","give_user_login":"Invalid email address or username.","give_user_pass":"Enter a password.","give_user_pass_confirm":"Enter the password confirmation.","give_agree_to_terms":"You must agree to the terms and conditions."},"confirm_email_sent_message":"Please check your email and click on the link to access your complete donation history.","ajax_vars":{"ajaxurl":"https://internationalfarmunion.com/wp-admin/admin-ajax.php","ajaxNonce":"4a88d48b5b","loading":"Loading","select_option":"Please select an option","default_gateway":"stripe","permalinks":"1","number_decimals":0},"cookie_hash":"8b435b1e7c6c9b61828be95f5531d56a","session_nonce_cookie_name":"wp-give_session_reset_nonce_8b435b1e7c6c9b61828be95f5531d56a","session_cookie_name":"wp-give_session_8b435b1e7c6c9b61828be95f5531d56a","delete_session_nonce_cookie":"0"};
+var giveApiSettings = {"root":"https://internationalfarmunion.com/wp-json/give-api/v2/","rest_base":"give-api/v2"};
+var give_global_vars = {"ajaxurl":"https://internationalfarmunion.com/wp-admin/admin-ajax.php","checkout_nonce":"7c5eec1dab","currency":"USD","currency_sign":"$","currency_pos":"before","thousands_separator":",","decimal_separator":".","no_gateway":"Please select a payment method.","bad_minimum":"The minimum custom donation amount for this form is","bad_maximum":"The maximum custom donation amount for this form is","general_loading":"Loading...","purchase_loading":"Please Wait...","textForOverlayScreen":"\u003Ch3\u003EProcessing...\u003C/h3\u003E\u003Cp\u003EThis will only take a second!\u003C/p\u003E","number_decimals":"0","is_test_mode":"1","give_version":"4.14.6","magnific_options":{"main_class":"give-modal","close_on_bg_click":false},"form_translation":{"payment-mode":"Please select payment mode.","give_first":"Please enter your first name.","give_last":"Please enter your last name.","give_email":"Please enter a valid email address.","give_user_login":"Invalid email address or username.","give_user_pass":"Enter a password.","give_user_pass_confirm":"Enter the password confirmation.","give_agree_to_terms":"You must agree to the terms and conditions."},"confirm_email_sent_message":"Please check your email and click on the link to access your complete donation history.","ajax_vars":{"ajaxurl":"https://internationalfarmunion.com/wp-admin/admin-ajax.php","ajaxNonce":"4a88d48b5b","loading":"Loading","select_option":"Please select an option","default_gateway":"stripe","permalinks":"1","number_decimals":0},"cookie_hash":"8b435b1e7c6c9b61828be95f5531d56a","session_nonce_cookie_name":"wp-give_session_reset_nonce_8b435b1e7c6c9b61828be95f5531d56a","session_cookie_name":"wp-give_session_8b435b1e7c6c9b61828be95f5531d56a","delete_session_nonce_cookie":"0"};
+var giveApiSettings = {"root":"https://internationalfarmunion.com/wp-json/give-api/v2/","rest_base":"give-api/v2"};
+//# sourceURL=give-js-extra
+</script>
+<script id="give-js" src="../wp-content/plugins/give/build/assets/dist/js/give.js%3Fver=8540f4f50a2032d9c5b5"></script>
+<meta name='robots' content='noindex,nofollow'/>
+        </head>
+        <body class="give-form-templates">
+        	<div id="give-form-5318-wrap" class="give-form-wrap give-embed-form give-viewing-form-in-iframe">
+		<div class="give-form-navigator">
+    <button class="back-btn"><i class="fas fa-chevron-left"></i></button>
+    <p class="title"></p>
+</div>
+<div class="give_error give_warning" id="give_error_test_mode"><p><strong>Notice:</strong> Test mode is enabled. While in test mode no live donations are processed.</p></div>			<form id="give-form-5318-1" class="give-form give-form-5318 give-form-type-multi" action="https://internationalfarmunion.com/give/ifu-donation-form/?payment-mode=stripe&form-id=5318" data-id="5318-1" data-currency_symbol="&#36;" data-currency_code="USD" data-currency_position="before" data-thousands_separator="," data-decimal_separator="." data-number_decimals="0" data-publishable-key="" data-account="" data-stripe-checkout-type="modal" method="post">
+				<!-- The following field is for robots only, invisible to humans: -->
+				<span class="give-hidden" style="display: none !important;">
+					<label for="give-form-honeypot-5318"></label>
+					<input id="give-form-honeypot-5318" type="text" name="give-honeypot"
+						   class="give-honeypot give-hidden"/>
+				</span>
+
+					<input type="hidden" name="give-form-id-prefix" value="5318-1"/>
+	<input type="hidden" name="give-form-id" value="5318"/>
+	<input type="hidden" name="give-form-title" value="IFU Donation Form"/>
+	<input type="hidden" name="give-current-url" value="https://internationalfarmunion.com/give/ifu-donation-form/"/>
+	<input type="hidden" name="give-form-url" value="https://internationalfarmunion.com/give/ifu-donation-form/"/>
+			<input type="hidden" name="give-form-minimum"
+			   value="5"/>
+		<input type="hidden" name="give-form-maximum"
+			   value="1000000"/>
+		<input type="hidden"  name="give-form-hash" value="b007a1c038" data-time="1781309407" data-nonce-life="86400" data-donor-session="0"/><input type="hidden" name="give-price-id" value="5"/>
+<div class="give-section introduction">
+    <h2 class="headline">
+        IFU Donation Form    </h2>
+            <div class="seperator"></div>
+        <p class="description">
+            Help our organization by donating today! All donations go directly to making a difference for our cause.        </p>
+        
+    <button class="give-btn advance-btn">Donate Now<i class="fas fa-chevron-right"></i></button></div><div class="give-section choose-amount"><p class="content">How much would you like to donate? As a contributor to IFU we make sure your donation goes directly to supporting our cause. Thank you.</p>		<div class="give-total-wrap">
+			<div class="give-donation-amount form-row-wide">
+				<span class="give-currency-symbol give-currency-position-before">&#036;</span>				<label class="give-hidden" for="give-amount">Donation Amount:</label>
+				<input class="give-text-input give-amount-top" id="give-amount" name="give-amount" type="text" inputmode="decimal"
+					   placeholder="" value="250" autocomplete="off">
+							</div>
+		</div>
+		<ul id="give-donation-level-button-wrap" class="give-donation-levels-wrap give-list-inline"><li><button type="button" data-price-id="0" class="give-donation-level-btn give-btn give-btn-level-0 " value="10" data-default="0">&#036;10</button></li><li><button type="button" data-price-id="1" class="give-donation-level-btn give-btn give-btn-level-1 " value="25" data-default="0">&#036;25</button></li><li><button type="button" data-price-id="2" class="give-donation-level-btn give-btn give-btn-level-2 " value="50" data-default="0">&#036;50</button></li><li><button type="button" data-price-id="3" class="give-donation-level-btn give-btn give-btn-level-3 " value="100" data-default="0">&#036;100</button></li><li><button type="button" data-price-id="5" class="give-donation-level-btn give-btn give-btn-level-5 give-default-level" value="250" data-default="1">&#036;250</button></li><li><button type="button" data-price-id="custom" class="give-donation-level-btn give-btn give-btn-level-custom" value="custom">Custom Amount</button></li></ul><input id="give-stripe-payment-method-5318-1" type="hidden" name="give_stripe_payment_method" value=""><button class="give-btn advance-btn">Continue<i class="fas fa-chevron-right"></i></button></div><div class="give-section payment"><div class="heading">Who's giving today?</div><div class="subheading">We’ll never share this information with anyone.</div>	<fieldset id="give_checkout_user_info" class="">
+		<legend>
+			Personal Info		</legend>
+
+		
+        <p id="give-first-name-wrap" class="form-row form-row-first form-row-responsive">
+            <label class="give-label" for="give-first">
+                First Name                                    <span class="give-required-indicator">*</span>
+                                <span class="give-tooltip hint--top hint--medium hint--bounce" aria-label="First Name is used to personalize your donation record." rel="tooltip"><i class="give-icon give-icon-question"></i></span>            </label>
+            <input
+                class="give-input required"
+                type="text"
+                name="give_first"
+                autocomplete="given-name"
+                placeholder="First Name"
+                id="give-first"
+                value=""
+                 required aria-required="true"             />
+        </p>
+
+        <p id="give-last-name-wrap" class="form-row form-row-last form-row-responsive">
+            <label class="give-label" for="give-last">
+                Last Name                                <span class="give-tooltip hint--top hint--medium hint--bounce" aria-label="Last Name is used to personalize your donation record." rel="tooltip"><i class="give-icon give-icon-question"></i></span>            </label>
+
+            <input
+                class="give-input"
+                type="text"
+                name="give_last"
+                autocomplete="family-name"
+                id="give-last"
+                placeholder="Last Name"
+                value=""
+                            />
+        </p>
+
+        
+                <p id="give-email-wrap" class="form-row form-row-wide">
+            <label class="give-label" for="give-email">
+                Email Address                                    <span class="give-required-indicator">*</span>
+                                    <span class="give-tooltip hint--top hint--medium hint--bounce" aria-label="We will send the donation receipt to this address." rel="tooltip"><i class="give-icon give-icon-question"></i></span>            </label>
+            <input
+                class="give-input required"
+                type="email"
+                name="give_email"
+                autocomplete="email"
+                placeholder="Email Address"
+                id="give-email"
+                value=""
+                 required aria-required="true"             />
+
+        </p>
+
+        
+					</fieldset>
+	
+	<fieldset id="give-payment-mode-select">
+				<legend
+			class="give-payment-mode-label">Select Payment Method			<span class="give-loading-text"><span
+					class="give-loading-animation"></span>
+			</span>
+		</legend>
+
+		<div id="give-payment-mode-wrap">
+						<ul id="give-gateway-radio-list">
+										<li class="give-gateway-option-selected">
+							<input type="radio" name="payment-mode" class="give-gateway"
+								   id="give-gateway-stripe-5318-1"
+								   value="stripe" checked='checked'>
+							<label for="give-gateway-stripe-5318-1"
+								   class="give-gateway-option"
+								   id="give-gateway-option-stripe"> Donate with Credit/Debit Card</label>
+						</li>
+												<li>
+							<input type="radio" name="payment-mode" class="give-gateway"
+								   id="give-gateway-stripe_checkout-5318-1"
+								   value="stripe_checkout">
+							<label for="give-gateway-stripe_checkout-5318-1"
+								   class="give-gateway-option"
+								   id="give-gateway-option-stripe_checkout"> Donate with Stripe - Checkout</label>
+						</li>
+									</ul>
+					</div>
+			</fieldset>
+
+	
+	<div id="give_purchase_form_wrap">
+
+		
+        <fieldset id="give_cc_fields" class="give-do-validate">
+            <legend>
+                Credit Card Info            </legend>
+
+                            <div id="give_secure_site_wrapper">
+                    <span class="give-icon padlock"></span>
+                    <span>
+					This is a secure SSL encrypted payment.				</span>
+                </div>
+                <div class="give_notices give_errors" id="give_error_warning">
+						<p class="give_notice give_warning" data-dismissible="" data-dismiss-interval="5000" data-dismiss-type="">
+							&lt;strong&gt;Notice:&lt;/strong&gt; Credit Card fields are disabled. Please connect and configure your Stripe account to accept donations.
+						</p>
+						
+					</div>        </fieldset>
+        <div id="give-stripe-payment-errors-5318-1"></div>	<fieldset id="give_purchase_submit" class="give-donation-submit">
+		<style>
+    .give-donation-summary-table-wrapper {
+        --primary-color: #36a043;
+    }
+</style>
+<div class="give-donation-summary-section">
+
+            <div class="heading">Here's what you're about to donate:</div>
+    
+    <div class="give-donation-summary-table-wrapper">
+
+        <table>
+            <thead>
+            <tr>
+                <th>Donation Summary</th>
+                <th>
+                                            <button type="button" class="back-btn" onclick="GiveDonationSummary.handleNavigateBack(event)">
+                            Edit Donation                            <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.9844 2.49878L13.3333 4.84774C13.4323 4.9467 13.4323 5.10815 13.3333 5.20711L7.64583 10.8946L5.22917 11.1628C4.90625 11.1993 4.63281 10.9259 4.66927 10.6029L4.9375 8.18628L10.625 2.49878C10.724 2.39982 10.8854 2.39982 10.9844 2.49878ZM15.2031 1.90243L13.9323 0.631592C13.5365 0.235758 12.8932 0.235758 12.4948 0.631592L11.5729 1.55347C11.474 1.65243 11.474 1.81388 11.5729 1.91284L13.9219 4.2618C14.0208 4.36076 14.1823 4.36076 14.2812 4.2618L15.2031 3.33992C15.599 2.94149 15.599 2.29826 15.2031 1.90243V1.90243ZM10.5 9.34774V11.9988H2.16667V3.66545H8.15104C8.23437 3.66545 8.3125 3.63159 8.3724 3.5743L9.41406 2.53263C9.61198 2.33472 9.47135 1.99878 9.19271 1.99878H1.75C1.0599 1.99878 0.5 2.55867 0.5 3.24878V12.4154C0.5 13.1055 1.0599 13.6654 1.75 13.6654H10.9167C11.6068 13.6654 12.1667 13.1055 12.1667 12.4154V8.30607C12.1667 8.02742 11.8307 7.8894 11.6328 8.08472L10.5911 9.12638C10.5339 9.18628 10.5 9.2644 10.5 9.34774Z" fill="#8C8C8C"/>
+</svg>
+                        </button>
+                                    </th>
+            </tr>
+            </thead>
+            <tbody>
+
+
+            <!-- PAYMENT AMOUNT -->
+            <tr>
+                <td>
+                    <div>Payment Amount</div>
+                </td>
+                <td data-tag="amount"></td>
+            </tr>
+
+
+            <!-- GIVING FREQUENCY -->
+            <tr>
+                <td>
+                    <div>Giving Frequency</div>
+                                    </td>
+                <td>
+                    <span data-tag="recurring"></span>
+                    <span data-tag="frequency">One time</span>
+                </td>
+            </tr>
+
+
+            <!-- COVER DONATION FEES -->
+            
+
+            </tbody>
+            <tfoot>
+
+
+            <!-- TOTAL DONATION AMOUNT (INCLUDING FEES) -->
+            <tr>
+                <th>Donation Total</th>
+                <th data-tag="total"></th>
+            </tr>
+
+
+            </tfoot>
+        </table>
+    </div>
+</div>
+	<p id="give-final-total-wrap" class="form-wrap ">
+				<span class="give-donation-total-label">
+			Donation Total:		</span>
+		<span class="give-final-total-amount"
+			  data-total="250">
+			&#36;250		</span>
+			</p>
+		<input type="hidden" name="give_action" value="purchase"/>
+	<input type="hidden" name="give-gateway" value="stripe"/>
+	<input type="hidden" name="give_embed_form" value="1">	<div class="give-submit-button-wrap give-clearfix">
+		<input type="submit" class="give-submit give-btn" id="give-purchase-button" name="give-purchase"
+			   value="Donate Now" data-before-validation-label="Donate Now"/>
+		<span class="give-loading-animation"></span>
+	</div>
+	</div>	</fieldset>
+	
+	</div>
+
+				</form>
+
+			<div class="form-footer">
+    <div class="navigator-tracker">
+        <button class="step-tracker current" data-step="0"></button>
+        <button class="step-tracker" data-step="1"></button>
+        <button class="step-tracker" data-step="2"></button>
+    </div>
+    <div class="secure-notice">
+                    <i class="fas fa-lock"></i>
+            Secure Donation            </div>
+</div>
+
+	</div><!--end #give-form-5318-->
+	<script id="givewp-donation-form-embed-js" src="https://internationalfarmunion.com/wp-content/plugins/give/build/donationFormEmbed.js?ver=4.14.6"></script>
+<script id="give-donation-summary-script-frontend-js-extra">
+var GiveDonationSummaryData = {"currencyPrecisionLookup":{"USD":2,"EUR":2,"GBP":2,"AUD":2,"BRL":2,"CAD":2,"CZK":2,"DKK":2,"HKD":2,"HUF":2,"ILS":2,"JPY":0,"MYR":2,"MXN":2,"MAD":2,"NZD":2,"NOK":2,"PHP":2,"PLN":2,"SGD":2,"KRW":0,"ZAR":2,"SEK":2,"CHF":2,"TWD":2,"THB":2,"INR":2,"TRY":2,"IRR":2,"RUB":2,"AED":2,"AMD":2,"ANG":2,"ARS":2,"AWG":2,"BAM":2,"BDT":2,"BHD":3,"BMD":2,"BND":2,"BOB":2,"BSD":2,"BWP":2,"BZD":2,"CLP":0,"CNY":2,"COP":2,"CRC":2,"CUC":2,"CUP":2,"DOP":2,"EGP":2,"GIP":2,"GTQ":2,"HNL":2,"HRK":2,"IDR":2,"ISK":0,"JMD":2,"JOD":2,"KES":2,"KWD":2,"KYD":2,"MKD":2,"NPR":2,"OMR":3,"PEN":2,"PKR":2,"RON":2,"SAR":2,"SZL":2,"TOP":2,"TZS":2,"TVD":2,"UAH":2,"UYU":2,"VEF":2,"VES":2,"VED":2,"XCD":2,"XCG":2,"XDR":2,"AFN":2,"ALL":2,"AOA":2,"AZN":2,"BBD":2,"BGN":2,"BIF":0,"XBT":8,"BTN":1,"BYR":2,"BYN":2,"CDF":2,"CVE":2,"DJF":0,"DZD":2,"ERN":2,"ETB":2,"FJD":2,"FKP":2,"GEL":2,"GGP":2,"GHS":2,"GMD":2,"GNF":0,"GYD":2,"HTG":2,"IMP":2,"IQD":2,"IRT":2,"JEP":2,"KGS":2,"KHR":0,"KMF":2,"KPW":0,"KZT":2,"LAK":0,"LBP":2,"LKR":0,"LRD":2,"LSL":2,"LYD":3,"MDL":2,"MGA":0,"MMK":2,"MNT":2,"MOP":2,"MRO":2,"MRU":2,"MUR":2,"MVR":1,"MWK":2,"MZN":0,"NAD":2,"NGN":2,"NIO":2,"PAB":2,"PGK":2,"PRB":2,"PYG":2,"QAR":2,"RSD":2,"RWF":2,"SBD":2,"SCR":2,"SDG":2,"SHP":2,"SLL":2,"SLE":2,"SOS":2,"SRD":2,"SSP":2,"STD":2,"STN":2,"SVC":2,"SYP":2,"TJS":2,"TMT":2,"TND":3,"TTD":2,"UGX":2,"UZS":2,"VND":1,"VUV":0,"WST":2,"XAF":2,"XOF":2,"XPF":2,"YER":2,"ZMW":2,"ZWL":2},"recurringLabelLookup":[]};
+//# sourceURL=give-donation-summary-script-frontend-js-extra
+</script>
+<script id="give-donation-summary-script-frontend-js" src="https://internationalfarmunion.com/wp-content/plugins/give/build/assets/dist/js/give-donation-summary.js?ver=4.14.6"></script>
+<script id="react-js" src="../wp-includes/js/dist/vendor/react.min.js%3Fver=18.3.1.1"></script>
+<script id="react-jsx-runtime-js" src="../wp-includes/js/dist/vendor/react-jsx-runtime.min.js%3Fver=18.3.1"></script>
+<script id="wp-url-js" src="../wp-includes/js/dist/url.min.js%3Fver=bb0f766c3d2efe497871"></script>
+<script id="wp-api-fetch-js" src="../wp-includes/js/dist/api-fetch.min.js%3Fver=d7efe4dc1468d36c39b8"></script>
+<script id="wp-api-fetch-js-after">
+wp.apiFetch.use( wp.apiFetch.createRootURLMiddleware( "https://internationalfarmunion.com/wp-json/" ) );
+wp.apiFetch.nonceMiddleware = wp.apiFetch.createNonceMiddleware( "9a8cd82084" );
+wp.apiFetch.use( wp.apiFetch.nonceMiddleware );
+wp.apiFetch.use( wp.apiFetch.mediaUploadMiddleware );
+wp.apiFetch.nonceEndpoint = "https://internationalfarmunion.com/wp-admin/admin-ajax.php?action=rest-nonce";
+(function(){if(!window.wp||!wp.apiFetch||!wp.apiFetch.use){return;}wp.apiFetch.use(function(options,next){var p=String((options&&(options.path||options.url))||"");try{var u=new URL(p,window.location.origin);p=(u.pathname||"")+(u.search||"");}catch(e){}if(p.indexOf("/wp/v2/users/me")!==-1){return Promise.resolve(null);}return next(options);});})();
+(function(){if(!window.wp||!wp.apiFetch||!wp.apiFetch.use){return;}wp.apiFetch.use(function(options,next){var p=String((options&&(options.path||options.url))||"");try{var u=new URL(p,window.location.origin);p=(u.pathname||"")+(u.search||"");}catch(e){}if(p.indexOf("/wp/v2/users/me")!==-1){return Promise.resolve(null);}return next(options);});})();
+//# sourceURL=wp-api-fetch-js-after
+</script>
+<script id="react-dom-js" src="../wp-includes/js/dist/vendor/react-dom.min.js%3Fver=18.3.1.1"></script>
+<script id="wp-dom-ready-js" src="../wp-includes/js/dist/dom-ready.min.js%3Fver=a06281ae5cf5500e9317"></script>
+<script id="wp-a11y-js" src="../wp-includes/js/dist/a11y.min.js%3Fver=af934e5259bc51b8718e"></script>
+<script id="wp-blob-js" src="../wp-includes/js/dist/blob.min.js%3Fver=198af75fe06d924090d8"></script>
+<script id="wp-block-serialization-default-parser-js" src="../wp-includes/js/dist/block-serialization-default-parser.min.js%3Fver=bff55bd3f1ce9df0c99c"></script>
+<script id="wp-autop-js" src="../wp-includes/js/dist/autop.min.js%3Fver=9d0d0901b46f0a9027c9"></script>
+<script id="wp-deprecated-js" src="../wp-includes/js/dist/deprecated.min.js%3Fver=990e85f234fee8f7d446"></script>
+<script id="wp-dom-js" src="../wp-includes/js/dist/dom.min.js%3Fver=66a6cf58e0c4cd128af0"></script>
+<script id="wp-escape-html-js" src="../wp-includes/js/dist/escape-html.min.js%3Fver=3f093e5cca67aa0f8b56"></script>
+<script id="wp-element-js" src="../wp-includes/js/dist/element.min.js%3Fver=15ba804677f72a8db97b"></script>
+<script id="wp-is-shallow-equal-js" src="../wp-includes/js/dist/is-shallow-equal.min.js%3Fver=5d84b9f3cb50d2ce7d04"></script>
+<script id="wp-keycodes-js" src="../wp-includes/js/dist/keycodes.min.js%3Fver=aa1a141e3468afe7f852"></script>
+<script id="wp-priority-queue-js" src="../wp-includes/js/dist/priority-queue.min.js%3Fver=1f0e89e247bc0bd3f9b9"></script>
+<script id="wp-undo-manager-js" src="../wp-includes/js/dist/undo-manager.min.js%3Fver=27bb0ae036a2c9d4a1b5"></script>
+<script id="wp-compose-js" src="../wp-includes/js/dist/compose.min.js%3Fver=edb5a8c0b5bf71686403"></script>
+<script id="wp-private-apis-js" src="../wp-includes/js/dist/private-apis.min.js%3Fver=835912f0086b9e59aed4"></script>
+<script id="wp-redux-routine-js" src="../wp-includes/js/dist/redux-routine.min.js%3Fver=64f9f5001aabc046c605"></script>
+<script id="wp-data-js" src="../wp-includes/js/dist/data.min.js%3Fver=1756b6a2676c1b3369ab"></script>
+<script id="wp-data-js-after">
+( function() {
+	var userId = 0;
+	var storageKey = "WP_DATA_USER_" + userId;
+	wp.data
+		.use( wp.data.plugins.persistence, { storageKey: storageKey } );
+} )();
+//# sourceURL=wp-data-js-after
+</script>
+<script id="wp-html-entities-js" src="../wp-includes/js/dist/html-entities.min.js%3Fver=8c6fa5b869dfeadc4af2"></script>
+<script id="wp-rich-text-js" src="../wp-includes/js/dist/rich-text.min.js%3Fver=16449e6108f48327f368"></script>
+<script id="wp-shortcode-js" src="../wp-includes/js/dist/shortcode.min.js%3Fver=11742fe18cc215d3d5ab"></script>
+<script id="wp-warning-js" src="../wp-includes/js/dist/warning.min.js%3Fver=36fdbdc984d93aee8a97"></script>
+<script id="wp-blocks-js" src="../wp-includes/js/dist/blocks.min.js%3Fver=ef38e42500165bfda301"></script>
+<script id="moment-js" src="../wp-includes/js/dist/vendor/moment.min.js%3Fver=2.30.1"></script>
+<script id="moment-js-after">
+moment.updateLocale( 'en_US', {"months":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthsShort":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"weekdaysShort":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"week":{"dow":1},"longDateFormat":{"LT":"g:i a","LTS":null,"L":null,"LL":"F j, Y","LLL":"F j, Y g:i a","LLLL":null}} );
+//# sourceURL=moment-js-after
+</script>
+<script id="wp-date-js" src="../wp-includes/js/dist/date.min.js%3Fver=c9f8e7dd3232716f34e9"></script>
+<script id="wp-date-js-after">
+wp.date.setSettings( {"l10n":{"locale":"en_US","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthsShort":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"weekdaysShort":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"meridiem":{"am":"am","pm":"pm","AM":"AM","PM":"PM"},"relative":{"future":"%s from now","past":"%s ago","s":"a second","ss":"%d seconds","m":"a minute","mm":"%d minutes","h":"an hour","hh":"%d hours","d":"a day","dd":"%d days","M":"a month","MM":"%d months","y":"a year","yy":"%d years"},"startOfWeek":1},"formats":{"time":"g:i a","date":"F j, Y","datetime":"F j, Y g:i a","datetimeAbbreviated":"M j, Y g:i a"},"timezone":{"offset":0,"offsetFormatted":"0","string":"","abbr":""}} );
+//# sourceURL=wp-date-js-after
+</script>
+<script id="wp-primitives-js" src="../wp-includes/js/dist/primitives.min.js%3Fver=a5c905ec27bcd76ef287"></script>
+<script id="wp-components-js" src="../wp-includes/js/dist/components.min.js%3Fver=5dedfe13f08880193a28"></script>
+<script id="wp-keyboard-shortcuts-js" src="../wp-includes/js/dist/keyboard-shortcuts.min.js%3Fver=2ed78d3b4c23f38804e0"></script>
+<script id="wp-commands-js" src="../wp-includes/js/dist/commands.min.js%3Fver=e3d8bba53f4ffea4fcd2"></script>
+<script id="wp-notices-js" src="../wp-includes/js/dist/notices.min.js%3Fver=218d0173a31ae7269246"></script>
+<script id="wp-preferences-persistence-js" src="../wp-includes/js/dist/preferences-persistence.min.js%3Fver=e8033be98338d1861bca"></script>
+<script id="wp-preferences-js" src="../wp-includes/js/dist/preferences.min.js%3Fver=035813168e404aa30193"></script>
+<script id="wp-preferences-js-after">
+( function() {
+				var serverData = false;
+				var userId = "0";
+				var persistenceLayer = wp.preferencesPersistence.__unstableCreatePersistenceLayer( serverData, userId );
+				var preferencesStore = wp.preferences.store;
+				wp.data.dispatch( preferencesStore ).setPersistenceLayer( persistenceLayer );
+			} ) ();
+//# sourceURL=wp-preferences-js-after
+</script>
+<script id="wp-style-engine-js" src="../wp-includes/js/dist/style-engine.min.js%3Fver=faa37ce61b7ec8394b2a"></script>
+<script id="wp-theme-js" src="../wp-includes/js/dist/theme.min.js%3Fver=e22ce547a4420507b323"></script>
+<script id="wp-token-list-js" src="../wp-includes/js/dist/token-list.min.js%3Fver=16f0aebdd39d87c2a84b"></script>
+<script id="wp-upload-media-js" src="../wp-includes/js/dist/upload-media.min.js%3Fver=d359c2cccf866d7082d2"></script>
+<script id="wp-block-editor-js" src="../wp-includes/js/dist/block-editor.min.js%3Fver=93c3566b7f24c15b7e17"></script>
+<script id="wp-core-data-js" src="../wp-includes/js/dist/core-data.min.js%3Fver=89931f90e4df5eb5f8a3"></script>
+<script id="givewp-entities-public-js" src="../wp-content/plugins/give/build/entitiesPublic.js%3Fver=b759f2adda1f29c50713"></script>
+<script id="give-sequoia-template-js-js-extra">
+var sequoiaTemplateOptions = {"visual_appearance":{"primary_color":"#36a043","google-fonts":"disabled","decimals_enabled":"disabled"},"introduction":{"enabled":"disabled","headline":"IFU Donation Form","description":"Help our organization by donating today! All donations go directly to making a difference for our cause.","image":"","donate_label":"Donate Now","primary_color":"#36a043"},"payment_amount":{"header_label":"Choose Amount","content":"How much would you like to donate? As a contributor to IFU we make sure your donation goes directly to supporting our cause. Thank you.","next_label":"Continue","decimals_enabled":"disabled"},"payment_information":{"header_label":"Add Your Information","headline":"Who's giving today?","description":"We\u2019ll never share this information with anyone.","donation_summary_enabled":"enabled","donation_summary_heading":"Here's what you're about to donate:","donation_summary_location":"give_donation_form_before_submit","checkout_label":"Donate Now"},"thank-you":{"image":"","headline":"A great big thank you!","description":"{name}, your contribution means a lot and will be put to good use in making a difference. We\u2019ve sent your donation receipt to {donor_email}.","sharing":"enabled","sharing_instruction":"Help spread the word by sharing your support with your friends and followers!","twitter_message":"I just gave to this cause. Who's next?"}};
+var sequoiaTemplateL10n = {"optionalLabel":"\u00a0(optional)"};
+var sequoiaTemplateOptions = {"visual_appearance":{"primary_color":"#36a043","google-fonts":"disabled","decimals_enabled":"disabled"},"introduction":{"enabled":"disabled","headline":"IFU Donation Form","description":"Help our organization by donating today! All donations go directly to making a difference for our cause.","image":"","donate_label":"Donate Now","primary_color":"#36a043"},"payment_amount":{"header_label":"Choose Amount","content":"How much would you like to donate? As a contributor to IFU we make sure your donation goes directly to supporting our cause. Thank you.","next_label":"Continue","decimals_enabled":"disabled"},"payment_information":{"header_label":"Add Your Information","headline":"Who's giving today?","description":"We\u2019ll never share this information with anyone.","donation_summary_enabled":"enabled","donation_summary_heading":"Here's what you're about to donate:","donation_summary_location":"give_donation_form_before_submit","checkout_label":"Donate Now"},"thank-you":{"image":"","headline":"A great big thank you!","description":"{name}, your contribution means a lot and will be put to good use in making a difference. We\u2019ve sent your donation receipt to {donor_email}.","sharing":"enabled","sharing_instruction":"Help spread the word by sharing your support with your friends and followers!","twitter_message":"I just gave to this cause. Who's next?"}};
+var sequoiaTemplateL10n = {"optionalLabel":"\u00a0(optional)"};
+//# sourceURL=give-sequoia-template-js-js-extra
+</script>
+<script id="give-sequoia-template-js-js" src="https://internationalfarmunion.com/wp-content/plugins/give/build/assets/dist/js/give-sequoia-template.js?ver=4.14.6"></script>
+<script id="cherito-givewp-iframes-scripts-js-extra">
+var formLayoutData = {"ajaxurl":"https://internationalfarmunion.com/wp-admin/admin-ajax.php","pluginurl":"https://internationalfarmunion.com/wp-content/plugins/cherito-addon/assets","nonce":"2373e5a4c2","form_layout":"[]"};
+//# sourceURL=cherito-givewp-iframes-scripts-js-extra
+</script>
+<script id="cherito-givewp-iframes-scripts-js" src="../wp-content/plugins/cherito-addon/assets/give/js/cherito-give-custom-donation-form.js"></script>
+        </body>
+        </html>
+        

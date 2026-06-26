@@ -1,0 +1,165 @@
+@font-face {
+  font-family: 'cherito-icon-three';
+  src:  url('fonts/cherito-icon-three.eot%3Fnm0o38');
+  src:  url('fonts/cherito-icon-three.eot%3Fnm0o38') format('embedded-opentype'),
+    url('fonts/cherito-icon-three.ttf%3Fnm0o38') format('truetype'),
+    url('fonts/cherito-icon-three.woff%3Fnm0o38') format('woff'),
+    url('fonts/cherito-icon-three.svg%3Fnm0o38') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="cherito-icon-three-"], [class*=" cherito-icon-three-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'cherito-icon-three' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.cherito-icon-three-flower:before {
+  content: "\e900";
+}
+.cherito-icon-three-arm:before {
+  content: "\e901";
+}
+.cherito-icon-three-yoga:before {
+  content: "\e902";
+}
+.cherito-icon-three-stethoscope:before {
+  content: "\e903";
+}
+.cherito-icon-three-shower-gel:before {
+  content: "\e904";
+}
+.cherito-icon-three-sun:before {
+  content: "\e905";
+}
+.cherito-icon-three-no-smoke:before {
+  content: "\e906";
+}
+.cherito-icon-three-apple:before {
+  content: "\e907";
+}
+.cherito-icon-three-weight-scale:before {
+  content: "\e908";
+}
+.cherito-icon-three-lotion:before {
+  content: "\e909";
+}
+.cherito-icon-three-heart-rate:before {
+  content: "\e90a";
+}
+.cherito-icon-three-brush-teeth:before {
+  content: "\e90b";
+}
+.cherito-icon-three-jar:before {
+  content: "\e90c";
+}
+.cherito-icon-three-stopwatch:before {
+  content: "\e90d";
+}
+.cherito-icon-three-shower-head:before {
+  content: "\e90e";
+}
+.cherito-icon-three-tea-cup:before {
+  content: "\e90f";
+}
+.cherito-icon-three-sprout:before {
+  content: "\e910";
+}
+.cherito-icon-three-bottle:before {
+  content: "\e911";
+}
+.cherito-icon-three-water-drop:before {
+  content: "\e912";
+}
+.cherito-icon-three-tooth:before {
+  content: "\e913";
+}
+.cherito-icon-three-bowl:before {
+  content: "\e914";
+}
+.cherito-icon-three-clipboard:before {
+  content: "\e915";
+}
+.cherito-icon-three-dumbbells:before {
+  content: "\e916";
+}
+.cherito-icon-three-Flip-flop:before {
+  content: "\e917";
+}
+.cherito-icon-three-heart-rate1:before {
+  content: "\e918";
+}
+.cherito-icon-three-bed:before {
+  content: "\e919";
+}
+.cherito-icon-three-calendar:before {
+  content: "\e91a";
+}
+.cherito-icon-three-shield:before {
+  content: "\e91b";
+}
+.cherito-icon-three-towel:before {
+  content: "\e91c";
+}
+.cherito-icon-three-gym-ball:before {
+  content: "\e91d";
+}
+.cherito-icon-three-yoga-mat:before {
+  content: "\e91e";
+}
+.cherito-icon-three-juice:before {
+  content: "\e91f";
+}
+.cherito-icon-three-heart:before {
+  content: "\e920";
+}
+.cherito-icon-three-bicycle:before {
+  content: "\e921";
+}
+.cherito-icon-three-medicine:before {
+  content: "\e922";
+}
+.cherito-icon-three-eye:before {
+  content: "\e923";
+}
+.cherito-icon-three-water-bottle:before {
+  content: "\e924";
+}
+.cherito-icon-three-mind:before {
+  content: "\e925";
+}
+.cherito-icon-three-medical-insurance:before {
+  content: "\e926";
+}
+.cherito-icon-three-basketball-ball:before {
+  content: "\e927";
+}
+.cherito-icon-three-love-message:before {
+  content: "\e928";
+}
+.cherito-icon-three-mind1:before {
+  content: "\e929";
+}
+.cherito-icon-three-eyedropper:before {
+  content: "\e92a";
+}
+.cherito-icon-three-emotion:before {
+  content: "\e92b";
+}
+.cherito-icon-three-lotus-flower:before {
+  content: "\e92c";
+}
+.cherito-icon-three-skin-care:before {
+  content: "\e92d";
+}

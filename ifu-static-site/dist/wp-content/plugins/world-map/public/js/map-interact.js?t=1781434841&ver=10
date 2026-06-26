@@ -1,0 +1,125 @@
+( function( $ ) {
+
+    "use strict";
+
+    function isTouchEnabled() {
+    return (('ontouchstart' in window)
+        || (navigator.MaxTouchPoints > 0)
+        || (navigator.msMaxTouchPoints > 0));
+    }
+
+    $(document).ready(function () {
+        $("path[id^=\"worldmap_\"]").each(function (i, e) {
+            addEvent($(e).attr('id'));
+        });
+    });
+
+    function addEvent(id, relationId) {
+        var _obj = $('#' + id);
+        var _Textobj = $('#' + id + ',' + '#' + world_map_config[id]['title']);
+        var _abb = $('#' + world_map_config[id]['title']);
+        $('#worldmapwrapper').css({'opacity': '1'});
+        $('#worldvisns').css({'fill': world_map_config['default']['worldvisns']});
+
+        if(world_map_config['default']['worldshowvisnslg'] === true) {
+            $('#worldvisnslg').css({'opacity': '1'});
+        } else {
+            $('#worldvisnslg').css({'opacity': '0'});
+        }
+
+        if(world_map_config['default']['worldshowvisnssm'] === true) {
+            $('#worldvisnssm').css({'opacity': '1'});
+        } else {
+            $('#worldvisnssm').css({'opacity': '0'});
+        }
+
+        _obj.attr({'fill': world_map_config[id]['upclr'], 'stroke': world_map_config['default']['worldbrdrclr']});
+
+        _Textobj.attr({'cursor': 'default'});
+
+        if (world_map_config[id]['enbl'] === true) {
+            if (isTouchEnabled()) {
+                var touchmoved;
+                _Textobj.on('touchend', function (e) {
+                    if (touchmoved !== true) {
+                        _Textobj.on('touchstart', function (e) {
+                            let touch = e.originalEvent.touches[0];
+                            let x = touch.pageX - 10, y = touch.pageY + (-15);
+
+                            let $worldmtip = $('#tipworldmap');
+                            let worldmaptipw = $worldmtip.outerWidth(),
+                                worldmaptiph = $worldmtip.outerHeight();
+
+                            x = (x + worldmaptipw > $(document).scrollLeft() + $(window).width()) ? x - worldmaptipw - (20 * 2) : x
+                            y = (y + worldmaptiph > $(document).scrollTop() + $(window).height()) ? $(document).scrollTop() + $(window).height() - worldmaptiph - 10 : y
+
+                            if (world_map_config[id]['targt'] !== 'none') {
+                                /* Down Color */
+                                _obj.css({'fill': '#b3b3b3'});
+                            }
+                            $worldmtip.show().html(world_map_config[id]['hover']);
+                            $worldmtip.css({left: x, top: y})
+                        })
+                        _Textobj.on('touchend', function () {
+                            _obj.css({'fill': world_map_config[id]['upclr']});
+                            if (world_map_config[id]['targt'] === '_blank') {
+                                window.open(world_map_config[id]['url']);
+                            } else if (world_map_config[id]['targt'] === '_self') {
+                                window.parent.location.href = world_map_config[id]['url'];
+                            }
+                            $('#tipworldmap').hide();
+                        })
+                    }
+                }).on('touchmove', function (e) {
+                    touchmoved = true;
+                }).on('touchstart', function () {
+                    touchmoved = false;
+                });
+            }
+            _Textobj.attr({'cursor': 'pointer'});
+
+            _Textobj.on('mouseenter', function () {
+                $('#tipworldmap').show().html(world_map_config[id]['hover']);
+                /* Over Color */
+                _obj.css({'fill': '#60a3d2'});
+                /* Names Hover Color */
+                _abb.css({'fill': '#112a3c'});
+            }).on('mouseleave', function () {
+                $('#tipworldmap').hide();
+                _obj.css({'fill': world_map_config[id]['upclr']});
+                _abb.css({'fill': world_map_config['default']['worldvisns']});
+            });
+            if (world_map_config[id]['targt'] !== 'none') {
+                _Textobj.on('mousedown', function () {
+                    /* Down Color */
+                    _obj.css({'fill': '#b3b3b3'});
+                });
+            }
+            _Textobj.on('mouseup', function () {
+                /* Over Color */
+                _obj.css({'fill': '#60a3d2'});
+                if (world_map_config[id]['targt'] === '_blank') {
+                    window.open(world_map_config[id]['url']);
+                } else if (world_map_config[id]['targt'] === '_self') {
+                    window.parent.location.href = world_map_config[id]['url'];
+                }
+            });
+            _Textobj.on('mousemove', function (e) {
+                let x = e.pageX + 10, y = e.pageY + 15;
+
+                let $mworld = $('#tipworldmap');
+                let worldmaptipw = $mworld.outerWidth(), worldmaptiph = $mworld.outerHeight();
+
+                x = (x + worldmaptipw > $(document).scrollLeft() +
+                    $(window).width()) ? x - worldmaptipw - (20 * 2) : x
+                y = (y + worldmaptiph > $(document).scrollTop() + $(window).height()) ?
+                    $(document).scrollTop() + $(window).height() - worldmaptiph - 10 : y
+
+                $mworld.css({left: x, top: y})
+            })
+        }
+        else {
+            _abb.css({'fill-opacity':'0.5'});
+        }
+    }
+})(jQuery);
