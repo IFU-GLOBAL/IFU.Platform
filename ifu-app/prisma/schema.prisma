@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  country   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RoleCategory {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  summary   String
+  sortOrder Int
+  roles     Role[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Role {
+  id          String                  @id @default(cuid())
+  slug        String                  @unique
+  title       String
+  summary     String
+  pathway     String
+  sortOrder   Int
+  categoryId  String
+  category    RoleCategory            @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  submissions PreviewSubmissionRole[]
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  @@index([categoryId])
+}
+
+model PreviewSubmission {
+  id                             String                  @id @default(cuid())
+  firstName                      String
+  lastName                       String
+  email                          String
+  phone                          String?
+  country                        String?
+  organization                   String?
+  roleOrTitle                    String?
+  selectedRoleSlugs              String[]
+  leadershipInterest             String?
+  contributionInterests          String[]
+  referralSource                 String?
+  referralDetail                 String?
+  recommendedContactName         String?
+  recommendedContactEmail        String?
+  recommendedContactRelationship String?
+  message                        String?
+  emailStatus                    String                  @default("pending")
+  emailMessageId                 String?
+  emailError                     String?
+  roles                          PreviewSubmissionRole[]
+  createdAt                      DateTime                @default(now())
+  updatedAt                      DateTime                @updatedAt
+}
+
+model PreviewSubmissionRole {
+  id           String            @id @default(cuid())
+  submissionId String
+  roleId       String
+  submission   PreviewSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  role         Role              @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([submissionId, roleId])
+  @@index([roleId])
+}
