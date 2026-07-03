@@ -1,22 +1,5 @@
 version: 1
 applications:
-  - appRoot: ifu-static-site
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - npm install
-        build:
-          commands:
-            - npm run build
-      artifacts:
-        baseDirectory: dist
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
-
   - appRoot: ifu-app
     frontend:
       phases:
