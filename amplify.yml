@@ -3,15 +3,20 @@ applications:
   - appRoot: ifu-static-site
     frontend:
       phases:
+        preBuild:
+          commands:
+            - npm install
         build:
           commands:
-            - echo "No build required"
+            - npm run build
       artifacts:
         baseDirectory: dist
         files:
           - '**/*'
-version: 1
-applications:
+      cache:
+        paths:
+          - node_modules/**/*
+
   - appRoot: ifu-app
     frontend:
       phases:
