@@ -1,18 +1,37 @@
 import type { Metadata } from "next";
-import { AuthPlaceholderPage } from "@/components/auth-placeholder-page";
+import { ArrowLeft, UserPlus } from "lucide-react";
+import {
+  IFUActionLink,
+  IFUContainer,
+  IFUHero,
+  IFUPage,
+  IFUSection,
+} from "@/components/ifu-ui";
 
 export const metadata: Metadata = {
   title: "Register | IFU Platform",
-  description: "IFU platform registration placeholder for Milestone 5 authentication prep.",
+  description: "Create an IFU platform account.",
 };
 
 export default function RegisterPage() {
   return (
-    <AuthPlaceholderPage
-      title="Register"
-      route="/register"
-      description="This page will become the IFU account creation flow after Cognito registration is configured."
-      nextStep="Next, map registration fields to the Cognito user attributes and the PostgreSQL profile record created after sign-up."
-    />
+    <IFUPage>
+      <IFUHero
+        title="Create account"
+        description="Account creation is handled by the IFU Cognito user pool."
+      >
+        <IFUActionLink href="/login" variant="ghost" icon={ArrowLeft}>
+          Sign in
+        </IFUActionLink>
+      </IFUHero>
+
+      <IFUSection>
+        <IFUContainer className="py-10">
+          <IFUActionLink href="/api/auth/login?returnTo=%2Fdashboard" icon={UserPlus}>
+            Continue to Cognito
+          </IFUActionLink>
+        </IFUContainer>
+      </IFUSection>
+    </IFUPage>
   );
 }

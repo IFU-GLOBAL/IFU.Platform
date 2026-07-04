@@ -1,18 +1,37 @@
 import type { Metadata } from "next";
-import { AuthPlaceholderPage } from "@/components/auth-placeholder-page";
+import { ArrowLeft, KeyRound } from "lucide-react";
+import {
+  IFUActionLink,
+  IFUContainer,
+  IFUHero,
+  IFUPage,
+  IFUSection,
+} from "@/components/ifu-ui";
 
 export const metadata: Metadata = {
   title: "Forgot Password | IFU Platform",
-  description: "IFU platform password reset placeholder for Milestone 5 authentication prep.",
+  description: "Recover access to an IFU platform account.",
 };
 
 export default function ForgotPasswordPage() {
   return (
-    <AuthPlaceholderPage
-      title="Forgot password"
-      route="/forgot-password"
-      description="This page will support password reset after Cognito account recovery settings are available."
-      nextStep="Next, connect this route to Cognito password recovery and make sure reset emails use the approved IFU sender/domain settings."
-    />
+    <IFUPage>
+      <IFUHero
+        title="Reset password"
+        description="Password recovery is handled by the IFU Cognito user pool."
+      >
+        <IFUActionLink href="/login" variant="ghost" icon={ArrowLeft}>
+          Sign in
+        </IFUActionLink>
+      </IFUHero>
+
+      <IFUSection>
+        <IFUContainer className="py-10">
+          <IFUActionLink href="/api/auth/login?returnTo=%2Fdashboard" icon={KeyRound}>
+            Continue to Cognito
+          </IFUActionLink>
+        </IFUContainer>
+      </IFUSection>
+    </IFUPage>
   );
 }

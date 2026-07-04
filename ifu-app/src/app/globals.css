@@ -2,29 +2,860 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #18231d;
+  --foreground: #182231;
+  --ifu-ink: #182231;
+  --ifu-heading: #203a66;
+  --ifu-muted: #66717d;
+  --ifu-muted-strong: #3f4c58;
+  --ifu-base: #03182d;
+  --ifu-navy: #082947;
+  --ifu-navy-deep: #03182d;
+  --ifu-header-panel: #202226;
+  --ifu-forest: #145e14;
+  --ifu-primary: #2b7e37;
+  --ifu-primary-deep: #145e14;
+  --ifu-primary-hover: #0f4d11;
+  --ifu-accent: #2b7e37;
+  --ifu-accent-hover: #36af4c;
+  --ifu-topbar: #efe8e2;
+  --ifu-page: #ffffff;
+  --ifu-surface: #ffffff;
+  --ifu-surface-muted: #f7f9f4;
+  --ifu-band: #f2f5ee;
+  --ifu-selected: #edf7ec;
+  --ifu-chip: #e6f3e4;
+  --ifu-border: #d9e2d3;
+  --ifu-border-strong: #c4d1bd;
+  --ifu-border-soft: #edf1ea;
+  --ifu-success-bg: #f0f7e7;
+  --ifu-success-border: #cfe2bf;
+  --ifu-success-text: #315f3a;
+  --ifu-error-bg: #fff5f0;
+  --ifu-error-border: #f0c7b8;
+  --ifu-error-text: #8a3b23;
+  --ifu-radius: 6px;
+  --ifu-shadow: 0 18px 48px rgba(8, 41, 71, 0.08);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --color-ifu-base: var(--ifu-base);
+  --color-ifu-forest: var(--ifu-forest);
+  --color-ifu-primary: var(--ifu-primary);
+  --color-ifu-accent: var(--ifu-accent);
+  --color-ifu-page: var(--ifu-page);
+  --color-ifu-surface: var(--ifu-surface);
+  --font-sans: "Inter", "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Inter", "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+::selection {
+  background: var(--ifu-accent);
+  color: var(--ifu-forest);
+}
+
+.ifu-page {
+  min-height: 100vh;
+  background: var(--ifu-page);
+  color: var(--ifu-ink);
+}
+
+.ifu-container {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+.ifu-container-wide {
+  max-width: 80rem;
+}
+
+.ifu-static-topbar {
+  background: var(--ifu-topbar);
+  color: #4d5660;
+  font-size: 0.875rem;
+}
+
+.ifu-static-topbar__inner {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ifu-static-socials {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ifu-static-socials a {
+  display: inline-flex;
+  width: 1.75rem;
+  height: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--ifu-navy);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  box-shadow: 0 6px 18px rgba(8, 41, 71, 0.08);
+}
+
+.ifu-static-language {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+
+.ifu-static-language__select {
+  border-radius: 999px;
+  border: 1px solid rgba(8, 41, 71, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.25rem 0.625rem;
+  color: var(--ifu-navy);
+  font-size: 0.75rem;
+}
+
+.ifu-static-header {
+  position: relative;
+  z-index: 20;
+  background: var(--ifu-navy);
+  color: #ffffff;
+  box-shadow: 0 12px 32px rgba(3, 24, 45, 0.22);
+}
+
+.ifu-static-header__inner {
+  display: grid;
+  min-height: 104px;
+  grid-template-columns: auto 1fr auto;
+  align-items: stretch;
+  gap: 1.25rem;
+}
+
+.ifu-static-logo {
+  display: flex;
+  align-items: center;
+  padding-block: 0.625rem;
+}
+
+.ifu-static-logo img {
+  width: 169px;
+  height: auto;
+}
+
+.ifu-static-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2vw, 2.25rem);
+  min-width: 0;
+}
+
+.ifu-static-nav a {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ifu-static-nav a:hover {
+  color: #ffffff;
+}
+
+.ifu-static-auth {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: 0.625rem;
+  margin-right: -2.5rem;
+  padding-inline: 1.5rem 2.5rem;
+  background: var(--ifu-header-panel);
+  color: #ffffff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ifu-static-join {
+  border-radius: 999px;
+  background: var(--ifu-primary);
+  padding: 0.625rem 1rem;
+  color: #ffffff;
+}
+
+.ifu-static-join:hover {
+  background: var(--ifu-accent-hover);
+}
+
+.ifu-static-hero {
+  position: relative;
+  min-height: 600px;
+  overflow: hidden;
+  background: var(--ifu-navy-deep);
+  color: #ffffff;
+}
+
+.ifu-static-hero::before {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(66vw, 1067px);
+  content: "";
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(3, 24, 45, 1) 0%,
+      rgba(3, 24, 45, 0.82) 16%,
+      rgba(3, 24, 45, 0.16) 54%,
+      rgba(3, 24, 45, 0) 100%
+    ),
+    url("/images/static-site/hero-home-use.jpg");
+  background-position: center right;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.ifu-static-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 600px;
+  align-items: center;
+}
+
+.ifu-static-hero__content {
+  width: min(100%, 680px);
+  padding-block: 4rem 5.5rem;
+}
+
+.ifu-static-title {
+  color: #ffffff;
+  font-size: clamp(3.25rem, 6vw, 4.375rem);
+  font-weight: 500;
+  line-height: 1.18;
+}
+
+.ifu-static-title span {
+  display: block;
+}
+
+.ifu-static-title__green {
+  color: var(--ifu-primary);
+}
+
+.ifu-static-hero__copy {
+  max-width: 670px;
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.25rem;
+  line-height: 1.35;
+}
+
+.ifu-static-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.875rem;
+  margin-top: 2.25rem;
+}
+
+.ifu-static-hero-button {
+  min-width: 16.25rem;
+  min-height: 3.125rem;
+  border-radius: 999px;
+  padding-inline: 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.ifu-static-hero-button-outline {
+  border: 2px solid #8e8e93;
+  background: transparent;
+  color: #ffffff;
+}
+
+.ifu-static-hero-button-outline:hover {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #111111;
+}
+
+.ifu-static-facts {
+  position: relative;
+  z-index: 5;
+  background: #ffffff;
+}
+
+.ifu-static-facts__bar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: -4rem;
+  border-radius: 999px;
+  background: #ffffff;
+  padding: 1.625rem 2rem;
+  box-shadow: 0 18px 45px rgba(8, 41, 71, 0.13);
+}
+
+.ifu-static-fact {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border-right: 1px solid #e4e8ec;
+}
+
+.ifu-static-fact:last-child {
+  border-right: 0;
+}
+
+.ifu-static-fact__icon {
+  display: inline-flex;
+  width: 4rem;
+  height: 4rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ifu-primary);
+  color: #ffffff;
+}
+
+.ifu-static-fact__content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.ifu-static-fact strong {
+  color: var(--ifu-heading);
+  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.ifu-static-fact span span {
+  margin-top: 0.375rem;
+  color: var(--ifu-muted);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.ifu-welcome-section {
+  background: #ffffff;
+}
+
+.ifu-welcome-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1fr);
+  align-items: center;
+  gap: clamp(2.5rem, 5vw, 5rem);
+}
+
+.ifu-welcome-copy {
+  max-width: 620px;
+}
+
+.ifu-static-section-title {
+  color: var(--ifu-heading);
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.ifu-welcome-copy p {
+  margin-top: 1.25rem;
+  color: var(--ifu-muted);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.ifu-static-discover {
+  margin-top: 2rem;
+  min-height: 3.125rem;
+  border-radius: 999px;
+  padding-inline: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ifu-welcome-images {
+  position: relative;
+  min-height: 540px;
+}
+
+.ifu-welcome-images img {
+  object-fit: cover;
+  box-shadow: 0 20px 42px rgba(8, 41, 71, 0.15);
+}
+
+.ifu-welcome-images__primary {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 54%;
+  height: 100%;
+  border-radius: 0.5rem;
+}
+
+.ifu-welcome-images__secondary {
+  position: absolute;
+  right: 0;
+  bottom: 2.25rem;
+  width: 58%;
+  height: 45%;
+  border: 8px solid #ffffff;
+  border-radius: 0.5rem;
+}
+
+.ifu-hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--ifu-forest);
+  color: #ffffff;
+}
+
+.ifu-hero::after {
+  position: absolute;
+  inset: auto 0 0;
+  height: 6px;
+  content: "";
+  background: var(--ifu-accent);
+}
+
+.ifu-eyebrow {
+  color: var(--ifu-accent);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ifu-title {
+  color: inherit;
+  font-size: clamp(2.25rem, 7vw, 4.75rem);
+  font-weight: 700;
+  line-height: 0.98;
+}
+
+.ifu-title-compact {
+  color: inherit;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.03;
+}
+
+.ifu-section-title {
+  color: var(--ifu-heading);
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+.ifu-copy {
+  color: var(--ifu-muted);
+  line-height: 1.75;
+}
+
+.ifu-copy-inverse {
+  color: rgba(255, 255, 255, 0.76);
+  line-height: 1.75;
+}
+
+.ifu-section {
+  background: var(--ifu-surface);
+}
+
+.ifu-section-muted {
+  background: var(--ifu-band);
+}
+
+.ifu-card {
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: var(--ifu-surface);
+  box-shadow: var(--ifu-shadow);
+}
+
+.ifu-card-muted {
+  background: var(--ifu-surface-muted);
+}
+
+.ifu-hero-card {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--ifu-radius);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ifu-icon {
+  color: var(--ifu-primary);
+}
+
+.ifu-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: var(--ifu-radius);
+  background: var(--ifu-chip);
+  color: var(--ifu-success-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.ifu-button {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--ifu-radius);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+.ifu-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.ifu-button-start {
+  justify-content: flex-start;
+}
+
+.ifu-button-compact {
+  min-height: auto;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.ifu-button-primary {
+  background: var(--ifu-primary-deep);
+  color: #ffffff;
+}
+
+.ifu-button-primary:hover {
+  background: var(--ifu-primary-hover);
+}
+
+.ifu-button-accent {
+  background: var(--ifu-accent);
+  color: var(--ifu-forest);
+}
+
+.ifu-button-accent:hover {
+  background: var(--ifu-accent-hover);
+}
+
+.ifu-button-light {
+  background: #ffffff;
+  color: var(--ifu-forest);
+}
+
+.ifu-button-light:hover {
+  background: #eef4ec;
+}
+
+.ifu-button-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.ifu-button-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.ifu-button-outline {
+  border: 1px solid var(--ifu-border);
+  color: var(--ifu-primary-deep);
+}
+
+.ifu-button-outline:hover {
+  background: var(--ifu-surface-muted);
+}
+
+.ifu-field-label {
+  display: block;
+  color: var(--ifu-muted-strong);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.ifu-field-control {
+  width: 100%;
+  border: 1px solid var(--ifu-border-strong);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  color: var(--ifu-ink);
+  font-size: 0.875rem;
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.ifu-field-control:focus {
+  border-color: var(--ifu-primary);
+  box-shadow: 0 0 0 4px rgba(73, 135, 40, 0.16);
+}
+
+.ifu-input,
+.ifu-select {
+  height: 2.75rem;
+  padding-inline: 0.75rem;
+}
+
+.ifu-textarea {
+  min-height: 8.5rem;
+  padding: 0.75rem;
+  resize: vertical;
+}
+
+.ifu-checkbox {
+  width: 1rem;
+  height: 1rem;
+  border-color: #9caf95;
+  color: var(--ifu-primary-deep);
+}
+
+.ifu-fieldset {
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.ifu-fieldset legend {
+  color: var(--ifu-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.ifu-table-shell {
+  overflow: hidden;
+  border: 1px solid #cfddc8;
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+}
+
+.ifu-table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.ifu-table th {
+  border-bottom: 1px solid var(--ifu-border);
+  background: var(--ifu-surface-muted);
+  color: #66746a;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.ifu-table td {
+  border-bottom: 1px solid var(--ifu-border-soft);
+  padding: 0.75rem 1rem;
+  vertical-align: top;
+}
+
+.ifu-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  border: 1px solid;
+  border-radius: var(--ifu-radius);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.ifu-status-success {
+  border-color: var(--ifu-success-border);
+  background: var(--ifu-success-bg);
+  color: var(--ifu-success-text);
+}
+
+.ifu-status-error {
+  border-color: var(--ifu-error-border);
+  background: var(--ifu-error-bg);
+  color: var(--ifu-error-text);
+}
+
+@media (min-width: 640px) {
+  .ifu-container {
+    padding-inline: 2rem;
+  }
+}
+
+@media (max-width: 1180px) {
+  .ifu-static-header__inner {
+    grid-template-columns: auto 1fr;
+  }
+
+  .ifu-static-nav {
+    display: none;
+  }
+
+  .ifu-static-auth {
+    justify-self: end;
+  }
+
+  .ifu-static-facts__bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: 2rem;
+  }
+
+  .ifu-static-fact:nth-child(2) {
+    border-right: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ifu-container {
+    padding-inline: 2.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .ifu-static-hero {
+    min-height: 640px;
+  }
+
+  .ifu-static-hero::before {
+    width: 100%;
+    background-image:
+      linear-gradient(
+        180deg,
+        rgba(3, 24, 45, 0.96) 0%,
+        rgba(3, 24, 45, 0.84) 48%,
+        rgba(3, 24, 45, 0.48) 100%
+      ),
+      url("/images/static-site/hero-home-use.jpg");
+    background-position: 68% center;
+  }
+
+  .ifu-static-hero__inner {
+    min-height: 640px;
+    align-items: flex-start;
+  }
+
+  .ifu-static-hero__content {
+    padding-block: 4rem 8rem;
+  }
+
+  .ifu-welcome-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ifu-welcome-images {
+    min-height: 460px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ifu-static-topbar__inner {
+    justify-content: center;
+  }
+
+  .ifu-static-socials {
+    display: none;
+  }
+
+  .ifu-static-header__inner {
+    min-height: 88px;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+  }
+
+  .ifu-static-logo {
+    justify-content: center;
+    padding-block: 0;
+  }
+
+  .ifu-static-logo img {
+    width: 150px;
+  }
+
+  .ifu-static-auth {
+    justify-self: stretch;
+    justify-content: center;
+    margin-right: 0;
+    padding: 0.75rem 1rem;
+  }
+
+  .ifu-static-title {
+    font-size: clamp(3rem, 13vw, 3.6rem);
+    line-height: 1.08;
+  }
+
+  .ifu-static-hero__copy {
+    font-size: 1rem;
+  }
+
+  .ifu-static-hero__actions {
+    gap: 0.875rem;
+  }
+
+  .ifu-static-hero-button {
+    width: 100%;
+    min-width: 0;
+    font-size: 1rem;
+  }
+
+  .ifu-static-facts__bar {
+    grid-template-columns: 1fr;
+    margin-top: -5rem;
+    padding: 1.25rem;
+  }
+
+  .ifu-static-fact {
+    justify-content: flex-start;
+    border-right: 0;
+    border-bottom: 1px solid #e4e8ec;
+    padding-bottom: 1rem;
+  }
+
+  .ifu-static-fact:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .ifu-welcome-images {
+    min-height: 360px;
+  }
+
+  .ifu-welcome-images__primary {
+    width: 62%;
+  }
+
+  .ifu-welcome-images__secondary {
+    width: 64%;
+    height: 42%;
+  }
 }
