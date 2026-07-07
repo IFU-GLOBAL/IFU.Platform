@@ -101,12 +101,12 @@ const referralOptions = [
 ];
 
 const navItems = [
-  { label: "About Us", href: "#welcome" },
-  { label: "Platforms", href: "#role-matrix" },
-  { label: "Programs", href: "#preview-application" },
-  { label: "Insights", href: "#role-matrix" },
-  { label: "Foundation", href: "#welcome" },
-  { label: "Gallery", href: "#role-matrix" },
+  { label: "About Us", href: "/about-us/" },
+  { label: "Platforms", href: "/platforms/" },
+  { label: "Programs", href: "/programs/" },
+  { label: "Insights", href: "/insights/" },
+  { label: "Foundation", href: "/foundation/" },
+  { label: "Gallery", href: "/gallery/" },
 ];
 
 const impactStats = [
