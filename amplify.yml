@@ -8,6 +8,7 @@ applications:
             - npm ci
         build:
           commands:
+            - printf "DATABASE_URL=%s\n" "$DATABASE_URL" >> .env.production
             - npm run build
       artifacts:
         baseDirectory: .next
