@@ -1,8 +1,8 @@
-import { getPrisma } from "@/lib/prisma";
 import { discoveryCategories, type DiscoveryCategory } from "@/lib/role-catalog";
 
 export async function getDiscoveryCategories(): Promise<DiscoveryCategory[]> {
   try {
+    const { getPrisma } = await import("@/lib/prisma");
     const categories = await getPrisma().roleCategory.findMany({
       orderBy: { sortOrder: "asc" },
       include: {

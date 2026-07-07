@@ -22,7 +22,7 @@ if (!existsSync(sourceRoot)) {
 mkdirSync(publicRoot, { recursive: true });
 
 const discoveryNavItem =
-  '<li id="menu-item-ifu-discovery" class="menu-item menu-item-type-custom megamenu-hide menu-item-ifu-discovery"><a href="/discovery/">Discovery Center</a></li>';
+  '<li id="menu-item-ifu-discovery" class="menu-item menu-item-type-custom megamenu-hide menu-item-ifu-discovery"><a href="/discovery">Discovery Center</a></li>';
 const navClosingPattern = /(<\/ul><\/div>\s*<\/nav><!-- \/.main-header__nav -->)/;
 const injectedDiscoveryNavPattern =
   /<li id="menu-item-ifu-discovery"[^>]*><a href="[^"]*">Discovery Center<\/a><\/li>/;
@@ -32,7 +32,7 @@ const headerActionsHtml = `<h4 class="main-header__call__number">
   <span class="ifu-header-action-links">
     <a href="/login">Login</a>
     <span aria-hidden="true">&nbsp; | &nbsp;</span>
-    <a class="elementor-button elementor-button-link elementor-size-sm" href="/discovery/#preview-application">
+    <a class="elementor-button elementor-button-link elementor-size-sm" href="/discovery#preview-application">
       <span class="elementor-button-content-wrapper">
         <span class="elementor-button-text">Join IFU</span>
       </span>
@@ -54,7 +54,7 @@ function updateStaticHtml(filePath) {
 
   updatedHtml = updatedHtml
     .replace(headerActionsPattern, headerActionsHtml)
-    .replace(joinButtonHrefPattern, "$1/discovery/#preview-application$2");
+    .replace(joinButtonHrefPattern, "$1/discovery#preview-application$2");
 
   if (updatedHtml === html) {
     return false;
