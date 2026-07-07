@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-type HomeProps = {
+type DiscoveryPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
@@ -26,7 +26,7 @@ function buildCallbackQuery(params: Record<string, string | string[] | undefined
   return callbackParams.toString();
 }
 
-export default async function Home({ searchParams }: HomeProps) {
+export default async function DiscoveryPage({ searchParams }: DiscoveryPageProps) {
   const params = (await searchParams) ?? {};
 
   if (params.code || params.error) {

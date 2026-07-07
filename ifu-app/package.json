@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "prisma generate",
+    "sync:static": "node scripts/sync-static-site.mjs",
+    "predev": "node scripts/sync-static-site.mjs && prisma generate",
     "dev": "next dev",
-    "prebuild": "prisma generate",
+    "prebuild": "node scripts/sync-static-site.mjs && prisma generate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
