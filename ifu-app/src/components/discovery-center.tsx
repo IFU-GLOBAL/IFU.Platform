@@ -224,7 +224,22 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
 
   return (
     <IFUPage>
-
+      <div className="ifu-static-topbar">
+        <IFUContainer size="wide" className="ifu-static-topbar__inner">
+          <div className="ifu-static-socials" aria-label="Social links">
+            {["f", "x", "ig", "yt"].map((label) => (
+              <a key={label} href="#welcome" aria-label={label}>
+                {label}
+              </a>
+            ))}
+          </div>
+          <div className="ifu-static-language">
+            <Languages className="h-4 w-4" aria-hidden="true" />
+            <span>Global Language</span>
+            <span className="ifu-static-language__select">English</span>
+          </div>
+        </IFUContainer>
+      </div>
 
       <header className="ifu-static-header">
         <IFUContainer size="wide" className="ifu-static-header__inner">
@@ -280,12 +295,73 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
         </IFUContainer>
       </section>
 
+      <section className="ifu-static-facts" aria-label="IFU reach">
+        <IFUContainer size="wide">
+          <div className="ifu-static-facts__bar">
+            {impactStats.map((stat) => (
+              <div key={stat.label} className="ifu-static-fact">
+                <span className="ifu-static-fact__icon">
+                  <stat.icon className="h-6 w-6" aria-hidden="true" />
+                </span>
+                <span className="ifu-static-fact__content">
+                  <strong>{stat.value}</strong>
+                  <span>{stat.label}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </IFUContainer>
+      </section>
 
+      <IFUSection id="welcome" className="ifu-welcome-section">
+        <IFUContainer size="wide" className="py-14 lg:py-20">
+          <div className="ifu-welcome-grid">
+            <div className="ifu-welcome-copy">
+              <h2 className="ifu-static-section-title">Welcome To IFU</h2>
+              <p>
+                The International Farm Union (IFU) is a global agricultural platform designed to connect farmers, cooperatives, researchers, development institutions, and buyers through a unified system that drives productivity, sustainability, and inclusive economic growth.
+              </p>
+              <p>
+                At the core of IFU is a transformative model that integrates technology, data, and global trade to expand market access, strengthen rural economies, and improve livelihoods for farming communities worldwide.
+              </p>
+              <p>
+                This preview center brings that same ecosystem into the platform app, helping visitors find roles, select pathways, and request guided follow-up before public rollout.
+              </p>
+              <IFUActionLink href="#preview-application" variant="primary" icon={ArrowRight} className="ifu-static-discover">
+                Discover More
+              </IFUActionLink>
+            </div>
 
-      
+            <div className="ifu-welcome-images" aria-label="IFU field imagery">
+              <Image
+                src="/images/static-site/farmer-field.jpg"
+                alt="Farmer harvesting crops in a field"
+                width={408}
+                height={612}
+                className="ifu-welcome-images__primary"
+                unoptimized
+              />
+              <Image
+                src="/images/static-site/tractor-field.jpg"
+                alt="Farmer driving a tractor"
+                width={876}
+                height={630}
+                className="ifu-welcome-images__secondary"
+                unoptimized
+              />
+            </div>
+          </div>
+        </IFUContainer>
+      </IFUSection>
 
       <IFUSection>
         <IFUContainer size="wide" className="py-12 lg:py-16">
+          <IFUSectionHeader
+            eyebrow="Role-based preview"
+            title="A coordinated ecosystem for agriculture"
+            description={`This app currently includes ${metrics.categories} role categories, ${metrics.roles} seeded roles, ${metrics.countries} country reach, and ${metrics.pathways} pathways for early access discovery.`}
+          />
+
           <div className="mt-8 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
             <IFUCard tone="muted" className="p-6">
               <BadgeCheck className="ifu-icon h-6 w-6" aria-hidden="true" />

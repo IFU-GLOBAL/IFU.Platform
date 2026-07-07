@@ -47,6 +47,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const status = getAuthConfigurationStatus();
   const returnTo = params.returnTo?.startsWith("/") ? params.returnTo : "/dashboard";
   const loginHref = `/api/auth/login?returnTo=${encodeURIComponent(returnTo)}`;
+  const devLoginHref = `/api/auth/dev-login?returnTo=${encodeURIComponent(returnTo)}`;
+  const isLocalDev = process.env.NODE_ENV !== "production";
   const errorMessage = params.error && params.error !== "missing_config"
     ? errorMessages[params.error] ?? "Sign-in could not be completed."
     : null;
@@ -100,9 +102,26 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                 Continue with Cognito
               </IFUActionLink>
             ) : (
-              <div className="ifu-status ifu-status-error mt-6 block">
-                <p className="font-semibold">Missing environment values</p>
-                <p className="mt-2 font-mono text-xs">{status.missing.join(", ")}</p>
+              <div className="mt-6 grid gap-4">
+                <div className="ifu-status ifu-status-error block">
+                  <p className="font-semibold">Missing environment values</p>
+                  <p className="mt-2 font-mono text-xs">{status.missing.join(", ")}</p>
+                </div>
+
+                {isLocalDev ? (
+                  <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4">
+                    <p className="text-sm font-semibold text-[var(--ifu-heading)]">
+                      Local development preview
+                    </p>
+                    <p className="ifu-copy mt-2 text-sm">
+                      Use this only on your local machine to preview the protected dashboard
+                      before Cognito is fully configured.
+                    </p>
+                    <IFUActionLink href={devLoginHref} icon={LogIn} className="mt-4">
+                      Open local dashboard preview
+                    </IFUActionLink>
+                  </div>
+                ) : null}
               </div>
             )}
           </IFUCard>

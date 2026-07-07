@@ -55,6 +55,14 @@ function normalizeDomain(domain?: string) {
     return undefined;
   }
 
+  if (
+    domain.includes("<") ||
+    domain.includes("your-prefix") ||
+    domain.includes("cognito-idp.")
+  ) {
+    return undefined;
+  }
+
   const withProtocol = domain.startsWith("http://") || domain.startsWith("https://")
     ? domain
     : `https://${domain}`;
@@ -90,11 +98,12 @@ export function getCognitoConfig(origin?: string): CognitoConfig {
 }
 
 export function getAuthConfigurationStatus(origin?: string) {
+  const userPoolDomain = normalizeDomain(readEnv("COGNITO_DOMAIN"));
   const missing = [
     ["COGNITO_REGION", readEnv("COGNITO_REGION") ?? readEnv("NEXT_PUBLIC_COGNITO_REGION")],
     ["COGNITO_USER_POOL_ID", readEnv("COGNITO_USER_POOL_ID") ?? readEnv("NEXT_PUBLIC_COGNITO_USER_POOL_ID")],
     ["COGNITO_CLIENT_ID", readEnv("COGNITO_CLIENT_ID") ?? readEnv("NEXT_PUBLIC_COGNITO_CLIENT_ID")],
-    ["COGNITO_DOMAIN", readEnv("COGNITO_DOMAIN")],
+    ["COGNITO_DOMAIN", userPoolDomain],
     ["AUTH_SESSION_SECRET", readEnv("AUTH_SESSION_SECRET")],
   ]
     .filter(([, value]) => !value)
