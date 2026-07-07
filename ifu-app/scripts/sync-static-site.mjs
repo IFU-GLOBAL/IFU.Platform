@@ -26,22 +26,35 @@ const discoveryNavItem =
 const navClosingPattern = /(<\/ul><\/div>\s*<\/nav><!-- \/.main-header__nav -->)/;
 const injectedDiscoveryNavPattern =
   /<li id="menu-item-ifu-discovery"[^>]*><a href="[^"]*">Discovery Center<\/a><\/li>/;
+const headerActionsPattern =
+  /<h4 class="main-header__call__number">[\s\S]*?<span class="elementor-button-text">Join IFU<\/span>[\s\S]*?<\/h4><!-- \/.main-header__call__number -->/;
+const headerActionsHtml = `<h4 class="main-header__call__number">
+  <span class="ifu-header-action-links">
+    <a href="/login">Login</a>
+    <span aria-hidden="true">&nbsp; | &nbsp;</span>
+    <a class="elementor-button elementor-button-link elementor-size-sm" href="/discovery/#preview-application">
+      <span class="elementor-button-content-wrapper">
+        <span class="elementor-button-text">Join IFU</span>
+      </span>
+    </a>
+  </span>
+</h4><!-- /.main-header__call__number -->`;
+const joinButtonHrefPattern =
+  /(<a class="elementor-button elementor-button-link elementor-size-sm" href=")[^"]*(">\s*<span class="elementor-button-content-wrapper">\s*<span class="elementor-button-text">Join IFU<\/span>)/g;
 
-function injectDiscoveryNavLink(filePath) {
+function updateStaticHtml(filePath) {
   const html = readFileSync(filePath, "utf8");
+  let updatedHtml = html;
 
-  if (html.includes("menu-item-ifu-discovery")) {
-    const updatedHtml = html.replace(injectedDiscoveryNavPattern, discoveryNavItem);
-
-    if (updatedHtml !== html) {
-      writeFileSync(filePath, updatedHtml);
-      return true;
-    }
-
-    return false;
+  if (updatedHtml.includes("menu-item-ifu-discovery")) {
+    updatedHtml = updatedHtml.replace(injectedDiscoveryNavPattern, discoveryNavItem);
+  } else {
+    updatedHtml = updatedHtml.replace(navClosingPattern, `${discoveryNavItem}\n$1`);
   }
 
-  const updatedHtml = html.replace(navClosingPattern, `${discoveryNavItem}\n$1`);
+  updatedHtml = updatedHtml
+    .replace(headerActionsPattern, headerActionsHtml)
+    .replace(joinButtonHrefPattern, "$1/discovery/#preview-application$2");
 
   if (updatedHtml === html) {
     return false;
@@ -51,19 +64,19 @@ function injectDiscoveryNavLink(filePath) {
   return true;
 }
 
-function injectDiscoveryNavLinks(directory) {
+function updateStaticHtmlFiles(directory) {
   let updateCount = 0;
 
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const entryPath = resolve(directory, entry.name);
 
     if (entry.isDirectory()) {
-      updateCount += injectDiscoveryNavLinks(entryPath);
+      updateCount += updateStaticHtmlFiles(entryPath);
       continue;
     }
 
     if (entry.isFile() && entry.name.endsWith(".html")) {
-      updateCount += injectDiscoveryNavLink(entryPath) ? 1 : 0;
+      updateCount += updateStaticHtml(entryPath) ? 1 : 0;
     }
   }
 
@@ -89,5 +102,5 @@ console.log(
   )}.`,
 );
 
-const injectedCount = injectDiscoveryNavLinks(publicRoot);
-console.log(`Added Discovery Center navigation to ${injectedCount} static HTML files.`);
+const updatedCount = updateStaticHtmlFiles(publicRoot);
+console.log(`Updated static navigation and account links in ${updatedCount} HTML files.`);
