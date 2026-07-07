@@ -27,9 +27,9 @@ function collectLegacyDirectoryRoutes(directory = legacyStaticRoot, route = ""):
   const rewrites: Rewrite[] = [];
   const hasIndex = entries.some((entry) => entry.isFile() && entry.name === "index.html");
 
-  if (hasIndex) {
-    const source = route ? `/${route.split(sep).join("/")}` : "/";
-    const destination = route ? `/${route.split(sep).join("/")}/index.html` : "/index.html";
+  if (hasIndex && route) {
+    const source = `/${route.split(sep).join("/")}`;
+    const destination = `/${route.split(sep).join("/")}/index.html`;
     const firstSegment = route.split(sep)[0];
 
     if (!firstSegment || !nextOwnedSegments.has(firstSegment)) {
@@ -54,6 +54,9 @@ function collectLegacyDirectoryRoutes(directory = legacyStaticRoot, route = ""):
 }
 
 const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    "/*": ["./public/**/*"],
+  },
   async rewrites() {
     return {
       beforeFiles: collectLegacyDirectoryRoutes(),

@@ -24,11 +24,20 @@ mkdirSync(publicRoot, { recursive: true });
 const discoveryNavItem =
   '<li id="menu-item-ifu-discovery" class="menu-item menu-item-type-custom megamenu-hide menu-item-ifu-discovery"><a href="/discovery/">Discovery Center</a></li>';
 const navClosingPattern = /(<\/ul><\/div>\s*<\/nav><!-- \/.main-header__nav -->)/;
+const injectedDiscoveryNavPattern =
+  /<li id="menu-item-ifu-discovery"[^>]*><a href="[^"]*">Discovery Center<\/a><\/li>/;
 
 function injectDiscoveryNavLink(filePath) {
   const html = readFileSync(filePath, "utf8");
 
   if (html.includes("menu-item-ifu-discovery")) {
+    const updatedHtml = html.replace(injectedDiscoveryNavPattern, discoveryNavItem);
+
+    if (updatedHtml !== html) {
+      writeFileSync(filePath, updatedHtml);
+      return true;
+    }
+
     return false;
   }
 
