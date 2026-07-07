@@ -1,12 +1,18 @@
 version: 1
 applications:
-  - appRoot: ifu-static-site
+  - appRoot: ifu-app
     frontend:
       phases:
+        preBuild:
+          commands:
+            - npm ci
         build:
           commands:
-            - echo "Using committed dist folder"
+            - npm run build
       artifacts:
-        baseDirectory: dist
+        baseDirectory: .next
         files:
           - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
