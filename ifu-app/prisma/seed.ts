@@ -3,6 +3,17 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { discoveryCategories, discoveryRoles } from "../src/lib/role-catalog";
 
+function roleKeywords(role: { title: string; categoryName: string; pathway: string }) {
+  return Array.from(
+    new Set(
+      `${role.title} ${role.categoryName} ${role.pathway}`
+        .toLowerCase()
+        .split(/[^a-z0-9]+/)
+        .filter((keyword) => keyword.length > 2),
+    ),
+  );
+}
+
 async function main() {
   const connectionString = process.env.DATABASE_URL;
 
@@ -24,12 +35,14 @@ async function main() {
         name: category.name,
         summary: category.summary,
         sortOrder: category.sortOrder,
+        isActive: true,
       },
       create: {
         slug: category.slug,
         name: category.name,
         summary: category.summary,
         sortOrder: category.sortOrder,
+        isActive: true,
       },
     });
   }
@@ -53,6 +66,10 @@ async function main() {
           title: role.title,
           summary: role.summary,
           pathway: role.pathway,
+          level: role.pathway,
+          description: role.summary,
+          keywords: roleKeywords(role),
+          isActive: true,
           sortOrder: role.sortOrder,
           categoryId,
         },
@@ -61,6 +78,10 @@ async function main() {
           title: role.title,
           summary: role.summary,
           pathway: role.pathway,
+          level: role.pathway,
+          description: role.summary,
+          keywords: roleKeywords(role),
+          isActive: true,
           sortOrder: role.sortOrder,
           categoryId,
         },
