@@ -276,16 +276,17 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
       <section className="ifu-static-hero" aria-labelledby="ifu-static-hero-title">
         <IFUContainer size="wide" className="ifu-static-hero__inner">
           <div className="ifu-static-hero__content">
+            <p className="ifu-eyebrow text-white/80">IFU Role-Based Discovery & Education Center</p>
             <h1 id="ifu-static-hero-title" className="ifu-static-title">
-              <span>Uniting Farms.</span>
-              <span className="ifu-static-title__green">United Future.</span>
+              <span>You Are Invited To Preview The Future Of Global Agriculture -</span>
+              <span className="ifu-static-title__green">IFU Platform</span>
             </h1>
             <p className="ifu-static-hero__copy">
               The International Farm Union Global Platform connects farmers, cooperatives, researchers, development institutions and buyers through AI-powered insights, real-time agricultural data, market access, and global collaboration tools.
             </p>
             <div className="ifu-static-hero__actions">
               <IFUActionLink href="#role-matrix" variant="primary" icon={ArrowRight} className="ifu-static-hero-button">
-                Explore Platforms
+                Choose Your IFU Role
               </IFUActionLink>
               <IFUActionLink href="#welcome" variant="ghost" icon={Play} className="ifu-static-hero-button ifu-static-hero-button-outline">
                 Watch Video

@@ -3,25 +3,17 @@
 import { CalendarClock, CheckCircle2, ExternalLink, FolderPlus, X } from "lucide-react";
 import { useEffect } from "react";
 import { IFUActionButton, cn } from "@/components/ifu-ui";
-
-export type DashboardDrawerItem = {
-  id: string;
-  title: string;
-  type: string;
-  summary: string;
-  description: string;
-  details?: string[];
-  actions?: string[];
-};
+import type { DashboardDrawerItem } from "@/lib/dashboard-model";
 
 type SlideOverDrawerProps = {
   item: DashboardDrawerItem | null;
   onClose: () => void;
+  onAction?: (action: string, item: DashboardDrawerItem) => void | Promise<void>;
 };
 
 const fallbackActions = ["Open", "Save to Bookmarks", "Move to Workspace"];
 
-export function SlideOverDrawer({ item, onClose }: SlideOverDrawerProps) {
+export function SlideOverDrawer({ item, onClose, onAction }: SlideOverDrawerProps) {
   useEffect(() => {
     if (!item) {
       return;
@@ -127,6 +119,7 @@ export function SlideOverDrawer({ item, onClose }: SlideOverDrawerProps) {
                 variant={index === 0 ? "primary" : "outline"}
                 icon={index === 0 ? ExternalLink : FolderPlus}
                 className={cn("w-full", index > 0 && "bg-white")}
+                onClick={() => onAction?.(action, item)}
               >
                 {action}
               </IFUActionButton>

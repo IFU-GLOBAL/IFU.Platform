@@ -252,6 +252,7 @@ model ReferralSource {
 
 model DashboardItem {
   id             String            @id @default(cuid())
+  slug           String            @unique
   title          String
   type           DashboardItemType
   category       String?

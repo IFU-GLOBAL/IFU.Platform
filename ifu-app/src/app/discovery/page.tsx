@@ -1,9 +1,16 @@
 import { DiscoveryCenter } from "@/components/discovery-center";
 import { getDiscoveryCategories } from "@/lib/discovery-data";
 import { discoveryMetrics } from "@/lib/role-catalog";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "IFU Role-Based Discovery & Education Center",
+  description:
+    "Preview the IFU Platform role-based discovery and education center for global agriculture.",
+};
 
 type DiscoveryPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;

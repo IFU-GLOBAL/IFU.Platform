@@ -6,6 +6,7 @@ import {
   getOidcChallenge,
   setAuthSessionCookie,
 } from "@/lib/auth/session";
+import { syncAuthenticatedUser } from "@/lib/dashboardData";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,6 +45,7 @@ export async function GET(request: NextRequest) {
     });
     const userInfo = await client.userinfo(tokenSet.access_token ?? tokenSet);
     const session = createAuthSession(userInfo);
+    await syncAuthenticatedUser(session);
     const response = NextResponse.redirect(
       new URL(challenge.returnTo, buildAppUrl("/", request.nextUrl.origin)),
     );

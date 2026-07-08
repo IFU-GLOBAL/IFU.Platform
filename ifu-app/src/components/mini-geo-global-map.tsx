@@ -2,21 +2,7 @@
 
 import { Clock3, LocateFixed, MapPin, Navigation } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import type { DashboardDrawerItem } from "@/components/slide-over-drawer";
-
-export type DashboardProfile = {
-  fullName: string;
-  email?: string;
-  role: string;
-  category: string;
-  city: string;
-  stateProvince: string;
-  region: string;
-  country: string;
-  timezone?: string;
-  profileCompletion: number;
-  sessionExpiresAt?: string;
-};
+import type { DashboardDrawerItem, DashboardProfile } from "@/lib/dashboard-model";
 
 type MiniGeoGlobalMapProps = {
   profile: DashboardProfile;
@@ -49,6 +35,7 @@ const mapMarkers = [
 
 export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
   const [localTime, setLocalTime] = useState("");
+  const [syncStatus, setSyncStatus] = useState<string | null>(null);
 
   useEffect(() => {
     const timezone = profile.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -80,6 +67,46 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
     ],
     [profile],
   );
+
+  function syncBrowserLocation() {
+    if (!navigator.geolocation) {
+      setSyncStatus("Browser geolocation is not available.");
+      return;
+    }
+
+    setSyncStatus("Requesting location...");
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const response = await fetch("/api/geolocation", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              consentStatus: "granted",
+              source: "browser",
+            }),
+          });
+          const result = (await response.json()) as { ok?: boolean; error?: string };
+
+          if (!response.ok || !result.ok) {
+            throw new Error(result.error ?? "Location sync failed");
+          }
+
+          setSyncStatus("Location saved.");
+        } catch (error) {
+          setSyncStatus(error instanceof Error ? error.message : "Location sync failed");
+        }
+      },
+      (error) => setSyncStatus(error.message),
+      { enableHighAccuracy: false, timeout: 10000 },
+    );
+  }
 
   return (
     <section className="grid gap-4 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)] lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
@@ -146,6 +173,19 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
 
       <div className="grid content-between gap-4">
         <div className="grid gap-2">
+          <button
+            type="button"
+            onClick={syncBrowserLocation}
+            className="mb-2 inline-flex w-fit items-center gap-2 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white px-3 py-2 text-sm font-bold text-[var(--ifu-primary-deep)] transition hover:border-[var(--ifu-primary)]"
+          >
+            <LocateFixed className="h-4 w-4" />
+            Sync location
+          </button>
+          {syncStatus ? (
+            <p className="mb-2 text-sm font-semibold text-[var(--ifu-muted-strong)]">
+              {syncStatus}
+            </p>
+          ) : null}
           {locationRows.map(([label, value]) => (
             <div
               key={label}

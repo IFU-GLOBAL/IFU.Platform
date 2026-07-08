@@ -1,58 +1,81 @@
-This is the IFU Next.js application, bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IFU Platform App
 
-## Getting Started
+Next.js application for the IFU Role-Based Discovery & Education Center, preview invitation form, Cognito login, and the private IFU Personal Command Center Dashboard.
 
-Install dependencies and run the development server:
+## Core Routes
+
+- `/` redirects to `/discovery`.
+- `/discovery` is the public Role-Based Discovery & Education Center with the 260-role matrix.
+- `/invitation` is the preview invitation letter.
+- `/register` starts Cognito sign-up.
+- `/login` starts Cognito sign-in.
+- `/dashboard` is the authenticated Personal Command Center Dashboard.
+- `/api/preview-applications` stores preview form submissions.
+- `/api/dashboard` loads/persists dashboard actions.
+- `/api/geolocation` stores browser/CloudFront geolocation events.
+- `/api/health/db` checks PostgreSQL connectivity.
+
+## Required Environment Variables
+
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/ifu_platform?schema=public&sslmode=require&uselibpqcompat=true"
+APP_BASE_URL="https://main.d34plke7xvuysn.amplifyapp.com"
+AUTH_SESSION_SECRET="at-least-32-characters"
+
+COGNITO_REGION="us-east-1"
+COGNITO_USER_POOL_ID="us-east-1_pfz7IT7lv"
+COGNITO_CLIENT_ID="2d8h65gh2hr3sc3m2nrhbhg963"
+COGNITO_DOMAIN="https://us-east-1pfz7it7lv.auth.us-east-1.amazoncognito.com"
+COGNITO_SCOPES="openid email profile"
+
+SES_REGION="us-east-1"
+SES_FROM_EMAIL="verified-sender@example.com"
+SES_REPLY_TO_EMAIL="reply@example.com"
+```
+
+Do not commit real secrets.
+
+## Local Commands
 
 ```bash
 npm install
 npm run dev
+npm run lint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
-
-## Database
-
-Copy `.env.example` to `.env` and update `DATABASE_URL` with your PostgreSQL connection string:
+Prisma:
 
 ```bash
-cp .env.example .env
-npm run db:migrate
-```
-
-The app includes a database health endpoint at `/api/health/db`. It returns `{ "ok": true }` when the configured PostgreSQL database is reachable.
-
-For local development without Docker, start a local Prisma Postgres instance:
-
-```bash
-npm run db:local
+npm run db:generate
 npm run db:deploy
 npm run db:seed
 ```
 
-The preview application form stores submissions in PostgreSQL through `/api/preview-applications`. Confirmation email uses Amazon SES and needs these environment variables:
+## Database Model
+
+The Prisma schema includes the package-required platform surface:
+
+- users, user profiles, selected roles
+- role categories and the 260 role records from the developer package
+- preview submissions and preview applications
+- recommended contacts and referral sources
+- dashboard items, workspace items, bookmarks, applications
+- messages, documents, activity logs, and geo events
+
+## AWS Notes
+
+Amplify builds this app as a WEB_COMPUTE Next.js app from `ifu-app`.
+
+The helper script below checks the required AWS surfaces without making destructive changes:
 
 ```bash
-AWS_REGION="us-east-1"
-SES_FROM_EMAIL="preview@internationalfarmunion.com"
-SES_REPLY_TO_EMAIL="info@internationalfarmunion.com"
+scripts/aws-bootstrap.sh
 ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Known admin/DNS-dependent items:
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Amplify SSR compute role needs SES send permissions.
+- `internationalfarmunion.com` DNS is required for custom domain, SSL, SES domain verification, DKIM, SPF, and DMARC.
+- S3 document upload/presign routes are not enabled until the media bucket policy and CORS are approved.
+- QuickSight/Data Engine, WAF, CloudTrail, GuardDuty, Security Hub, and production CloudWatch alarms remain infrastructure tasks.
