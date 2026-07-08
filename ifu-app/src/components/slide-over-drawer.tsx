@@ -50,19 +50,19 @@ export function SlideOverDrawer({ item, onClose, onAction }: SlideOverDrawerProp
         aria-modal="true"
         role="dialog"
         aria-labelledby="dashboard-drawer-title"
-        className="absolute right-0 top-0 flex h-full w-full max-w-[34rem] flex-col overflow-y-auto border-l border-[var(--ifu-border)] bg-white shadow-2xl"
+        className="absolute right-0 top-0 flex h-full w-full max-w-[32rem] flex-col overflow-y-auto border-l border-[var(--ifu-border)] bg-white shadow-2xl"
       >
-        <header className="border-b border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-5 sm:p-6">
-          <div className="flex items-start justify-between gap-4">
+        <header className="border-b border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-4">
+          <div className="flex items-start justify-between gap-3">
             <div>
               <span className="ifu-chip px-2.5 py-1">{item.type}</span>
               <h2
                 id="dashboard-drawer-title"
-                className="mt-4 text-2xl font-bold leading-tight text-[var(--ifu-heading)]"
+                className="mt-2 text-xl font-bold leading-tight text-[var(--ifu-heading)]"
               >
                 {item.title}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-[var(--ifu-muted-strong)]">
+              <p className="mt-2 text-sm leading-5 text-[var(--ifu-muted-strong)]">
                 {item.summary}
               </p>
             </div>
@@ -78,18 +78,18 @@ export function SlideOverDrawer({ item, onClose, onAction }: SlideOverDrawerProp
           </div>
         </header>
 
-        <div className="grid gap-6 p-5 sm:p-6">
+        <div className="grid gap-4 p-4">
           <section>
             <h3 className="text-sm font-bold uppercase text-[var(--ifu-primary-deep)]">
               Details
             </h3>
-            <p className="mt-3 text-sm leading-7 text-[var(--ifu-muted-strong)]">
+            <p className="mt-2 text-sm leading-5 text-[var(--ifu-muted-strong)]">
               {item.description}
             </p>
             {item.details?.length ? (
-              <ul className="mt-4 grid gap-2">
+              <ul className="mt-3 grid gap-1.5">
                 {item.details.map((detail) => (
-                  <li key={detail} className="flex gap-2 text-sm text-[var(--ifu-muted-strong)]">
+                  <li key={detail} className="flex gap-2 text-sm leading-tight text-[var(--ifu-muted-strong)]">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--ifu-primary)]" />
                     <span>{detail}</span>
                   </li>
@@ -98,12 +98,12 @@ export function SlideOverDrawer({ item, onClose, onAction }: SlideOverDrawerProp
             ) : null}
           </section>
 
-          <section className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-4">
-            <h3 className="flex items-center gap-2 text-sm font-bold text-[var(--ifu-heading)]">
+          <section className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-3">
+            <h3 className="flex items-center gap-2 text-sm font-bold leading-tight text-[var(--ifu-heading)]">
               <CalendarClock className="h-4 w-4 text-[var(--ifu-primary)]" />
               Recommended Next Steps
             </h3>
-            <ol className="mt-3 grid list-decimal gap-2 pl-5 text-sm leading-6 text-[var(--ifu-muted-strong)]">
+            <ol className="mt-2 grid list-decimal gap-1.5 pl-5 text-sm leading-5 text-[var(--ifu-muted-strong)]">
               <li>Review the section details and match notes.</li>
               <li>Save the item, move it to workspace, or continue the workflow.</li>
               <li>Upload documents, message a contact, or schedule the next step when needed.</li>
@@ -111,7 +111,7 @@ export function SlideOverDrawer({ item, onClose, onAction }: SlideOverDrawerProp
             </ol>
           </section>
 
-          <section className="grid gap-3">
+          <section className="grid gap-2">
             {(item.actions ?? fallbackActions).map((action, index) => (
               <IFUActionButton
                 key={action}
@@ -124,7 +124,12 @@ export function SlideOverDrawer({ item, onClose, onAction }: SlideOverDrawerProp
                 {action}
               </IFUActionButton>
             ))}
-            <IFUActionButton type="button" variant="light" className="w-full border" onClick={onClose}>
+            <IFUActionButton
+              type="button"
+              variant="light"
+              className="w-full border"
+              onClick={onClose}
+            >
               Close and Return to Dashboard
             </IFUActionButton>
           </section>

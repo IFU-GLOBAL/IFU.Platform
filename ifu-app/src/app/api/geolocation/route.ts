@@ -74,6 +74,8 @@ export async function POST(request: NextRequest) {
       timezone,
       latitude,
       longitude,
+      accuracy: body.accuracy,
+      source: body.source ?? "browser",
     },
   });
 }

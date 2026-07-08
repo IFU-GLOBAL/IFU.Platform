@@ -116,9 +116,9 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[var(--ifu-band)] text-[var(--ifu-ink)]">
-      <div className="grid min-h-screen min-w-0 lg:grid-cols-[18rem_minmax(0,1fr)]">
+      <div className="grid min-h-screen min-w-0 lg:grid-cols-[17rem_minmax(0,1fr)]">
         <aside className="min-w-0 bg-[#03182d] text-white lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
-          <div className="border-b border-white/12 p-4 lg:p-5">
+          <div className="border-b border-white/12 p-3 lg:p-4">
             <Image
               src="/images/ifu-logo-hero.png"
               alt="International Farm Union"
@@ -126,14 +126,14 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
               height={176}
               priority
               unoptimized
-              className="h-auto w-44"
+              className="h-auto w-40"
             />
-            <p className="mt-4 text-xs font-bold uppercase text-white/58">
+            <p className="mt-3 text-[0.68rem] font-bold uppercase leading-tight text-white/58">
               My IFU Personal Command Center
             </p>
           </div>
           <nav
-            className="flex min-w-0 gap-2 overflow-x-auto p-3 lg:grid lg:overflow-visible"
+            className="flex min-w-0 gap-1.5 overflow-x-auto p-2 lg:grid lg:gap-1 lg:overflow-visible"
             aria-label="Dashboard sections"
           >
             {view.menu.map((item, index) => {
@@ -144,11 +144,13 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
                   key={item.id}
                   type="button"
                   onClick={() => setActiveItem(item)}
-                  className="flex min-h-11 min-w-52 items-center gap-3 rounded-[var(--ifu-radius)] px-3 py-2 text-left text-sm font-semibold text-white/76 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:min-w-0"
+                  className="flex min-h-9 min-w-48 items-center gap-2 rounded-[var(--ifu-radius)] px-2.5 py-1.5 text-left text-[0.82rem] font-semibold leading-tight text-white/76 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:min-w-0"
                 >
                   <Icon className="h-4 w-4 shrink-0 text-[#7fc36e]" />
                   <span className="min-w-0 flex-1">{item.title}</span>
-                  <span className="text-xs text-white/34">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="text-[0.68rem] text-white/34">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
                 </button>
               );
             })}
@@ -170,14 +172,14 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
               <div className="absolute inset-0 bg-gradient-to-r from-white via-white/72 to-white/8" />
             </div>
 
-            <div className="relative z-10 max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+            <div className="relative z-10 max-w-6xl px-4 py-4 sm:px-5 lg:px-6">
+              <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
                 <div className="max-w-4xl">
                   <p className="ifu-eyebrow text-[var(--ifu-primary)]">Private dashboard</p>
-                  <h1 className="mt-3 max-w-full break-words text-3xl font-bold leading-tight text-[var(--ifu-heading)] md:text-4xl">
+                  <h1 className="mt-2 max-w-full break-words text-2xl font-bold leading-tight text-[var(--ifu-heading)] md:text-3xl">
                     Welcome To My IFU Personal Command Center Dashboard
                   </h1>
-                  <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--ifu-muted-strong)] md:text-base">
+                  <p className="mt-2 max-w-3xl text-sm leading-5 text-[var(--ifu-muted-strong)]">
                     My personalized command center where I can save my bookmark, view my
                     opportunities, resources, tools, training, fundings, my network, my community,
                     and all my connections across the IFU global platform.
@@ -200,16 +202,16 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
             </div>
           </header>
 
-          <div className="grid max-w-6xl gap-6 px-4 py-6 sm:px-6 lg:px-8">
+          <div className="grid max-w-6xl gap-4 px-4 py-4 sm:px-5 lg:px-6">
             <MiniGeoGlobalMap profile={profile} onSelect={setActiveItem} />
 
             {actionStatus ? (
-              <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ifu-muted-strong)]">
+              <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white px-3 py-2 text-sm font-semibold leading-tight text-[var(--ifu-muted-strong)]">
                 {actionStatus}
               </div>
             ) : null}
 
-            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {view.cards.map((card) => {
                 const Icon = getIcon(card.iconKey);
 
@@ -218,12 +220,12 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
                     key={card.id}
                     type="button"
                     onClick={() => setActiveItem(card)}
-                    className="group flex min-h-48 flex-col justify-between rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-5 text-left shadow-[var(--ifu-shadow)] transition hover:-translate-y-0.5 hover:border-[var(--ifu-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ifu-primary)]"
+                    className="group flex min-h-40 flex-col justify-between rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 text-left shadow-[var(--ifu-shadow)] transition hover:-translate-y-0.5 hover:border-[var(--ifu-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ifu-primary)]"
                   >
                     <div>
-                      <div className="flex items-start justify-between gap-4">
-                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
-                          <Icon className="h-5 w-5" />
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
+                          <Icon className="h-4 w-4" />
                         </span>
                         {card.metric ? (
                           <span className="rounded-[var(--ifu-radius)] bg-[#f7efe1] px-2.5 py-1 text-xs font-bold text-[#7a4a12]">
@@ -231,17 +233,17 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
                           </span>
                         ) : null}
                       </div>
-                      <p className="mt-5 text-xs font-bold uppercase text-[var(--ifu-primary-deep)]">
+                      <p className="mt-3 text-xs font-bold uppercase leading-tight text-[var(--ifu-primary-deep)]">
                         {card.type}
                       </p>
-                      <h2 className="mt-2 text-xl font-bold leading-snug text-[var(--ifu-heading)]">
+                      <h2 className="mt-1 text-lg font-bold leading-tight text-[var(--ifu-heading)]">
                         {card.title}
                       </h2>
-                      <p className="mt-3 text-sm leading-6 text-[var(--ifu-muted)]">
+                      <p className="mt-2 text-sm leading-5 text-[var(--ifu-muted)]">
                         {card.summary}
                       </p>
                     </div>
-                    <span className="mt-5 text-sm font-bold text-[var(--ifu-primary-deep)]">
+                    <span className="mt-4 text-sm font-bold leading-tight text-[var(--ifu-primary-deep)]">
                       Open drawer
                     </span>
                   </button>
@@ -249,49 +251,49 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
               })}
             </section>
 
-            <section className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.65fr)]">
-              <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-5 shadow-[var(--ifu-shadow)]">
-                <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <section className="grid gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.65fr)]">
+              <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
+                <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
                   <div>
                     <p className="ifu-eyebrow text-[var(--ifu-primary)]">IFU ecosystem</p>
-                    <h2 className="mt-2 text-2xl font-bold text-[var(--ifu-heading)]">
+                    <h2 className="mt-1 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
                       Powered By 9 Unified Ecosystems
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-[var(--ifu-muted)]">
+                    <p className="mt-1 text-sm leading-5 text-[var(--ifu-muted)]">
                       One Engine - One Platform - One Agricultural World. Everything You Need - All
                       In One Place.
                     </p>
                   </div>
                   <Globe2 className="hidden h-10 w-10 text-[var(--ifu-primary)] sm:block" />
                 </div>
-                <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                   {view.ecosystemItems.map((item) => (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => setActiveItem(item)}
-                      className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] px-3 py-3 text-left text-sm font-bold text-[var(--ifu-heading)] transition hover:border-[var(--ifu-primary)] hover:bg-white"
+                      className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] px-2.5 py-2 text-left text-[0.82rem] font-bold leading-tight text-[var(--ifu-heading)] transition hover:border-[var(--ifu-primary)] hover:bg-white"
                     >
-                      <Sprout className="mb-2 h-4 w-4 text-[var(--ifu-primary)]" />
+                      <Sprout className="mb-1 h-4 w-4 text-[var(--ifu-primary)]" />
                       {item.title}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-5 shadow-[var(--ifu-shadow)]">
+              <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
                 <p className="ifu-eyebrow text-[var(--ifu-primary)]">Workspace snapshot</p>
-                <h2 className="mt-2 text-2xl font-bold text-[var(--ifu-heading)]">
+                <h2 className="mt-1 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
                   Next Actions
                 </h2>
-                <div className="mt-5 grid gap-3">
+                <div className="mt-3 grid gap-2">
                   {view.workspaceItems.map((item, index) => (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => setActiveItem(item)}
                       className={cn(
-                        "flex items-center gap-3 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-3 text-left text-sm font-semibold text-[var(--ifu-muted-strong)] transition hover:bg-white",
+                        "flex items-center gap-2 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-2.5 text-left text-[0.82rem] font-semibold leading-tight text-[var(--ifu-muted-strong)] transition hover:bg-white",
                         index === 0 && "border-[var(--ifu-primary)] bg-[var(--ifu-selected)]",
                       )}
                     >
