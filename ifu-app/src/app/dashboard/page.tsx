@@ -17,13 +17,18 @@ export default async function DashboardPage() {
     redirect("/login?returnTo=/dashboard");
   }
 
-  const displayName = session.name ?? session.username ?? session.email ?? "IFU member";
+  const authenticatedSession = session;
+  const displayName =
+    authenticatedSession.name ??
+    authenticatedSession.username ??
+    authenticatedSession.email ??
+    "IFU member";
 
   return (
     <IFUPersonalCommandCenter
       profile={{
         fullName: displayName,
-        email: session.email,
+        email: authenticatedSession.email,
         role: "Member Candidate",
         category: "IFU Platform Member",
         city: "Profile Pending",
@@ -32,7 +37,7 @@ export default async function DashboardPage() {
         country: "Profile Pending",
         timezone: "America/New_York",
         profileCompletion: 62,
-        sessionExpiresAt: new Date(session.expiresAt).toLocaleString(),
+        sessionExpiresAt: new Date(authenticatedSession.expiresAt).toLocaleString(),
       }}
     />
   );

@@ -43,10 +43,18 @@ function requiredEnv(name: string, fallback?: string) {
 function normalizeBaseUrl(origin?: string) {
   const baseUrl = readEnv("APP_BASE_URL") ?? readEnv("NEXT_PUBLIC_APP_URL") ?? origin;
 
-  return baseUrl?.replace(/\/$/, "") ?? "http://localhost:3000";
+  if (baseUrl) {
+    return baseUrl.replace(/\/$/, "");
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("APP_BASE_URL is required in production.");
+  }
+
+  return "http://localhost:3000";
 }
 
-function buildAppUrl(path: string, origin?: string) {
+export function buildAppUrl(path: string, origin?: string) {
   return new URL(path, `${normalizeBaseUrl(origin)}/`).toString();
 }
 

@@ -1,6 +1,7 @@
 import { generators } from "openid-client";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  buildAppUrl,
   getAuthConfigurationStatus,
   getCognitoClient,
   getCognitoConfig,
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
   const status = getAuthConfigurationStatus(request.nextUrl.origin);
 
   if (!status.configured) {
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = new URL(buildAppUrl("/login", request.nextUrl.origin));
     loginUrl.searchParams.set("error", "missing_config");
     loginUrl.searchParams.set("missing", status.missing.join(","));
 
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Cognito login initialization failed:", error);
 
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = new URL(buildAppUrl("/login", request.nextUrl.origin));
     loginUrl.searchParams.set("error", "auth_init_failed");
 
     return NextResponse.redirect(loginUrl);

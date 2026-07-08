@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCognitoClient, getCognitoConfig } from "@/lib/auth/cognito";
+import { buildAppUrl, getCognitoClient, getCognitoConfig } from "@/lib/auth/cognito";
 import {
   clearAuthCookies,
   createAuthSession,
@@ -11,7 +11,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function redirectToLogin(request: NextRequest, error: string) {
-  const loginUrl = new URL("/login", request.url);
+  const loginUrl = new URL(buildAppUrl("/login", request.nextUrl.origin));
   loginUrl.searchParams.set("error", error);
   const response = NextResponse.redirect(loginUrl);
 
@@ -44,7 +44,9 @@ export async function GET(request: NextRequest) {
     });
     const userInfo = await client.userinfo(tokenSet.access_token ?? tokenSet);
     const session = createAuthSession(userInfo);
-    const response = NextResponse.redirect(new URL(challenge.returnTo, request.url));
+    const response = NextResponse.redirect(
+      new URL(challenge.returnTo, buildAppUrl("/", request.nextUrl.origin)),
+    );
 
     clearAuthCookies(response);
     setAuthSessionCookie(response, session);
