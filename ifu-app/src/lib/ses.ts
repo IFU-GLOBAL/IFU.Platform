@@ -13,7 +13,10 @@ function getSesClient() {
     return sesClient;
   }
 
-  const region = process.env.AWS_REGION ?? process.env.AWS_DEFAULT_REGION;
+  const region =
+    process.env.SES_REGION ??
+    process.env.AWS_REGION ??
+    process.env.AWS_DEFAULT_REGION;
 
   if (!region) {
     return null;

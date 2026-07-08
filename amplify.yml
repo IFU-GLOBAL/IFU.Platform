@@ -19,6 +19,9 @@ applications:
             - printf "COGNITO_REDIRECT_URI=%s\n" "$COGNITO_REDIRECT_URI" >> .env.production
             - printf "COGNITO_LOGOUT_URI=%s\n" "$COGNITO_LOGOUT_URI" >> .env.production
             - printf "COGNITO_SCOPES=%s\n" "$COGNITO_SCOPES" >> .env.production
+            - printf "SES_REGION=%s\n" "$SES_REGION" >> .env.production
+            - printf "SES_FROM_EMAIL=%s\n" "$SES_FROM_EMAIL" >> .env.production
+            - printf "SES_REPLY_TO_EMAIL=%s\n" "$SES_REPLY_TO_EMAIL" >> .env.production
             - npm run build
       artifacts:
         baseDirectory: .next
