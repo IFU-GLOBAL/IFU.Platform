@@ -27,7 +27,7 @@ export default function RegisterPage() {
 
       <IFUSection>
         <IFUContainer className="py-10">
-          <IFUActionLink href="/api/auth/login?returnTo=%2Fdashboard" icon={UserPlus}>
+          <IFUActionLink href="/api/auth/register?returnTo=%2Fdashboard" icon={UserPlus}>
             Continue to Cognito
           </IFUActionLink>
         </IFUContainer>
