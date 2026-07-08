@@ -1,6 +1,6 @@
 import { Issuer, type Client } from "openid-client";
 
-const DEFAULT_SCOPES = "openid email phone";
+const DEFAULT_SCOPES = "openid email";
 
 export type CognitoConfig = {
   region: string;
