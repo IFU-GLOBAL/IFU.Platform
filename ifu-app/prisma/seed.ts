@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { discoveryCategories } from "../src/lib/role-catalog";
+import { discoveryCategories, discoveryRoles } from "../src/lib/role-catalog";
 
 async function main() {
   const connectionString = process.env.DATABASE_URL;
@@ -13,6 +13,9 @@ async function main() {
   const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString }),
   });
+
+  const categorySlugs = discoveryCategories.map((category) => category.slug);
+  const roleSlugs = discoveryRoles.map((role) => role.slug);
 
   for (const category of discoveryCategories) {
     await prisma.roleCategory.upsert({
@@ -65,6 +68,22 @@ async function main() {
     }
   }
 
+  const deletedRoles = await prisma.role.deleteMany({
+    where: {
+      slug: {
+        notIn: roleSlugs,
+      },
+    },
+  });
+
+  const deletedCategories = await prisma.roleCategory.deleteMany({
+    where: {
+      slug: {
+        notIn: categorySlugs,
+      },
+    },
+  });
+
   const [categoryCount, roleCount] = await Promise.all([
     prisma.roleCategory.count(),
     prisma.role.count(),
@@ -72,7 +91,9 @@ async function main() {
 
   await prisma.$disconnect();
 
-  console.log(`Seeded ${categoryCount} role categories and ${roleCount} roles.`);
+  console.log(
+    `Seeded ${categoryCount} role categories and ${roleCount} roles. Pruned ${deletedCategories.count} old categories and ${deletedRoles.count} old roles.`,
+  );
 }
 
 main().catch((error) => {

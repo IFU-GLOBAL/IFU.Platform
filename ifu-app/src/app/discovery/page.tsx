@@ -43,7 +43,7 @@ export default async function DiscoveryPage({ searchParams }: DiscoveryPageProps
         categories: categories.length || discoveryMetrics.categories,
         roles: roleCount || discoveryMetrics.roles,
         countries: discoveryMetrics.countries,
-        pathways: discoveryMetrics.pathways,
+        ecosystems: discoveryMetrics.ecosystems,
       }}
     />
   );

@@ -36,7 +36,7 @@ type Metrics = {
   categories: number;
   roles: number;
   countries: string;
-  pathways: number;
+  ecosystems: number;
 };
 
 type DiscoveryCenterProps = {
@@ -123,7 +123,7 @@ const whyItems = [
     icon: Sprout,
   },
   {
-    title: "Match people to the right pathway",
+    title: "Match people to the right role",
     text: "Role-based discovery helps farmers, institutions, buyers, educators, and partners find the most useful starting point.",
     icon: Users,
   },
@@ -359,7 +359,7 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
           <IFUSectionHeader
             eyebrow="Role-based preview"
             title="A coordinated ecosystem for agriculture"
-            description={`This app currently includes ${metrics.categories} role categories, ${metrics.roles} seeded roles, ${metrics.countries} country reach, and ${metrics.pathways} pathways for early access discovery.`}
+            description={`This app currently includes ${metrics.categories} role categories, ${metrics.roles} seeded roles, ${metrics.countries} country reach, and ${metrics.ecosystems} ecosystems for early access discovery.`}
           />
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
@@ -371,6 +371,9 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
               <p className="ifu-copy mt-4">
                 This center helps IFU understand where each person, organization, or partner fits: learning, leadership, coordination, funding, data, marketplace participation, or community impact.
               </p>
+              <IFUActionLink href="/invitation" variant="outline" icon={ArrowRight} className="mt-6">
+                Read invitation letter
+              </IFUActionLink>
             </IFUCard>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -404,7 +407,7 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search roles, pathways, categories, or keywords"
+                placeholder="Search roles, levels, categories, or keywords"
                 className="ifu-field-control ifu-input h-12 !pl-12 pr-4"              />
             </label>
 
@@ -430,7 +433,7 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
                     <th className="w-14">Select</th>
                     <th>Role</th>
                     <th>Category</th>
-                    <th>Pathway</th>
+                    <th>Level</th>
                     <th>Preview value</th>
                   </tr>
                 </thead>
