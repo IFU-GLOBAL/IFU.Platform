@@ -9,6 +9,16 @@ applications:
         build:
           commands:
             - printf "DATABASE_URL=%s\n" "$DATABASE_URL" >> .env.production
+            - printf "APP_BASE_URL=%s\n" "$APP_BASE_URL" >> .env.production
+            - printf "AUTH_SESSION_SECRET=%s\n" "$AUTH_SESSION_SECRET" >> .env.production
+            - printf "COGNITO_REGION=%s\n" "$COGNITO_REGION" >> .env.production
+            - printf "COGNITO_USER_POOL_ID=%s\n" "$COGNITO_USER_POOL_ID" >> .env.production
+            - printf "COGNITO_CLIENT_ID=%s\n" "$COGNITO_CLIENT_ID" >> .env.production
+            - printf "COGNITO_CLIENT_SECRET=%s\n" "$COGNITO_CLIENT_SECRET" >> .env.production
+            - printf "COGNITO_DOMAIN=%s\n" "$COGNITO_DOMAIN" >> .env.production
+            - printf "COGNITO_REDIRECT_URI=%s\n" "$COGNITO_REDIRECT_URI" >> .env.production
+            - printf "COGNITO_LOGOUT_URI=%s\n" "$COGNITO_LOGOUT_URI" >> .env.production
+            - printf "COGNITO_SCOPES=%s\n" "$COGNITO_SCOPES" >> .env.production
             - npm run build
       artifacts:
         baseDirectory: .next
