@@ -8,11 +8,12 @@ import {
   Handshake,
   Languages,
   LoaderCircle,
-  Play,
   Search,
   Send,
+  Share2,
   Sprout,
   UserRound,
+  UserPlus,
   Users,
   X,
 } from "lucide-react";
@@ -30,7 +31,12 @@ import {
   IFUSectionHeader,
   cn,
 } from "@/components/ifu-ui";
-import type { DiscoveryCategory, DiscoveryRole } from "@/lib/role-catalog";
+import {
+  discoveryPersonas,
+  type DiscoveryCategory,
+  type DiscoveryPersona,
+  type DiscoveryRole,
+} from "@/lib/role-catalog";
 
 type Metrics = {
   categories: number;
@@ -42,6 +48,8 @@ type Metrics = {
 type DiscoveryCenterProps = {
   categories: DiscoveryCategory[];
   metrics: Metrics;
+  initialPersonaSlug?: string;
+  initialRoleSlugs?: string[];
 };
 
 type FormState = {
@@ -60,6 +68,9 @@ type FormState = {
   recommendedContactEmail: string;
   recommendedContactRelationship: string;
   message: string;
+  privacyConsent: boolean;
+  referralConsent: boolean;
+  website: string;
 };
 
 const initialFormState: FormState = {
@@ -78,6 +89,9 @@ const initialFormState: FormState = {
   recommendedContactEmail: "",
   recommendedContactRelationship: "",
   message: "",
+  privacyConsent: false,
+  referralConsent: false,
+  website: "",
 };
 
 const contributionOptions = [
@@ -110,11 +124,21 @@ const navItems = [
 ];
 
 const impactStats = [
-  { value: "190+", label: "Countries", icon: Globe2 },
-  { value: "2M+", label: "Farmers", icon: Users },
+  { value: "190+", label: "Countries Served", icon: Globe2 },
+  { value: "2M+", label: "Farmers Empowered", icon: Users },
   { value: "500+", label: "Partners", icon: Handshake },
-  { value: "50+", label: "Projects", icon: Sprout },
+  { value: "50+", label: "Country Programs", icon: Sprout },
 ];
+
+const allRolesPersona: DiscoveryPersona = {
+  slug: "all",
+  label: "Show me every IFU role",
+  prompt: "Search across all 260 role pathways",
+  description: "Use the full catalog if you already know the role name or want to compare every pathway.",
+  categorySlugs: [],
+};
+
+const roleJourneySteps = ["Your role", "Your value", "Apply"];
 
 const whyItems = [
   {
@@ -140,32 +164,60 @@ const whyItems = [
 ];
 
 function includesSearch(role: DiscoveryRole, query: string) {
-  const haystack = `${role.title} ${role.summary} ${role.pathway} ${role.categoryName}`.toLowerCase();
+  const haystack = `${role.title} ${role.summary} ${role.pathway} ${role.categoryName} ${role.level} ${role.ecosystems.join(" ")} ${role.personaLabel}`.toLowerCase();
   return haystack.includes(query.toLowerCase());
 }
 
-export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
+export function DiscoveryCenter({
+  categories,
+  metrics,
+  initialPersonaSlug,
+  initialRoleSlugs = [],
+}: DiscoveryCenterProps) {
+  const normalizedInitialPersonaSlug =
+    initialPersonaSlug === "all" || discoveryPersonas.some((persona) => persona.slug === initialPersonaSlug)
+      ? initialPersonaSlug
+      : undefined;
   const [query, setQuery] = useState("");
+  const [selectedPersonaSlug, setSelectedPersonaSlug] = useState(
+    normalizedInitialPersonaSlug ??
+      (initialRoleSlugs.length > 0 ? "all" : discoveryPersonas[0]?.slug ?? "all"),
+  );
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [selectedRoleSlugs, setSelectedRoleSlugs] = useState<string[]>([]);
+  const [selectedRoleSlugs, setSelectedRoleSlugs] = useState<string[]>(initialRoleSlugs);
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
 
   const roles = useMemo(() => categories.flatMap((category) => category.roles), [categories]);
   const rolesBySlug = useMemo(() => new Map(roles.map((role) => [role.slug, role])), [roles]);
+  const personaOptions = useMemo(() => [allRolesPersona, ...discoveryPersonas], []);
+  const selectedPersona =
+    personaOptions.find((persona) => persona.slug === selectedPersonaSlug) ?? allRolesPersona;
   const selectedRoles = selectedRoleSlugs
     .map((slug) => rolesBySlug.get(slug))
     .filter((role): role is DiscoveryRole => Boolean(role));
+  const primarySelectedRole = selectedRoles[0];
+  const referralHasData = Boolean(
+    formState.recommendedContactName ||
+      formState.recommendedContactEmail ||
+      formState.recommendedContactRelationship,
+  );
+  const registerHref =
+    selectedRoleSlugs.length > 0
+      ? `/register?roles=${encodeURIComponent(selectedRoleSlugs.join(","))}`
+      : "/register";
+  const shareHref = `mailto:?subject=${encodeURIComponent("IFU preview invitation")}&body=${encodeURIComponent("You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you: https://ifuplatform.com/discovery")}`;
 
   const filteredRoles = roles.filter((role) => {
+    const matchesPersona = selectedPersonaSlug === "all" || role.personaSlug === selectedPersonaSlug;
     const matchesCategory = categoryFilter === "all" || role.categorySlug === categoryFilter;
     const matchesQuery = query.trim() === "" || includesSearch(role, query.trim());
 
-    return matchesCategory && matchesQuery;
+    return matchesPersona && matchesCategory && matchesQuery;
   });
 
-  function updateField(field: keyof FormState, value: string) {
+  function updateField<K extends keyof FormState>(field: K, value: FormState[K]) {
     setFormState((current) => ({ ...current, [field]: value }));
   }
 
@@ -184,10 +236,33 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
     );
   }
 
+  function selectPersona(slug: string) {
+    setSelectedPersonaSlug(slug);
+    setCategoryFilter("all");
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("submitting");
     setStatusMessage("");
+
+    if (formState.website) {
+      setStatus("success");
+      setStatusMessage("Application submitted.");
+      return;
+    }
+
+    if (!formState.privacyConsent) {
+      setStatus("error");
+      setStatusMessage("Privacy consent is required before IFU can review your preview application.");
+      return;
+    }
+
+    if (referralHasData && !formState.referralConsent) {
+      setStatus("error");
+      setStatusMessage("Referral consent is required when recommending another contact.");
+      return;
+    }
 
     const response = await fetch("/api/preview-applications", {
       method: "POST",
@@ -282,14 +357,14 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
               <span className="ifu-static-title__green">IFU Platform</span>
             </h1>
             <p className="ifu-static-hero__copy">
-              The International Farm Union Global Platform connects farmers, cooperatives, researchers, development institutions and buyers through AI-powered insights, real-time agricultural data, market access, and global collaboration tools.
+              One platform. 10 ecosystems. 190+ countries. Built for everyone in agriculture. In less than a minute, choose your role and discover how IFU connects you to global opportunities, knowledge, funding, markets, training, and partnerships.
             </p>
             <div className="ifu-static-hero__actions">
               <IFUActionLink href="#role-matrix" variant="primary" icon={ArrowRight} className="ifu-static-hero-button">
                 Choose Your IFU Role
               </IFUActionLink>
-              <IFUActionLink href="#welcome" variant="ghost" icon={Play} className="ifu-static-hero-button ifu-static-hero-button-outline">
-                Watch Video
+              <IFUActionLink href="/invitation" variant="ghost" icon={ArrowRight} className="ifu-static-hero-button ifu-static-hero-button-outline">
+                Read Invitation Letter
               </IFUActionLink>
             </div>
           </div>
@@ -299,6 +374,7 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
       <section className="ifu-static-facts" aria-label="IFU reach">
         <IFUContainer size="wide">
           <div className="ifu-static-facts__bar">
+            <p className="ifu-static-facts__eyebrow">Our 2030 Vision</p>
             {impactStats.map((stat) => (
               <div key={stat.label} className="ifu-static-fact">
                 <span className="ifu-static-fact__icon">
@@ -328,9 +404,6 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
               <p>
                 This preview center brings that same ecosystem into the platform app, helping visitors find roles, select pathways, and request guided follow-up before public rollout.
               </p>
-              <IFUActionLink href="#preview-application" variant="primary" icon={ArrowRight} className="ifu-static-discover">
-                Discover More
-              </IFUActionLink>
             </div>
 
             <div className="ifu-welcome-images" aria-label="IFU field imagery">
@@ -390,120 +463,208 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
         </IFUContainer>
       </IFUSection>
 
-      <IFUSection tone="muted" id="role-matrix">
-        <IFUContainer size="wide" className="py-12">
+      <IFUSection tone="muted" id="role-matrix" className="ifu-role-section">
+        <IFUContainer size="wide" className="py-10 lg:py-12">
           <IFUSectionHeader
             eyebrow="Role matrix"
-            title="Search and select your IFU roles"
+            title="Who are you in agriculture?"
+            description="Choose the plain-language path that sounds most like you. IFU will show the most relevant roles first, while search still reaches the full role catalog."
             action={
               <IFUInset className="px-4 py-3 text-sm text-[var(--ifu-muted)]">
-              <span className="font-semibold text-[var(--ifu-heading)]">{selectedRoles.length}</span> selected
+                <span className="font-semibold text-[var(--ifu-heading)]">{selectedRoles.length}</span> selected
               </IFUInset>
             }
           />
 
-          <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_280px]">
-            <label className="relative block">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ifu-muted)]" aria-hidden="true" />
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search roles, levels, categories, or keywords"
-                className="ifu-field-control ifu-input h-12 !pl-12 pr-4"              />
-            </label>
-
-            <select
-              value={categoryFilter}
-              onChange={(event) => setCategoryFilter(event.target.value)}
-              className="ifu-field-control ifu-select h-12"
-            >
-              <option value="all">All categories</option>
-              {categories.map((category) => (
-                <option key={category.slug} value={category.slug}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+          <div className="ifu-role-steps mt-5" aria-label="Preview flow">
+            {roleJourneySteps.map((step, index) => (
+              <span key={step} className="ifu-role-step">
+                <strong>{index + 1}</strong>
+                {step}
+              </span>
+            ))}
           </div>
 
-          <div className="ifu-table-shell mt-5">
-            <div className="max-h-[560px] overflow-auto">
-              <table className="ifu-table">
-                <thead className="sticky top-0 z-10">
-                  <tr>
-                    <th className="w-14">Select</th>
-                    <th>Role</th>
-                    <th>Category</th>
-                    <th>Level</th>
-                    <th>Preview value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredRoles.map((role) => {
-                    const selected = selectedRoleSlugs.includes(role.slug);
+          <div className="ifu-persona-grid mt-6" aria-label="Choose your IFU persona">
+            {personaOptions.map((persona) => {
+              const active = selectedPersona.slug === persona.slug;
 
-                    return (
-                      <tr key={role.slug} className={selected ? "bg-[var(--ifu-selected)]" : "bg-white"}>
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={selected}
-                            onChange={() => toggleRole(role.slug)}
-                            aria-label={`Select ${role.title}`}
-                            className="ifu-checkbox"
-                          />
-                        </td>
-                        <td className="font-semibold text-[var(--ifu-heading)]">
-                          {role.title}
-                        </td>
-                        <td className="text-[var(--ifu-muted)]">
-                          {role.categoryName}
-                        </td>
-                        <td>
-                          <span className="ifu-chip px-2 py-1">
-                            {role.pathway}
-                          </span>
-                        </td>
-                        <td className="text-[var(--ifu-muted)]">
-                          {role.summary}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {selectedRoles.length > 0 ? (
-            <IFUCard className="mt-5 p-4">
-              <div className="flex items-center justify-between gap-4">
-                <h3 className="text-sm font-bold text-[var(--ifu-heading)]">Selected roles</h3>
-                <IFUActionButton
+              return (
+                <button
+                  key={persona.slug}
                   type="button"
-                  onClick={() => setSelectedRoleSlugs([])}
-                  variant="outline"
-                  className="ifu-button-compact"
+                  onClick={() => selectPersona(persona.slug)}
+                  className={cn("ifu-persona-button", active && "ifu-persona-button-active")}
+                  aria-pressed={active}
                 >
-                  <X className="h-3.5 w-3.5" aria-hidden="true" />
-                  Clear
-                </IFUActionButton>
+                  <span className="ifu-persona-label">{persona.label}</span>
+                  <span className="ifu-persona-prompt">{persona.prompt}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="ifu-role-workbench mt-6">
+            <div className="ifu-role-list-panel">
+              <div className="ifu-role-filter-row">
+                <label className="relative block">
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ifu-muted)]" aria-hidden="true" />
+                  <input
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Search roles, levels, ecosystems, or keywords"
+                    className="ifu-field-control ifu-input h-12 !pl-12 pr-4"
+                  />
+                </label>
+
+                <select
+                  value={categoryFilter}
+                  onChange={(event) => setCategoryFilter(event.target.value)}
+                  className="ifu-field-control ifu-select h-12"
+                >
+                  <option value="all">All categories</option>
+                  {categories.map((category) => (
+                    <option key={category.slug} value={category.slug}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {selectedRoles.map((role) => (
-                  <button
-                    key={role.slug}
-                    type="button"
-                    onClick={() => toggleRole(role.slug)}
-                    className="ifu-chip px-3 py-2"
-                  >
-                    {role.title}
-                    <X className="h-3.5 w-3.5" aria-hidden="true" />
-                  </button>
-                ))}
+
+              <div className="ifu-role-filter-summary">
+                <p>
+                  Showing <strong>{filteredRoles.length}</strong> roles for <strong>{selectedPersona.label}</strong>
+                </p>
+                <p>
+                  Level indicates typical career stage: Foundation, Professional, or Leadership. It does not limit which roles you may select.
+                </p>
               </div>
-            </IFUCard>
-          ) : null}
+
+              <div className="ifu-table-shell mt-4">
+                <div className="ifu-role-table-scroll">
+                  <table className="ifu-table ifu-role-table">
+                    <thead className="sticky top-0 z-10">
+                      <tr>
+                        <th className="w-14">Select</th>
+                        <th>Role</th>
+                        <th>Level</th>
+                        <th>Preview value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredRoles.map((role) => {
+                        const selected = selectedRoleSlugs.includes(role.slug);
+
+                        return (
+                          <tr key={role.slug} className={selected ? "bg-[var(--ifu-selected)]" : "bg-white"}>
+                            <td>
+                              <input
+                                type="checkbox"
+                                checked={selected}
+                                onChange={() => toggleRole(role.slug)}
+                                aria-label={`Select ${role.title}`}
+                                className="ifu-checkbox"
+                              />
+                            </td>
+                            <td>
+                              <p className="font-semibold text-[var(--ifu-heading)]">{role.title}</p>
+                              <p className="mt-1 text-xs font-semibold text-[var(--ifu-muted)]">{role.categoryName}</p>
+                              <div className="ifu-role-ecosystems mt-2">
+                                {role.ecosystems.slice(0, 3).map((ecosystem) => (
+                                  <span key={ecosystem}>{ecosystem}</span>
+                                ))}
+                              </div>
+                            </td>
+                            <td>
+                              <span className="ifu-chip px-2 py-1">{role.level}</span>
+                            </td>
+                            <td className="text-[var(--ifu-muted)]">
+                              {role.summary}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {filteredRoles.length === 0 ? (
+                        <tr>
+                          <td colSpan={4} className="text-center text-[var(--ifu-muted)]">
+                            No matching roles found.
+                          </td>
+                        </tr>
+                      ) : null}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <aside className="ifu-role-selection-panel">
+              <p className="ifu-eyebrow text-[var(--ifu-primary)]">Role selected</p>
+              {primarySelectedRole ? (
+                <>
+                  <h3 className="mt-2 text-2xl font-bold text-[var(--ifu-heading)]">
+                    {primarySelectedRole.title}
+                  </h3>
+                  <p className="ifu-copy mt-3">{primarySelectedRole.summary}</p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <span className="ifu-chip px-3 py-2">{primarySelectedRole.level}</span>
+                    {primarySelectedRole.ecosystems.map((ecosystem) => (
+                      <span key={ecosystem} className="ifu-chip px-3 py-2">
+                        {ecosystem}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3 className="mt-2 text-2xl font-bold text-[var(--ifu-heading)]">
+                    Select one role to see your IFU value.
+                  </h3>
+                  <p className="ifu-copy mt-3">{selectedPersona.description}</p>
+                </>
+              )}
+
+              {selectedRoles.length > 0 ? (
+                <div className="mt-5">
+                  <div className="flex items-center justify-between gap-4">
+                    <h4 className="text-sm font-bold text-[var(--ifu-heading)]">Selected roles</h4>
+                    <IFUActionButton
+                      type="button"
+                      onClick={() => setSelectedRoleSlugs([])}
+                      variant="outline"
+                      className="ifu-button-compact"
+                    >
+                      <X className="h-3.5 w-3.5" aria-hidden="true" />
+                      Clear
+                    </IFUActionButton>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {selectedRoles.map((role) => (
+                      <button
+                        key={role.slug}
+                        type="button"
+                        onClick={() => toggleRole(role.slug)}
+                        className="ifu-chip px-3 py-2"
+                      >
+                        {role.title}
+                        <X className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-5 grid gap-3">
+                    <IFUActionLink href={registerHref} icon={UserPlus}>
+                      Register
+                    </IFUActionLink>
+                    <IFUActionLink href={shareHref} variant="outline" icon={Share2}>
+                      Share invitation
+                    </IFUActionLink>
+                    <IFUActionLink href="#preview-application" variant="outline" icon={Send}>
+                      Share contact interests
+                    </IFUActionLink>
+                  </div>
+                </div>
+              ) : null}
+            </aside>
+          </div>
         </IFUContainer>
       </IFUSection>
 
@@ -523,7 +684,7 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
                 <TextInput label="Last name" value={formState.lastName} onChange={(value) => updateField("lastName", value)} required />
                 <TextInput label="Email" type="email" value={formState.email} onChange={(value) => updateField("email", value)} required />
                 <TextInput label="Phone" value={formState.phone} onChange={(value) => updateField("phone", value)} />
-                <TextInput label="Country" value={formState.country} onChange={(value) => updateField("country", value)} />
+                <TextInput label="Country" value={formState.country} onChange={(value) => updateField("country", value)} required />
                 <TextInput label="Organization" value={formState.organization} onChange={(value) => updateField("organization", value)} />
                 <TextInput label="Current role or title" value={formState.roleOrTitle} onChange={(value) => updateField("roleOrTitle", value)} className="sm:col-span-2" />
               </div>
@@ -584,11 +745,26 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
 
               <fieldset className="ifu-fieldset mt-6 p-4">
                 <legend className="px-2">Recommended contact or friend</legend>
+                <p className="ifu-copy mt-2 text-sm">
+                  Know someone who belongs in the IFU community? Please share their details only if they have agreed to be contacted by IFU. We will send them a single invitation mentioning that you recommended them, and nothing more unless they respond.
+                </p>
                 <div className="grid gap-4 sm:grid-cols-3">
                   <TextInput label="Name" value={formState.recommendedContactName} onChange={(value) => updateField("recommendedContactName", value)} />
                   <TextInput label="Email" type="email" value={formState.recommendedContactEmail} onChange={(value) => updateField("recommendedContactEmail", value)} />
                   <TextInput label="Relationship" value={formState.recommendedContactRelationship} onChange={(value) => updateField("recommendedContactRelationship", value)} />
                 </div>
+                <label className="ifu-consent-row mt-4">
+                  <input
+                    type="checkbox"
+                    checked={formState.referralConsent}
+                    onChange={(event) => updateField("referralConsent", event.target.checked)}
+                    required={referralHasData}
+                    className="ifu-checkbox"
+                  />
+                  <span>
+                    I confirm this person has agreed to receive a one-time invitation from IFU, and I understand they can decline or ask for their details to be deleted.
+                  </span>
+                </label>
               </fieldset>
 
               <label className="ifu-field-label mt-6">
@@ -599,6 +775,33 @@ export function DiscoveryCenter({ categories, metrics }: DiscoveryCenterProps) {
                   rows={5}
                   className="ifu-field-control ifu-textarea mt-2"
                 />
+              </label>
+
+              <label className="ifu-honeypot" aria-hidden="true">
+                Website
+                <input
+                  value={formState.website}
+                  onChange={(event) => updateField("website", event.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </label>
+
+              <label className="ifu-consent-row mt-6">
+                <input
+                  type="checkbox"
+                  checked={formState.privacyConsent}
+                  onChange={(event) => updateField("privacyConsent", event.target.checked)}
+                  required
+                  className="ifu-checkbox"
+                />
+                <span>
+                  I agree that the International Farm Union (IFU) may store and process the information I have provided in order to review my application, contact me about my selected role, and send me updates about the IFU Platform launch. I understand my data will never be sold, I may withdraw consent at any time, and I can request deletion of my data by emailing privacy@ifuplatform.com. I have read the{" "}
+                  <Link href="/privacy" className="font-bold text-[var(--ifu-primary-deep)] underline">
+                    IFU Privacy Notice
+                  </Link>
+                  .
+                </span>
               </label>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

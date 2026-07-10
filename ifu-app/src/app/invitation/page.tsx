@@ -5,6 +5,8 @@ import {
   BadgeCheck,
   CheckCircle2,
   Mail,
+  Share2,
+  UserPlus,
   Users,
 } from "lucide-react";
 import {
@@ -38,13 +40,15 @@ const letterParagraphs = [
   "We welcome your participation, feedback, referrals, and leadership interest as IFU prepares the next phase of platform access.",
 ];
 
+const shareInvitationHref = `mailto:?subject=${encodeURIComponent("IFU preview invitation")}&body=${encodeURIComponent("You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you: https://ifuplatform.com/discovery")}`;
+
 export default function InvitationPage() {
   return (
-    <IFUPage>
+    <IFUPage className="ifu-invitation-page">
       <IFUHero
         eyebrow="Preview invitation"
-        title="IFU Preview Invitation Letter"
-        description="An invitation to explore the International Farm Union ecosystem before public rollout and help IFU understand where your role, organization, or community fits."
+        title="You are invited to preview the IFU ecosystem"
+        description="Read the invitation, choose the IFU roles that match your work, then register or share the invitation with someone who belongs in the IFU community."
         aside={
           <IFUCard tone="hero" className="p-6">
             <BadgeCheck className="h-6 w-6 text-[var(--ifu-accent)]" aria-hidden="true" />
@@ -65,7 +69,7 @@ export default function InvitationPage() {
 
       <IFUSection>
         <IFUContainer className="grid gap-8 py-10 lg:grid-cols-[1fr_320px] lg:py-14">
-          <article className="ifu-card ifu-card-muted p-6 sm:p-8">
+          <article className="ifu-card ifu-invitation-letter p-6 sm:p-8">
             <p className="text-sm font-semibold uppercase tracking-wide text-[var(--ifu-primary)]">
               International Farm Union
             </p>
@@ -87,11 +91,14 @@ export default function InvitationPage() {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <IFUActionLink href="/discovery#preview-application" icon={ArrowRight}>
-                Continue to preview form
+              <IFUActionLink href="/register" icon={UserPlus}>
+                Register
               </IFUActionLink>
-              <IFUActionLink href="/register" variant="outline" icon={Users}>
-                Create platform account
+              <IFUActionLink href={shareInvitationHref} variant="outline" icon={Share2}>
+                Share invitation
+              </IFUActionLink>
+              <IFUActionLink href="/discovery#role-matrix" variant="outline" icon={Users}>
+                Choose roles
               </IFUActionLink>
             </div>
           </article>

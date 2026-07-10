@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/prisma";
 import { parsePreviewApplicationPayload } from "@/lib/preview-application";
-import { sendPreviewConfirmationEmail } from "@/lib/ses";
+import {
+  sendPreviewConfirmationEmail,
+  sendReferralInvitationEmail,
+} from "@/lib/ses";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,8 +24,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: parsed.error }, { status: 400 });
   }
 
+  if ("spam" in parsed && parsed.spam) {
+    return NextResponse.json({ ok: true, emailStatus: "skipped" }, { status: 201 });
+  }
+
   const prisma = getPrisma();
   const payload = parsed.payload;
+  const now = new Date();
+  const deleteAfter = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+  const appBaseUrl =
+    process.env.APP_BASE_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    "https://ifuplatform.com";
 
   try {
     const roles = await prisma.role.findMany({
@@ -56,6 +69,10 @@ export async function POST(request: Request) {
         recommendedContactEmail: payload.recommendedContactEmail || null,
         recommendedContactRelationship: payload.recommendedContactRelationship || null,
         message: payload.message || null,
+        privacyConsentAccepted: payload.privacyConsent,
+        privacyConsentAcceptedAt: payload.privacyConsent ? now : null,
+        referralConsentAccepted: payload.referralConsent,
+        referralConsentAcceptedAt: payload.referralConsent ? now : null,
         roles: {
           create: roles.map((role) => ({
             role: {
@@ -65,6 +82,29 @@ export async function POST(request: Request) {
             },
           })),
         },
+        recommendedContacts: payload.recommendedContactEmail
+          ? {
+              create: {
+                name:
+                  payload.recommendedContactName ||
+                  payload.recommendedContactEmail,
+                email: payload.recommendedContactEmail,
+                relationship: payload.recommendedContactRelationship || null,
+                consentConfirmed: payload.referralConsent,
+                consentConfirmedAt: payload.referralConsent ? now : null,
+                deleteAfter,
+              },
+            }
+          : undefined,
+        referralSources:
+          payload.referralSource || payload.referralDetail
+            ? {
+                create: {
+                  source: payload.referralSource || "Unspecified",
+                  detail: payload.referralDetail || null,
+                },
+              }
+            : undefined,
       },
     });
 
@@ -84,6 +124,45 @@ export async function POST(request: Request) {
           emailError: emailResult.error,
         },
       });
+
+      if (payload.recommendedContactEmail && payload.referralConsent) {
+        try {
+          const referralEmailResult = await sendReferralInvitationEmail({
+            to: payload.recommendedContactEmail,
+            referredName: payload.recommendedContactName,
+            referrerName: `${payload.firstName} ${payload.lastName}`.trim(),
+            discoveryUrl: `${appBaseUrl}/discovery`,
+            deleteUrl: `${appBaseUrl}/privacy#delete-request`,
+          });
+
+          await prisma.recommendedContact.updateMany({
+            where: {
+              previewSubmissionId: submission.id,
+              email: payload.recommendedContactEmail,
+            },
+            data: {
+              oneTimeInviteStatus: referralEmailResult.status,
+              oneTimeInviteMessageId: referralEmailResult.messageId,
+              oneTimeInviteError: referralEmailResult.error,
+              oneTimeInviteSentAt:
+                referralEmailResult.status === "sent" ? new Date() : null,
+            },
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Referral email send failed";
+
+          await prisma.recommendedContact.updateMany({
+            where: {
+              previewSubmissionId: submission.id,
+              email: payload.recommendedContactEmail,
+            },
+            data: {
+              oneTimeInviteStatus: "failed",
+              oneTimeInviteError: message,
+            },
+          });
+        }
+      }
 
       return NextResponse.json(
         { ok: true, id: submission.id, emailStatus: emailResult.status },

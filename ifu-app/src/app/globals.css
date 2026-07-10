@@ -313,6 +313,15 @@ html {
   box-shadow: 0 18px 45px rgba(8, 41, 71, 0.13);
 }
 
+.ifu-static-facts__eyebrow {
+  grid-column: 1 / -1;
+  color: var(--ifu-primary-deep);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .ifu-static-fact {
   display: flex;
   min-width: 0;
@@ -684,6 +693,194 @@ html {
   vertical-align: top;
 }
 
+.ifu-role-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.ifu-role-step {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.625rem;
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding: 0.5rem 0.875rem;
+  color: var(--ifu-muted-strong);
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+.ifu-role-step strong {
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ifu-primary-deep);
+  color: #ffffff;
+  font-size: 0.75rem;
+}
+
+.ifu-persona-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ifu-persona-button {
+  display: flex;
+  min-height: 7.5rem;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding: 1rem;
+  text-align: left;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.ifu-persona-button:hover,
+.ifu-persona-button-active {
+  border-color: var(--ifu-primary);
+  background: var(--ifu-selected);
+  box-shadow: 0 14px 30px rgba(20, 94, 20, 0.12);
+  transform: translateY(-1px);
+}
+
+.ifu-persona-label {
+  color: var(--ifu-heading);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.ifu-persona-prompt {
+  margin-top: 0.75rem;
+  color: var(--ifu-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.ifu-role-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.36fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.ifu-role-list-panel,
+.ifu-role-selection-panel {
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  box-shadow: var(--ifu-shadow);
+}
+
+.ifu-role-list-panel {
+  padding: 1rem;
+}
+
+.ifu-role-selection-panel {
+  position: sticky;
+  top: 1rem;
+  padding: 1.25rem;
+}
+
+.ifu-role-filter-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.32fr);
+  gap: 0.75rem;
+}
+
+.ifu-role-filter-summary {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.875rem;
+  color: var(--ifu-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.ifu-role-filter-summary strong {
+  color: var(--ifu-heading);
+}
+
+.ifu-role-table-scroll {
+  max-height: min(52vh, 520px);
+  overflow: auto;
+}
+
+.ifu-role-table {
+  min-width: 760px;
+}
+
+.ifu-role-ecosystems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.ifu-role-ecosystems span {
+  border-radius: 999px;
+  background: #eef6ec;
+  padding: 0.2rem 0.45rem;
+  color: var(--ifu-success-text);
+  font-size: 0.6875rem;
+  font-weight: 800;
+}
+
+.ifu-consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  color: var(--ifu-muted-strong);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.ifu-consent-row input {
+  margin-top: 0.25rem;
+  flex: 0 0 auto;
+}
+
+.ifu-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.ifu-invitation-page {
+  background: var(--ifu-primary-deep);
+}
+
+.ifu-invitation-page .ifu-section,
+.ifu-invitation-page .ifu-section-muted {
+  background: var(--ifu-primary-deep);
+}
+
+.ifu-invitation-page .ifu-card:not(.ifu-invitation-letter) {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.ifu-invitation-letter {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: #ffffff;
+}
+
 .ifu-status {
   display: flex;
   align-items: flex-start;
@@ -732,6 +929,18 @@ html {
 
   .ifu-static-fact:nth-child(2) {
     border-right: 0;
+  }
+
+  .ifu-persona-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ifu-role-workbench {
+    grid-template-columns: 1fr;
+  }
+
+  .ifu-role-selection-panel {
+    position: static;
   }
 }
 
@@ -832,6 +1041,19 @@ html {
     grid-template-columns: 1fr;
     margin-top: -5rem;
     padding: 1.25rem;
+  }
+
+  .ifu-persona-grid,
+  .ifu-role-filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ifu-persona-button {
+    min-height: auto;
+  }
+
+  .ifu-role-table-scroll {
+    max-height: 62vh;
   }
 
   .ifu-static-fact {

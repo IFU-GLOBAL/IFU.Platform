@@ -43,8 +43,20 @@ const headerActionsHtml = `<h4 class="main-header__call__number">
 </h4><!-- /.main-header__call__number -->`;
 const joinButtonHrefPattern =
   /(<a class="elementor-button elementor-button-link elementor-size-sm" href=")[^"]*(">\s*<span class="elementor-button-content-wrapper">\s*<span class="elementor-button-text">Join IFU<\/span>)/g;
+const discoverMoreButtonPattern = /<a href="home\.html#"\s+class="cherito-btn">/g;
 const homepageRoleSectionPattern =
   /<style>\s*\.agrisphere-dashboard \*[\s\S]*?renderRoleTab\(currentRole,currentTab\);\s*<\/script>\s*<\/div>/;
+
+const homePersonas = [
+  ["grow-or-produce", "I grow, raise, or harvest", "Farmers, ranchers, fishers, producers, and cooperative members"],
+  ["buy-sell-or-move-food", "I buy, sell, process, or move food", "Buyers, importers, exporters, traders, processors, logistics, and storage"],
+  ["fund-or-protect-agriculture", "I fund, insure, or invest", "Investors, donors, banks, grant providers, sponsors, and insurance partners"],
+  ["teach-research-or-advise", "I teach, research, or advise", "Educators, researchers, agronomists, vets, advisors, data specialists, and trainers"],
+  ["govern-or-lead-regions", "I govern, regulate, or lead regions", "Government, institutions, country representatives, compliance, legal, and governance roles"],
+  ["support-communities", "I support communities or food security", "NGOs, foundations, volunteers, food security, nutrition, sustainability, and climate roles"],
+  ["build-or-tell-the-story", "I build technology or tell the story", "Technology partners, founders, software teams, media, journalists, and creators"],
+  ["visit-learn-or-participate", "I want to learn, visit, or participate", "Consumers, visitors, students, supporters, and public participants"],
+];
 
 function escapeHtml(value) {
   return String(value)
@@ -120,6 +132,16 @@ function readRoleCatalog() {
 function buildHomepageRoleSection() {
   const categories = readRoleCatalog();
   const roleCount = categories.reduce((total, category) => total + category.roles.length, 0);
+  const personaMarkup = homePersonas
+    .map(
+      ([slug, label, prompt]) => `<a class="ifu-home-persona-card" href="/discovery?persona=${encodeURIComponent(
+        slug,
+      )}#role-matrix">
+        <strong>${escapeHtml(label)}</strong>
+        <span>${escapeHtml(prompt)}</span>
+      </a>`,
+    )
+    .join("");
   const categoryMarkup = categories
     .map((category, index) => {
       const roleMarkup = category.roles
@@ -263,9 +285,52 @@ function buildHomepageRoleSection() {
   text-decoration: none !important;
 }
 
+.ifu-home-persona-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.ifu-home-persona-card {
+  display: flex;
+  min-height: 126px;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(8, 35, 59, .1);
+  border-radius: 16px;
+  background: #fff;
+  padding: 16px;
+  color: #08233b !important;
+  text-decoration: none !important;
+  box-shadow: 0 12px 30px rgba(8, 35, 59, .06);
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+
+.ifu-home-persona-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(11, 125, 53, .35);
+  background: #f0fbf4;
+}
+
+.ifu-home-persona-card strong {
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.ifu-home-persona-card span {
+  margin-top: 12px;
+  color: #667085;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 .ifu-home-role-categories {
   display: grid;
   gap: 12px;
+  max-height: 380px;
+  overflow: auto;
 }
 
 .ifu-home-role-category {
@@ -385,6 +450,10 @@ function buildHomepageRoleSection() {
   .ifu-home-role-stats {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .ifu-home-persona-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 560px) {
@@ -393,6 +462,10 @@ function buildHomepageRoleSection() {
   }
 
   .ifu-home-role-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .ifu-home-persona-grid {
     grid-template-columns: 1fr;
   }
 
@@ -407,19 +480,21 @@ function buildHomepageRoleSection() {
     <div class="ifu-home-role-header">
       <div>
         <p class="ifu-home-role-eyebrow">Role-Based Discovery Center</p>
-        <h2 id="ifu-home-role-title">Discover IFU Based on Your Role</h2>
-        <p>Explore the current IFU role catalog from the platform database seed: ${categories.length} role categories and ${roleCount} role pathways for producers, buyers, institutions, educators, funders, partners, and public visitors.</p>
+        <h2 id="ifu-home-role-title">Who are you in agriculture?</h2>
+        <p>Start with one personal question. Choose the path that sounds most like you, then open the discovery center to see your role value, IFU ecosystems, registration, and invitation options.</p>
       </div>
       <div class="ifu-home-role-stats" aria-label="IFU role catalog metrics">
         <div class="ifu-home-role-stat"><strong>${categories.length}</strong><span>Categories</span></div>
         <div class="ifu-home-role-stat"><strong>${roleCount}</strong><span>Roles</span></div>
-        <div class="ifu-home-role-stat"><strong>9</strong><span>Ecosystems</span></div>
+        <div class="ifu-home-role-stat"><strong>10</strong><span>Unified ecosystems</span></div>
       </div>
     </div>
 
+    <div class="ifu-home-persona-grid" aria-label="Choose your IFU role path">${personaMarkup}</div>
+
     <div class="ifu-home-role-controls">
       <input class="ifu-home-role-search" id="ifu-home-role-search" type="search" placeholder="Search all ${roleCount} roles" autocomplete="off">
-      <a class="ifu-home-role-cta" href="/discovery#role-matrix">Open full role discovery</a>
+      <a class="ifu-home-role-cta" href="/discovery#role-matrix">Open role discovery</a>
     </div>
 
     <div class="ifu-home-role-categories" id="ifu-home-role-categories">${categoryMarkup}</div>
@@ -489,7 +564,11 @@ function updateStaticHtml(filePath) {
 
   updatedHtml = updatedHtml
     .replace(headerActionsPattern, headerActionsHtml)
-    .replace(joinButtonHrefPattern, "$1/discovery#preview-application$2");
+    .replace(joinButtonHrefPattern, "$1/discovery#preview-application$2")
+    .replace(
+      discoverMoreButtonPattern,
+      '<a href="javascript:void(0)" aria-disabled="true" class="cherito-btn">',
+    );
 
   if (filePath === publicHomePath) {
     updatedHtml = updateHomepageRoleSection(updatedHtml);

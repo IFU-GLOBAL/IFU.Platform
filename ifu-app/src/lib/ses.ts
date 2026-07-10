@@ -6,6 +6,14 @@ type PreviewEmailInput = {
   selectedRoleTitles: string[];
 };
 
+type ReferralEmailInput = {
+  to: string;
+  referredName?: string;
+  referrerName: string;
+  discoveryUrl: string;
+  deleteUrl: string;
+};
+
 let sesClient: SESv2Client | null = null;
 
 function getSesClient() {
@@ -62,6 +70,55 @@ Thank you for submitting your IFU preview application. We received your selected
 ${roleList}
 
 The IFU team will review your interests and follow up with the next preview steps.
+
+International Farm Union`,
+            },
+          },
+        },
+      },
+    }),
+  );
+
+  return { status: "sent", messageId: result.MessageId ?? null, error: null };
+}
+
+export async function sendReferralInvitationEmail(input: ReferralEmailInput) {
+  const fromEmail = process.env.SES_FROM_EMAIL;
+  const client = getSesClient();
+
+  if (!client || !fromEmail) {
+    return { status: "skipped", messageId: null, error: "SES is not configured" };
+  }
+
+  const greeting = input.referredName ? `Hello ${input.referredName},` : "Hello,";
+
+  const result = await client.send(
+    new SendEmailCommand({
+      FromEmailAddress: fromEmail,
+      Destination: {
+        ToAddresses: [input.to],
+      },
+      ReplyToAddresses: process.env.SES_REPLY_TO_EMAIL
+        ? [process.env.SES_REPLY_TO_EMAIL]
+        : undefined,
+      Content: {
+        Simple: {
+          Subject: {
+            Data: "You were invited to preview IFU",
+          },
+          Body: {
+            Text: {
+              Data: `${greeting}
+
+${input.referrerName} recommended you for an early preview invitation to the International Farm Union platform.
+
+You can review the Role-Based Discovery Center here:
+${input.discoveryUrl}
+
+This is a one-time invitation. IFU will not contact you again unless you respond or submit your own preview application.
+
+To decline or request deletion of this referral record, use:
+${input.deleteUrl}
 
 International Farm Union`,
             },

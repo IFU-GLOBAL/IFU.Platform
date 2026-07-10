@@ -42,10 +42,19 @@ export default async function DiscoveryPage({ searchParams }: DiscoveryPageProps
 
   const categories = await getDiscoveryCategories();
   const roleCount = categories.reduce((total, category) => total + category.roles.length, 0);
+  const persona = typeof params.persona === "string" ? params.persona : undefined;
+  const roleParam = params.role;
+  const initialRoleSlugs = Array.isArray(roleParam)
+    ? roleParam
+    : typeof roleParam === "string"
+      ? roleParam.split(",").filter(Boolean)
+      : [];
 
   return (
     <DiscoveryCenter
       categories={categories}
+      initialPersonaSlug={persona}
+      initialRoleSlugs={initialRoleSlugs}
       metrics={{
         categories: categories.length || discoveryMetrics.categories,
         roles: roleCount || discoveryMetrics.roles,

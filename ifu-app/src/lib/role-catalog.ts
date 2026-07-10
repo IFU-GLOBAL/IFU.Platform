@@ -1,8 +1,16 @@
+import { rolePreviewValuesByTitle } from "@/lib/role-preview-values";
+
+export type DiscoveryLevel = "Foundation" | "Professional" | "Leadership";
+
 export type DiscoveryRole = {
   slug: string;
   title: string;
   summary: string;
   pathway: string;
+  level: DiscoveryLevel;
+  ecosystems: string[];
+  personaSlug: string;
+  personaLabel: string;
   categorySlug: string;
   categoryName: string;
   sortOrder: number;
@@ -15,6 +23,100 @@ export type DiscoveryCategory = {
   sortOrder: number;
   roles: DiscoveryRole[];
 };
+
+export type DiscoveryPersona = {
+  slug: string;
+  label: string;
+  prompt: string;
+  description: string;
+  categorySlugs: string[];
+};
+
+export const ecosystemNames = [
+  "AgriSphere",
+  "AgriNexus",
+  "AgriAcademie",
+  "AgriExchange",
+  "AgriCapital",
+  "AgriFunds",
+  "AgriShield",
+  "AgriCentral",
+  "AgriTourisme",
+  "AgriFinance",
+] as const;
+
+export const discoveryPersonas: DiscoveryPersona[] = [
+  {
+    slug: "grow-or-produce",
+    label: "I grow, raise, or harvest",
+    prompt: "Farmers, ranchers, fishers, producers, and cooperative members",
+    description: "Start here if your work begins with land, livestock, water, harvests, or producer groups.",
+    categorySlugs: [
+      "producers-and-primary-agriculture",
+      "cooperatives-and-associations",
+      "agritourism-and-hospitality",
+    ],
+  },
+  {
+    slug: "buy-sell-or-move-food",
+    label: "I buy, sell, process, or move food",
+    prompt: "Buyers, importers, exporters, traders, processors, logistics, and storage",
+    description: "For market access, trade, logistics, processing, distribution, and buyer relationships.",
+    categorySlugs: ["trade-and-marketplace"],
+  },
+  {
+    slug: "fund-or-protect-agriculture",
+    label: "I fund, insure, or invest",
+    prompt: "Investors, donors, banks, grant providers, sponsors, and insurance partners",
+    description: "For finance, grants, investment, risk, sponsorship, and capital pathways.",
+    categorySlugs: ["finance-and-funding", "strategic-partners-and-sponsors"],
+  },
+  {
+    slug: "teach-research-or-advise",
+    label: "I teach, research, or advise",
+    prompt: "Educators, researchers, agronomists, vets, advisors, data specialists, and trainers",
+    description: "For people who create knowledge, provide technical expertise, or support better decisions.",
+    categorySlugs: ["education-and-research", "agricultural-services", "data-and-intelligence"],
+  },
+  {
+    slug: "govern-or-lead-regions",
+    label: "I govern, regulate, or lead regions",
+    prompt: "Government, institutions, country representatives, compliance, legal, and governance roles",
+    description: "For public-sector, policy, compliance, country leadership, standards, and governance work.",
+    categorySlugs: [
+      "government-and-institutions",
+      "country-and-regional-leadership",
+      "compliance-and-certification",
+      "legal-and-governance",
+      "ifu-executive-and-advisory",
+    ],
+  },
+  {
+    slug: "support-communities",
+    label: "I support communities or food security",
+    prompt: "NGOs, foundations, volunteers, food security, nutrition, sustainability, and climate roles",
+    description: "For community impact, resilience, food access, sustainability, climate, and nonprofit programs.",
+    categorySlugs: [
+      "ngo-and-social-impact",
+      "food-security-and-nutrition",
+      "sustainability-and-agrifuture",
+    ],
+  },
+  {
+    slug: "build-or-tell-the-story",
+    label: "I build technology or tell the story",
+    prompt: "Technology partners, founders, software teams, media, journalists, and creators",
+    description: "For digital platforms, AI, data products, media, storytelling, and communications.",
+    categorySlugs: ["technology-and-innovation", "media-and-communications"],
+  },
+  {
+    slug: "visit-learn-or-participate",
+    label: "I want to learn, visit, or participate",
+    prompt: "Consumers, visitors, students, supporters, and public participants",
+    description: "For people exploring IFU, learning about agriculture, visiting farms, or supporting the mission.",
+    categorySlugs: ["public-and-visitors", "operations-and-administration"],
+  },
+];
 
 // Source: Current-IFU_Complete_AWS_GitHub_GoogleDrive_Developer_Package-Josiah1 (1).docx, section "IFU Role Master Seed Table".
 const categorySeeds = [
@@ -304,6 +406,128 @@ const roleSeeds = [
   ["executive-member", "Executive Member", "ifu-executive-and-advisory", "IFU Executive & Advisory", "Leadership"],
 ] as const;
 
+const primaryEcosystemByCategory: Record<string, string> = {
+  "producers-and-primary-agriculture": "AgriExchange",
+  "trade-and-marketplace": "AgriExchange",
+  "finance-and-funding": "AgriCapital",
+  "government-and-institutions": "AgriSphere",
+  "education-and-research": "AgriAcademie",
+  "ngo-and-social-impact": "AgriFunds",
+  "agricultural-services": "AgriCentral",
+  "technology-and-innovation": "AgriNexus",
+  "media-and-communications": "AgriNexus",
+  "public-and-visitors": "AgriNexus",
+  "agritourism-and-hospitality": "AgriTourisme",
+  "sustainability-and-agrifuture": "AgriSphere",
+  "cooperatives-and-associations": "AgriCentral",
+  "food-security-and-nutrition": "AgriFunds",
+  "compliance-and-certification": "AgriShield",
+  "data-and-intelligence": "AgriSphere",
+  "legal-and-governance": "AgriShield",
+  "operations-and-administration": "AgriCentral",
+  "country-and-regional-leadership": "AgriSphere",
+  "strategic-partners-and-sponsors": "AgriCapital",
+  "ifu-executive-and-advisory": "AgriSphere",
+};
+
+function uniqueValues(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+function getPrimaryEcosystem(categorySlug: string) {
+  return primaryEcosystemByCategory[categorySlug] ?? "AgriNexus";
+}
+
+function getPersonaForCategory(categorySlug: string) {
+  return (
+    discoveryPersonas.find((persona) => persona.categorySlugs.includes(categorySlug)) ??
+    discoveryPersonas[0]
+  );
+}
+
+function normalizeRoleLevel(title: string, categorySlug: string, rawLevel?: string | null): DiscoveryLevel {
+  const previewValue = rolePreviewValuesByTitle[title];
+
+  if (previewValue) {
+    return previewValue.level;
+  }
+
+  if (rawLevel === "Foundation" || rawLevel === "Professional" || rawLevel === "Leadership") {
+    return rawLevel;
+  }
+
+  const lowerTitle = title.toLowerCase();
+
+  if (
+    /\b(student|visitor|consumer|volunteer|supporter|member|smallholder|assistant)\b/.test(
+      lowerTitle,
+    )
+  ) {
+    return "Foundation";
+  }
+
+  if (
+    categorySlug === "country-and-regional-leadership" ||
+    categorySlug === "ifu-executive-and-advisory" ||
+    /\b(leader|director|representative|ambassador|board|executive|official|authority|minister|ministry|founder|manager|coordinator|sponsor|partner)\b/.test(
+      lowerTitle,
+    )
+  ) {
+    return "Leadership";
+  }
+
+  return "Professional";
+}
+
+function buildFallbackPreviewValue(title: string, categorySlug: string) {
+  const primaryEcosystem = getPrimaryEcosystem(categorySlug);
+
+  return `${title} members access ${primaryEcosystem} plus the IFU community in AgriNexus and training in AgriAcademie. Full role benefits published at platform launch.`;
+}
+
+function isPlaceholderSummary(summary?: string | null) {
+  return !summary || /^Express interest in the .+ role within .+\.$/.test(summary);
+}
+
+export function buildDiscoveryRole({
+  slug,
+  title,
+  categorySlug,
+  categoryName,
+  rawLevel,
+  summary,
+  sortOrder,
+}: {
+  slug: string;
+  title: string;
+  categorySlug: string;
+  categoryName: string;
+  rawLevel?: string | null;
+  summary?: string | null;
+  sortOrder: number;
+}): DiscoveryRole {
+  const persona = getPersonaForCategory(categorySlug);
+  const previewValue = rolePreviewValuesByTitle[title];
+  const primaryEcosystem = getPrimaryEcosystem(categorySlug);
+  const level = normalizeRoleLevel(title, categorySlug, rawLevel);
+
+  return {
+    slug,
+    title,
+    summary:
+      previewValue?.previewValue ??
+      (isPlaceholderSummary(summary) ? buildFallbackPreviewValue(title, categorySlug) : summary),
+    pathway: level,
+    level,
+    ecosystems: previewValue?.ecosystems ?? uniqueValues([primaryEcosystem, "AgriNexus", "AgriAcademie"]),
+    personaSlug: persona.slug,
+    personaLabel: persona.label,
+    categorySlug,
+    categoryName,
+    sortOrder,
+  };
+}
+
 export const discoveryCategories: DiscoveryCategory[] = categorySeeds.map(
   ([slug, name, summary], categoryIndex) => ({
     slug,
@@ -312,15 +536,16 @@ export const discoveryCategories: DiscoveryCategory[] = categorySeeds.map(
     sortOrder: categoryIndex + 1,
     roles: roleSeeds
       .filter(([, , categorySlug]) => categorySlug === slug)
-      .map(([roleSlug, roleName, , categoryName, level], roleIndex) => ({
-        slug: roleSlug,
-        title: roleName,
-        summary: `Express interest in the ${roleName} role within ${categoryName}.`,
-        pathway: level,
-        categorySlug: slug,
-        categoryName,
-        sortOrder: roleIndex + 1,
-      })),
+      .map(([roleSlug, roleName, , categoryName, level], roleIndex) =>
+        buildDiscoveryRole({
+          slug: roleSlug,
+          title: roleName,
+          categorySlug: slug,
+          categoryName,
+          rawLevel: level,
+          sortOrder: roleIndex + 1,
+        }),
+      ),
   }),
 );
 
@@ -330,5 +555,5 @@ export const discoveryMetrics = {
   categories: discoveryCategories.length,
   roles: discoveryRoles.length,
   countries: "190+",
-  ecosystems: 9,
+  ecosystems: ecosystemNames.length,
 };

@@ -15,6 +15,9 @@ export type PreviewApplicationPayload = {
   recommendedContactEmail?: string;
   recommendedContactRelationship?: string;
   message?: string;
+  privacyConsent: boolean;
+  referralConsent: boolean;
+  website?: string;
 };
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,6 +35,10 @@ function cleanStringArray(value: unknown) {
     .filter((item): item is string => typeof item === "string")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function cleanBoolean(value: unknown) {
+  return value === true;
 }
 
 export function parsePreviewApplicationPayload(value: unknown) {
@@ -57,7 +64,14 @@ export function parsePreviewApplicationPayload(value: unknown) {
     recommendedContactEmail: cleanString(body.recommendedContactEmail).toLowerCase(),
     recommendedContactRelationship: cleanString(body.recommendedContactRelationship),
     message: cleanString(body.message),
+    privacyConsent: cleanBoolean(body.privacyConsent),
+    referralConsent: cleanBoolean(body.referralConsent),
+    website: cleanString(body.website),
   };
+
+  if (payload.website) {
+    return { ok: true as const, payload, spam: true as const };
+  }
 
   if (!payload.firstName || !payload.lastName) {
     return { ok: false as const, error: "First and last name are required" };
@@ -67,8 +81,29 @@ export function parsePreviewApplicationPayload(value: unknown) {
     return { ok: false as const, error: "A valid email is required" };
   }
 
+  if (!payload.country) {
+    return { ok: false as const, error: "Country is required" };
+  }
+
+  if (!payload.privacyConsent) {
+    return { ok: false as const, error: "Privacy consent is required" };
+  }
+
   if (payload.recommendedContactEmail && !emailPattern.test(payload.recommendedContactEmail)) {
     return { ok: false as const, error: "Recommended contact email is invalid" };
+  }
+
+  const hasReferral =
+    payload.recommendedContactName ||
+    payload.recommendedContactEmail ||
+    payload.recommendedContactRelationship;
+
+  if (hasReferral && !payload.recommendedContactEmail) {
+    return { ok: false as const, error: "Recommended contact email is required when sharing a referral" };
+  }
+
+  if (hasReferral && !payload.referralConsent) {
+    return { ok: false as const, error: "Referral consent is required when sharing a referral" };
   }
 
   if (payload.selectedRoleSlugs.length === 0) {

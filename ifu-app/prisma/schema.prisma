@@ -156,6 +156,10 @@ model PreviewSubmission {
   recommendedContactEmail        String?
   recommendedContactRelationship String?
   message                        String?
+  privacyConsentAccepted         Boolean                 @default(false)
+  privacyConsentAcceptedAt       DateTime?
+  referralConsentAccepted        Boolean                 @default(false)
+  referralConsentAcceptedAt      DateTime?
   emailStatus                    String                  @default("pending")
   emailMessageId                 String?
   emailError                     String?
@@ -215,17 +219,24 @@ model PreviewApplicationRole {
 }
 
 model RecommendedContact {
-  id                   String              @id @default(cuid())
-  previewSubmissionId  String?
-  previewApplicationId String?
-  name                 String
-  organization         String?
-  email                String?
-  relationship         String?
-  reason               String?
-  previewSubmission    PreviewSubmission?  @relation(fields: [previewSubmissionId], references: [id], onDelete: Cascade)
-  previewApplication   PreviewApplication? @relation(fields: [previewApplicationId], references: [id], onDelete: Cascade)
-  createdAt            DateTime            @default(now())
+  id                     String              @id @default(cuid())
+  previewSubmissionId    String?
+  previewApplicationId   String?
+  name                   String
+  organization           String?
+  email                  String?
+  relationship           String?
+  reason                 String?
+  consentConfirmed       Boolean             @default(false)
+  consentConfirmedAt     DateTime?
+  oneTimeInviteStatus    String              @default("pending")
+  oneTimeInviteMessageId String?
+  oneTimeInviteError     String?
+  oneTimeInviteSentAt    DateTime?
+  deleteAfter            DateTime?
+  previewSubmission      PreviewSubmission?  @relation(fields: [previewSubmissionId], references: [id], onDelete: Cascade)
+  previewApplication     PreviewApplication? @relation(fields: [previewApplicationId], references: [id], onDelete: Cascade)
+  createdAt              DateTime            @default(now())
 
   @@index([previewSubmissionId])
   @@index([previewApplicationId])

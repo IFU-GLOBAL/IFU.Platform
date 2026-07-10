@@ -1,4 +1,8 @@
-import { discoveryCategories, type DiscoveryCategory } from "@/lib/role-catalog";
+import {
+  buildDiscoveryRole,
+  discoveryCategories,
+  type DiscoveryCategory,
+} from "@/lib/role-catalog";
 
 export async function getDiscoveryCategories(): Promise<DiscoveryCategory[]> {
   try {
@@ -22,13 +26,15 @@ export async function getDiscoveryCategories(): Promise<DiscoveryCategory[]> {
       summary: category.summary,
       sortOrder: category.sortOrder,
       roles: category.roles.map((role) => ({
-        slug: role.slug,
-        title: role.title,
-        summary: role.summary,
-        pathway: role.pathway,
-        categorySlug: category.slug,
-        categoryName: category.name,
-        sortOrder: role.sortOrder,
+        ...buildDiscoveryRole({
+          slug: role.slug,
+          title: role.title,
+          categorySlug: category.slug,
+          categoryName: category.name,
+          rawLevel: role.level ?? role.pathway,
+          summary: role.summary,
+          sortOrder: role.sortOrder,
+        }),
       })),
     }));
   } catch {
