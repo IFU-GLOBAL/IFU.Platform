@@ -5,6 +5,7 @@ import {
   BadgeCheck,
   CheckCircle2,
   Mail,
+  MessageCircle,
   Share2,
   UserPlus,
   Users,
@@ -40,7 +41,30 @@ const letterParagraphs = [
   "We welcome your participation, feedback, referrals, and leadership interest as IFU prepares the next phase of platform access.",
 ];
 
-const shareInvitationHref = `mailto:?subject=${encodeURIComponent("IFU preview invitation")}&body=${encodeURIComponent("You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you: https://ifuplatform.com/discovery")}`;
+const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fdashboard";
+const discoveryShareUrl = "https://ifuplatform.com/discovery";
+const invitationShareText =
+  "You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you.";
+const encodedShareText = encodeURIComponent(`${invitationShareText} ${discoveryShareUrl}`);
+const shareLinks = [
+  {
+    label: "Email",
+    href: `mailto:?subject=${encodeURIComponent("IFU preview invitation")}&body=${encodedShareText}`,
+    icon: Mail,
+  },
+  {
+    label: "LinkedIn",
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(discoveryShareUrl)}`,
+    icon: Share2,
+    external: true,
+  },
+  {
+    label: "WhatsApp",
+    href: `https://wa.me/?text=${encodedShareText}`,
+    icon: MessageCircle,
+    external: true,
+  },
+];
 
 export default function InvitationPage() {
   return (
@@ -91,12 +115,22 @@ export default function InvitationPage() {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <IFUActionLink href="/register" icon={UserPlus}>
+              <IFUActionLink href={cognitoRegisterHref} icon={UserPlus}>
                 Register
               </IFUActionLink>
-              <IFUActionLink href={shareInvitationHref} variant="outline" icon={Share2}>
-                Share invitation
-              </IFUActionLink>
+              {shareLinks.map((link) => (
+                <IFUActionLink
+                  key={link.label}
+                  href={link.href}
+                  variant="outline"
+                  icon={link.icon}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noreferrer" : undefined}
+                  ariaLabel={`Share IFU invitation by ${link.label}`}
+                >
+                  {link.label}
+                </IFUActionLink>
+              ))}
               <IFUActionLink href="/discovery#role-matrix" variant="outline" icon={Users}>
                 Choose roles
               </IFUActionLink>

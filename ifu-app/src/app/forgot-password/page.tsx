@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   description: "Recover access to an IFU platform account.",
 };
 
+const cognitoLoginHref = "/api/auth/login?returnTo=%2Fdashboard";
+
 export default function ForgotPasswordPage() {
   return (
     <IFUPage>
@@ -20,14 +22,14 @@ export default function ForgotPasswordPage() {
         title="Reset password"
         description="Password recovery is handled by the IFU Cognito user pool."
       >
-        <IFUActionLink href="/login" variant="ghost" icon={ArrowLeft}>
+        <IFUActionLink href={cognitoLoginHref} variant="ghost" icon={ArrowLeft}>
           Sign in
         </IFUActionLink>
       </IFUHero>
 
       <IFUSection>
         <IFUContainer className="py-10">
-          <IFUActionLink href="/api/auth/login?returnTo=%2Fdashboard" icon={KeyRound}>
+          <IFUActionLink href={cognitoLoginHref} icon={KeyRound}>
             Continue to Cognito
           </IFUActionLink>
         </IFUContainer>

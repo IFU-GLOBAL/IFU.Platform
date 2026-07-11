@@ -28,6 +28,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, emailStatus: "skipped" }, { status: 201 });
   }
 
+  // TODO: Add configured CAPTCHA or AWS WAF bot protection before production launch.
   const prisma = getPrisma();
   const payload = parsed.payload;
   const now = new Date();
@@ -50,6 +51,17 @@ export async function POST(request: Request) {
         title: true,
       },
     });
+    const existingReferralInvite = payload.recommendedContactEmail
+      ? await prisma.recommendedContact.findFirst({
+          where: {
+            email: payload.recommendedContactEmail,
+            oneTimeInviteStatus: "sent",
+          },
+          select: {
+            id: true,
+          },
+        })
+      : null;
 
     const submission = await prisma.previewSubmission.create({
       data: {
@@ -92,6 +104,12 @@ export async function POST(request: Request) {
                 relationship: payload.recommendedContactRelationship || null,
                 consentConfirmed: payload.referralConsent,
                 consentConfirmedAt: payload.referralConsent ? now : null,
+                oneTimeInviteStatus: existingReferralInvite
+                  ? "duplicate_skipped"
+                  : "pending",
+                oneTimeInviteError: existingReferralInvite
+                  ? "A one-time invitation was already sent to this email."
+                  : null,
                 deleteAfter,
               },
             }
@@ -125,7 +143,7 @@ export async function POST(request: Request) {
         },
       });
 
-      if (payload.recommendedContactEmail && payload.referralConsent) {
+      if (payload.recommendedContactEmail && payload.referralConsent && !existingReferralInvite) {
         try {
           const referralEmailResult = await sendReferralInvitationEmail({
             to: payload.recommendedContactEmail,

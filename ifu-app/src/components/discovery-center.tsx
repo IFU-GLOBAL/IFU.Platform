@@ -8,6 +8,8 @@ import {
   Handshake,
   Languages,
   LoaderCircle,
+  Mail,
+  MessageCircle,
   Search,
   Send,
   Share2,
@@ -123,6 +125,19 @@ const navItems = [
   { label: "Gallery", href: "/gallery/" },
 ];
 
+const cognitoLoginHref = "/api/auth/login?returnTo=%2Fdashboard";
+const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fdashboard";
+const discoveryShareUrl = "https://ifuplatform.com/discovery";
+const invitationShareText =
+  "You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you.";
+
+const socialLinks = [
+  { label: "Facebook", shortLabel: "f", href: "https://facebook.com/IFUPlatform" },
+  { label: "X", shortLabel: "x", href: "https://x.com/IFUPlatform" },
+  { label: "Instagram", shortLabel: "ig", href: "https://instagram.com/IFUPlatform" },
+  { label: "YouTube", shortLabel: "yt", href: "https://youtube.com/@IFUPlatform" },
+];
+
 const impactStats = [
   { value: "190+", label: "Countries Served", icon: Globe2 },
   { value: "2M+", label: "Farmers Empowered", icon: Users },
@@ -204,11 +219,29 @@ export function DiscoveryCenter({
       formState.recommendedContactEmail ||
       formState.recommendedContactRelationship,
   );
-  const registerHref =
-    selectedRoleSlugs.length > 0
-      ? `/register?roles=${encodeURIComponent(selectedRoleSlugs.join(","))}`
-      : "/register";
-  const shareHref = `mailto:?subject=${encodeURIComponent("IFU preview invitation")}&body=${encodeURIComponent("You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you: https://ifuplatform.com/discovery")}`;
+  const roleShareUrl = selectedRoleSlugs.length > 0
+    ? `${discoveryShareUrl}?role=${encodeURIComponent(selectedRoleSlugs.join(","))}#role-matrix`
+    : discoveryShareUrl;
+  const encodedShareText = encodeURIComponent(`${invitationShareText} ${roleShareUrl}`);
+  const shareLinks = [
+    {
+      label: "Email",
+      href: `mailto:?subject=${encodeURIComponent("IFU preview invitation")}&body=${encodedShareText}`,
+      icon: Mail,
+    },
+    {
+      label: "LinkedIn",
+      href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(roleShareUrl)}`,
+      icon: Share2,
+      external: true,
+    },
+    {
+      label: "WhatsApp",
+      href: `https://wa.me/?text=${encodedShareText}`,
+      icon: MessageCircle,
+      external: true,
+    },
+  ];
 
   const filteredRoles = roles.filter((role) => {
     const matchesPersona = selectedPersonaSlug === "all" || role.personaSlug === selectedPersonaSlug;
@@ -303,9 +336,15 @@ export function DiscoveryCenter({
       <div className="ifu-static-topbar">
         <IFUContainer size="wide" className="ifu-static-topbar__inner">
           <div className="ifu-static-socials" aria-label="Social links">
-            {["f", "x", "ig", "yt"].map((label) => (
-              <a key={label} href="#welcome" aria-label={label}>
-                {label}
+            {socialLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                aria-label={`${link.label} placeholder`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {link.shortLabel}
               </a>
             ))}
           </div>
@@ -340,9 +379,9 @@ export function DiscoveryCenter({
 
           <div className="ifu-static-auth">
             <UserRound className="h-5 w-5" aria-hidden="true" />
-            <Link href="/login">Login</Link>
+            <Link href={cognitoLoginHref}>Login</Link>
             <span aria-hidden="true">|</span>
-            <Link href="#preview-application" className="ifu-static-join">
+            <Link href={cognitoRegisterHref} className="ifu-static-join">
               Join IFU
             </Link>
           </div>
@@ -653,12 +692,25 @@ export function DiscoveryCenter({
                       ))}
                     </div>
                     <div className="mt-5 grid gap-3">
-                      <IFUActionLink href={registerHref} icon={UserPlus}>
+                      <IFUActionLink href={cognitoRegisterHref} icon={UserPlus}>
                         Register
                       </IFUActionLink>
-                      <IFUActionLink href={shareHref} variant="outline" icon={Share2}>
-                        Share invitation
-                      </IFUActionLink>
+                      <div className="grid gap-2 sm:grid-cols-3">
+                        {shareLinks.map((link) => (
+                          <IFUActionLink
+                            key={link.label}
+                            href={link.href}
+                            variant="outline"
+                            icon={link.icon}
+                            target={link.external ? "_blank" : undefined}
+                            rel={link.external ? "noreferrer" : undefined}
+                            ariaLabel={`Share IFU invitation by ${link.label}`}
+                            className="ifu-button-compact"
+                          >
+                            {link.label}
+                          </IFUActionLink>
+                        ))}
+                      </div>
                       <IFUActionLink href="#preview-application" variant="outline" icon={Send}>
                         Share contact interests
                       </IFUActionLink>

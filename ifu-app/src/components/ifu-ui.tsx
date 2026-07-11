@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type {
+  AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   HTMLAttributes,
   ReactNode,
@@ -144,15 +145,27 @@ export function IFUActionLink({
   icon: Icon,
   variant = "primary",
   className,
+  target,
+  rel,
+  ariaLabel,
 }: {
   href: string;
   children: ReactNode;
   icon?: LucideIcon;
   variant?: ButtonVariant;
   className?: string;
+  target?: AnchorHTMLAttributes<HTMLAnchorElement>["target"];
+  rel?: string;
+  ariaLabel?: string;
 }) {
   return (
-    <Link href={href} className={cn("ifu-button", `ifu-button-${variant}`, className)}>
+    <Link
+      href={href}
+      className={cn("ifu-button", `ifu-button-${variant}`, className)}
+      target={target}
+      rel={rel}
+      aria-label={ariaLabel}
+    >
       {Icon ? <Icon className="h-4 w-4" aria-hidden="true" /> : null}
       {children}
     </Link>

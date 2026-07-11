@@ -32,9 +32,9 @@ const headerActionsPattern =
   /<h4 class="main-header__call__number">[\s\S]*?<span class="elementor-button-text">Join IFU<\/span>[\s\S]*?<\/h4><!-- \/.main-header__call__number -->/;
 const headerActionsHtml = `<h4 class="main-header__call__number">
   <span class="ifu-header-action-links">
-    <a href="/login">Login</a>
+    <a href="/api/auth/login?returnTo=%2Fdashboard">Login</a>
     <span aria-hidden="true">&nbsp; | &nbsp;</span>
-    <a class="elementor-button elementor-button-link elementor-size-sm" href="/discovery#preview-application">
+    <a class="elementor-button elementor-button-link elementor-size-sm" href="/api/auth/register?returnTo=%2Fdashboard">
       <span class="elementor-button-content-wrapper">
         <span class="elementor-button-text">Join IFU</span>
       </span>
@@ -44,6 +44,13 @@ const headerActionsHtml = `<h4 class="main-header__call__number">
 const joinButtonHrefPattern =
   /(<a class="elementor-button elementor-button-link elementor-size-sm" href=")[^"]*(">\s*<span class="elementor-button-content-wrapper">\s*<span class="elementor-button-text">Join IFU<\/span>)/g;
 const discoverMoreButtonPattern = /<a href="home\.html#"\s+class="cherito-btn">/g;
+const socialHrefReplacements = [
+  [/href="https:\/\/facebook\.com"/g, 'href="https://facebook.com/IFUPlatform" aria-label="Facebook placeholder"'],
+  [/href="https:\/\/twitter\.com"/g, 'href="https://x.com/IFUPlatform" aria-label="X placeholder"'],
+  [/href="https:\/\/instagram\.com"/g, 'href="https://instagram.com/IFUPlatform" aria-label="Instagram placeholder"'],
+  [/href="https:\/\/youtube\.com"/g, 'href="https://youtube.com/@IFUPlatform" aria-label="YouTube placeholder"'],
+  [/href="home\.html#"/g, 'href="https://instagram.com/IFUPlatform" aria-label="Instagram placeholder"'],
+];
 const homepageRoleSectionPattern =
   /<style>\s*\.agrisphere-dashboard \*[\s\S]*?renderRoleTab\(currentRole,currentTab\);\s*<\/script>\s*<\/div>/;
 
@@ -192,67 +199,40 @@ function buildHomepageRoleSection() {
 .ifu-home-role-header {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
   align-items: center;
   justify-items: center;
   margin-bottom: 28px;
   text-align: center;
 }
 
-.ifu-home-role-eyebrow {
-  margin: 0 0 10px;
-  color: #0b7d35;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: .14em;
-  text-transform: uppercase;
+.ifu-home-role-intro {
+  max-width: 980px;
+  margin: 0 auto;
 }
 
-.ifu-home-role-header h2 {
+.ifu-home-role-intro h2 {
   margin: 0;
   color: #08233b;
   font-size: clamp(30px, 4vw, 48px);
-  line-height: 1.05;
+  line-height: 1.08;
 }
 
-.ifu-home-role-header p {
-  max-width: 760px;
-  margin: 14px auto 0;
+.ifu-home-role-intro p {
+  margin: 16px auto 0;
   color: #55616f;
   font-size: 16px;
   line-height: 1.7;
 }
 
-.ifu-home-role-stats {
-  display: grid;
-  width: min(100%, 520px);
-  grid-template-columns: repeat(3, minmax(94px, 1fr));
-  gap: 10px;
+.ifu-home-role-intro h3 {
+  margin: 22px auto 0;
+  color: #08233b;
+  font-size: clamp(20px, 2.6vw, 30px);
+  line-height: 1.2;
 }
 
-.ifu-home-role-stat {
-  min-width: 110px;
-  border: 1px solid rgba(8, 35, 59, .1);
-  border-radius: 16px;
-  background: #fff;
-  padding: 14px;
-  text-align: center;
-  box-shadow: 0 12px 30px rgba(8, 35, 59, .06);
-}
-
-.ifu-home-role-stat strong {
-  display: block;
-  color: #0b7d35;
-  font-size: 26px;
-  line-height: 1;
-}
-
-.ifu-home-role-stat span {
-  display: block;
-  margin-top: 6px;
-  color: #667085;
-  font-size: 12px;
-  font-weight: 700;
+.ifu-home-role-intro strong {
+  color: #08233b;
 }
 
 .ifu-home-role-controls {
@@ -465,10 +445,6 @@ function buildHomepageRoleSection() {
     padding: 44px 14px;
   }
 
-  .ifu-home-role-stats {
-    grid-template-columns: 1fr;
-  }
-
   .ifu-home-persona-grid {
     grid-template-columns: 1fr;
   }
@@ -482,15 +458,17 @@ function buildHomepageRoleSection() {
 <section class="ifu-home-role-catalog" id="ifu-home-role-catalog" aria-labelledby="ifu-home-role-title">
   <div class="ifu-home-role-shell">
     <div class="ifu-home-role-header">
-      <div>
-        <p class="ifu-home-role-eyebrow">Role-Based Discovery Center</p>
-        <h2 id="ifu-home-role-title">Who are you in agriculture?</h2>
-        <p>Start with one personal question. Choose the path that sounds most like you, then open the discovery center to see your role value, IFU ecosystems, registration, and invitation options.</p>
-      </div>
-      <div class="ifu-home-role-stats" aria-label="IFU role catalog metrics">
-        <div class="ifu-home-role-stat"><strong>${categories.length}</strong><span>Categories</span></div>
-        <div class="ifu-home-role-stat"><strong>${roleCount}</strong><span>Roles</span></div>
-        <div class="ifu-home-role-stat"><strong>10</strong><span>Unified ecosystems</span></div>
+      <div class="ifu-home-role-intro">
+        <h2 id="ifu-home-role-title">🌍 Discover Your Place in the Global Agriculture ecosystem</h2>
+        <p>The International Farm Union (IFU) Platform is built for everyone in the global food and agriculture value chain. Whether you're a farmer, buyer, investor, researcher, student, government official, nonprofit leader, or simply exploring agriculture, IFU brings together people, organizations, and the world agricultural communities across the entire food and agriculture value chain in one platform.</p>
+        <p>IFU helps you discover the right people, programs, funding, markets, training, and opportunities in 190+ countries, 2Million+ farmers, 500+ partners in the world—all from one ai powered intelligent global platform.</p>
+        <h3><strong>Who are you in agriculture?</strong></h3>
+        <p>Simply choose your role from 20+ categories and 260+ real agricultural roles roles below, and in less than one minute we'll personalize your IFU experience and we'll instantly show you the opportunities, tools, training, funding, intelligence, networking and global connections created specifically for you in your own Private Personalized Command Center Dashboard.</p>
+        <h3><strong>WELCOME TO THE INTERNATIONAL FARM UNION (IFU) PLATFORM ROLES BASED DISCOVERY CENTER</strong></h3>
+        <p><strong>🌍 IFU Is Live. 🌎 IFU Is Global. 📍 Yet IFU Is Local.</strong></p>
+        <p><strong>Powered by 10 AI Unified Ecosystems. One Platform. Endless Opportunities.</strong> Real-Time Intelligence • Global Connections • Local Opportunities</p>
+        <p>➡️ Choose your role to get started.</p>
+        <h3><strong>Search and select your IFU roles below</strong></h3>
       </div>
     </div>
 
@@ -498,7 +476,6 @@ function buildHomepageRoleSection() {
 
     <div class="ifu-home-role-controls">
       <input class="ifu-home-role-search" id="ifu-home-role-search" type="search" placeholder="Search all ${roleCount} roles" autocomplete="off">
-      <a class="ifu-home-role-cta" href="/discovery#role-matrix">Open role discovery</a>
     </div>
 
     <div class="ifu-home-role-categories" id="ifu-home-role-categories">${categoryMarkup}</div>
@@ -556,7 +533,16 @@ function updateHomepageRoleSection(html) {
   return html.replace(homepageRoleSectionPattern, buildHomepageRoleSection());
 }
 
-function updateStaticHtml(filePath) {
+function shouldUpdateStaticTextFile(filePath, fileName) {
+  return (
+    fileName.endsWith(".html") ||
+    fileName.endsWith(".css") ||
+    fileName.endsWith(".json") ||
+    filePath.includes("/wp-json/")
+  );
+}
+
+function updateStaticText(filePath) {
   const html = readFileSync(filePath, "utf8");
   let updatedHtml = html;
 
@@ -568,11 +554,16 @@ function updateStaticHtml(filePath) {
 
   updatedHtml = updatedHtml
     .replace(headerActionsPattern, headerActionsHtml)
-    .replace(joinButtonHrefPattern, "$1/discovery#preview-application$2")
+    .replace(joinButtonHrefPattern, "$1/api/auth/register?returnTo=%2Fdashboard$2")
     .replace(
       discoverMoreButtonPattern,
       '<a href="javascript:void(0)" aria-disabled="true" class="cherito-btn">',
-    );
+    )
+    .replaceAll("Watch Video", "Video Coming Soon");
+
+  for (const [pattern, replacement] of socialHrefReplacements) {
+    updatedHtml = updatedHtml.replace(pattern, replacement);
+  }
 
   if (filePath === publicHomePath) {
     updatedHtml = updateHomepageRoleSection(updatedHtml);
@@ -586,19 +577,19 @@ function updateStaticHtml(filePath) {
   return true;
 }
 
-function updateStaticHtmlFiles(directory) {
+function updateStaticTextFiles(directory) {
   let updateCount = 0;
 
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const entryPath = resolve(directory, entry.name);
 
     if (entry.isDirectory()) {
-      updateCount += updateStaticHtmlFiles(entryPath);
+      updateCount += updateStaticTextFiles(entryPath);
       continue;
     }
 
-    if (entry.isFile() && entry.name.endsWith(".html")) {
-      updateCount += updateStaticHtml(entryPath) ? 1 : 0;
+    if (entry.isFile() && shouldUpdateStaticTextFile(entryPath, entry.name)) {
+      updateCount += updateStaticText(entryPath) ? 1 : 0;
     }
   }
 
@@ -624,5 +615,5 @@ console.log(
   )}.`,
 );
 
-const updatedCount = updateStaticHtmlFiles(publicRoot);
-console.log(`Updated static navigation and account links in ${updatedCount} HTML files.`);
+const updatedCount = updateStaticTextFiles(publicRoot);
+console.log(`Updated static navigation, placeholders, and account links in ${updatedCount} text files.`);

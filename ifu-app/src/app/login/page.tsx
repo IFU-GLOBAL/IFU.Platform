@@ -36,6 +36,8 @@ const errorMessages: Record<string, string> = {
   missing_config: "Cognito setup is incomplete.",
 };
 
+const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fdashboard";
+
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = (await searchParams) ?? {};
   const session = await getAuthSession();
@@ -132,7 +134,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               Account help
             </h2>
             <div className="mt-4 flex flex-col gap-3">
-              <IFUActionLink href="/register" variant="outline" className="ifu-button-start">
+              <IFUActionLink href={cognitoRegisterHref} variant="outline" className="ifu-button-start">
                 Create account
               </IFUActionLink>
               <IFUActionLink href="/forgot-password" variant="outline" className="ifu-button-start">
