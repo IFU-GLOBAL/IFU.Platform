@@ -32,9 +32,9 @@ const headerActionsPattern =
   /<h4 class="main-header__call__number">[\s\S]*?<span class="elementor-button-text">Join IFU<\/span>[\s\S]*?<\/h4><!-- \/.main-header__call__number -->/;
 const headerActionsHtml = `<h4 class="main-header__call__number">
   <span class="ifu-header-action-links">
-    <a href="/api/auth/login?returnTo=%2Fdashboard">Login</a>
+    <a href="/api/auth/login?returnTo=%2Fprofile">Login</a>
     <span aria-hidden="true">&nbsp; | &nbsp;</span>
-    <a class="elementor-button elementor-button-link elementor-size-sm" href="/api/auth/register?returnTo=%2Fdashboard">
+    <a class="elementor-button elementor-button-link elementor-size-sm" href="/api/auth/register?returnTo=%2Fprofile">
       <span class="elementor-button-content-wrapper">
         <span class="elementor-button-text">Join IFU</span>
       </span>
@@ -554,7 +554,7 @@ function updateStaticText(filePath) {
 
   updatedHtml = updatedHtml
     .replace(headerActionsPattern, headerActionsHtml)
-    .replace(joinButtonHrefPattern, "$1/api/auth/register?returnTo=%2Fdashboard$2")
+    .replace(joinButtonHrefPattern, "$1/api/auth/register?returnTo=%2Fprofile$2")
     .replace(
       discoverMoreButtonPattern,
       '<a href="javascript:void(0)" aria-disabled="true" class="cherito-btn">',

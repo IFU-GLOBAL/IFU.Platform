@@ -26,11 +26,21 @@ async function cleanupExpiredReferralContacts(request: NextRequest) {
   }
 
   try {
+    const now = new Date();
     const result = await getPrisma().recommendedContact.deleteMany({
       where: {
-        deleteAfter: {
-          lte: new Date(),
-        },
+        OR: [
+          {
+            deleteAfter: {
+              lte: now,
+            },
+          },
+          {
+            deleteTokenExpiresAt: {
+              lte: now,
+            },
+          },
+        ],
       },
     });
 

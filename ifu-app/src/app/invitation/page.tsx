@@ -41,7 +41,7 @@ const letterParagraphs = [
   "We welcome your participation, feedback, referrals, and leadership interest as IFU prepares the next phase of platform access.",
 ];
 
-const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fdashboard";
+const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fprofile";
 const discoveryShareUrl = "https://ifuplatform.com/discovery";
 const invitationShareText =
   "You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you.";

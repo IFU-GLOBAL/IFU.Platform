@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/prisma";
 import { parsePreviewApplicationPayload } from "@/lib/preview-application";
 import {
+  buildReferralDeleteUrl,
+  createReferralDeleteToken,
+} from "@/lib/referral-delete-token";
+import {
   sendPreviewConfirmationEmail,
   sendReferralInvitationEmail,
 } from "@/lib/ses";
@@ -28,11 +32,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, emailStatus: "skipped" }, { status: 201 });
   }
 
-  // TODO: Add configured CAPTCHA or AWS WAF bot protection before production launch.
+  // TODO: Add real CAPTCHA or AWS WAF bot protection before production launch.
   const prisma = getPrisma();
   const payload = parsed.payload;
   const now = new Date();
   const deleteAfter = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+  const referralDeleteToken = payload.recommendedContactEmail
+    ? createReferralDeleteToken(now)
+    : null;
   const appBaseUrl =
     process.env.APP_BASE_URL ??
     process.env.NEXT_PUBLIC_APP_URL ??
@@ -110,6 +117,8 @@ export async function POST(request: Request) {
                 oneTimeInviteError: existingReferralInvite
                   ? "A one-time invitation was already sent to this email."
                   : null,
+                deleteTokenHash: referralDeleteToken?.tokenHash,
+                deleteTokenExpiresAt: referralDeleteToken?.expiresAt,
                 deleteAfter,
               },
             }
@@ -150,7 +159,9 @@ export async function POST(request: Request) {
             referredName: payload.recommendedContactName,
             referrerName: `${payload.firstName} ${payload.lastName}`.trim(),
             discoveryUrl: `${appBaseUrl}/discovery`,
-            deleteUrl: `${appBaseUrl}/privacy#delete-request`,
+            deleteUrl: referralDeleteToken
+              ? buildReferralDeleteUrl(appBaseUrl, referralDeleteToken.token)
+              : `${appBaseUrl}/privacy#delete-request`,
           });
 
           await prisma.recommendedContact.updateMany({

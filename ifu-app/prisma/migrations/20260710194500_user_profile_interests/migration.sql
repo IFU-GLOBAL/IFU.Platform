@@ -1,0 +1,2 @@
+ALTER TABLE "UserProfile"
+ADD COLUMN "interests" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];

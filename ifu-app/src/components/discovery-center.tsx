@@ -125,8 +125,8 @@ const navItems = [
   { label: "Gallery", href: "/gallery/" },
 ];
 
-const cognitoLoginHref = "/api/auth/login?returnTo=%2Fdashboard";
-const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fdashboard";
+const cognitoLoginHref = "/api/auth/login?returnTo=%2Fprofile";
+const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fprofile";
 const discoveryShareUrl = "https://ifuplatform.com/discovery";
 const invitationShareText =
   "You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you.";

@@ -116,6 +116,7 @@ model UserProfile {
   longitude         Float?
   organization      String?
   phone             String?
+  interests         String[] @default([])
   profileCompletion Int      @default(0)
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt         DateTime @default(now())
@@ -233,6 +234,8 @@ model RecommendedContact {
   oneTimeInviteMessageId String?
   oneTimeInviteError     String?
   oneTimeInviteSentAt    DateTime?
+  deleteTokenHash        String?             @unique
+  deleteTokenExpiresAt   DateTime?
   deleteAfter            DateTime?
   previewSubmission      PreviewSubmission?  @relation(fields: [previewSubmissionId], references: [id], onDelete: Cascade)
   previewApplication     PreviewApplication? @relation(fields: [previewApplicationId], references: [id], onDelete: Cascade)

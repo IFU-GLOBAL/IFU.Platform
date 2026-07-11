@@ -36,7 +36,7 @@ const errorMessages: Record<string, string> = {
   missing_config: "Cognito setup is incomplete.",
 };
 
-const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fdashboard";
+const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fprofile";
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = (await searchParams) ?? {};
@@ -47,7 +47,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   }
 
   const status = getAuthConfigurationStatus();
-  const returnTo = params.returnTo?.startsWith("/") ? params.returnTo : "/dashboard";
+  const returnTo = params.returnTo?.startsWith("/") ? params.returnTo : "/profile";
   const loginHref = `/api/auth/login?returnTo=${encodeURIComponent(returnTo)}`;
   const devLoginHref = `/api/auth/dev-login?returnTo=${encodeURIComponent(returnTo)}`;
   const isLocalDev = process.env.NODE_ENV !== "production";

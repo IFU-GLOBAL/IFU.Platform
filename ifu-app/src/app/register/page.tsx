@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function RegisterPage() {
-  redirect("/api/auth/register?returnTo=%2Fdashboard");
+  redirect("/api/auth/register?returnTo=%2Fprofile");
 }
