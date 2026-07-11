@@ -191,10 +191,12 @@ function buildHomepageRoleSection() {
 
 .ifu-home-role-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 24px;
-  align-items: end;
-  margin-bottom: 24px;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: center;
+  justify-items: center;
+  margin-bottom: 28px;
+  text-align: center;
 }
 
 .ifu-home-role-eyebrow {
@@ -215,7 +217,7 @@ function buildHomepageRoleSection() {
 
 .ifu-home-role-header p {
   max-width: 760px;
-  margin: 14px 0 0;
+  margin: 14px auto 0;
   color: #55616f;
   font-size: 16px;
   line-height: 1.7;
@@ -223,6 +225,7 @@ function buildHomepageRoleSection() {
 
 .ifu-home-role-stats {
   display: grid;
+  width: min(100%, 520px);
   grid-template-columns: repeat(3, minmax(94px, 1fr));
   gap: 10px;
 }
@@ -233,6 +236,7 @@ function buildHomepageRoleSection() {
   border-radius: 16px;
   background: #fff;
   padding: 14px;
+  text-align: center;
   box-shadow: 0 12px 30px rgba(8, 35, 59, .06);
 }
 

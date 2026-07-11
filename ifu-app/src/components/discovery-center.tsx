@@ -191,9 +191,10 @@ export function DiscoveryCenter({
 
   const roles = useMemo(() => categories.flatMap((category) => category.roles), [categories]);
   const rolesBySlug = useMemo(() => new Map(roles.map((role) => [role.slug, role])), [roles]);
-  const personaOptions = useMemo(() => [allRolesPersona, ...discoveryPersonas], []);
+  const personaOptions = useMemo(() => discoveryPersonas, []);
+  const selectablePersonaOptions = useMemo(() => [allRolesPersona, ...discoveryPersonas], []);
   const selectedPersona =
-    personaOptions.find((persona) => persona.slug === selectedPersonaSlug) ?? allRolesPersona;
+    selectablePersonaOptions.find((persona) => persona.slug === selectedPersonaSlug) ?? allRolesPersona;
   const selectedRoles = selectedRoleSlugs
     .map((slug) => rolesBySlug.get(slug))
     .filter((role): role is DiscoveryRole => Boolean(role));
@@ -597,73 +598,88 @@ export function DiscoveryCenter({
               </div>
             </div>
 
-            <aside className="ifu-role-selection-panel">
-              <p className="ifu-eyebrow text-[var(--ifu-primary)]">Role selected</p>
-              {primarySelectedRole ? (
-                <>
-                  <h3 className="mt-2 text-2xl font-bold text-[var(--ifu-heading)]">
-                    {primarySelectedRole.title}
-                  </h3>
-                  <p className="ifu-copy mt-3">{primarySelectedRole.summary}</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <span className="ifu-chip px-3 py-2">{primarySelectedRole.level}</span>
-                    {primarySelectedRole.ecosystems.map((ecosystem) => (
-                      <span key={ecosystem} className="ifu-chip px-3 py-2">
-                        {ecosystem}
-                      </span>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <h3 className="mt-2 text-2xl font-bold text-[var(--ifu-heading)]">
-                    Select one role to see your IFU value.
-                  </h3>
-                  <p className="ifu-copy mt-3">{selectedPersona.description}</p>
-                </>
-              )}
+            <div className="ifu-role-side-column">
+              <aside className="ifu-role-selection-panel">
+                <p className="ifu-eyebrow text-[var(--ifu-primary)]">Role selected</p>
+                {primarySelectedRole ? (
+                  <>
+                    <h3 className="mt-2 text-2xl font-bold text-[var(--ifu-heading)]">
+                      {primarySelectedRole.title}
+                    </h3>
+                    <p className="ifu-copy mt-3">{primarySelectedRole.summary}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <span className="ifu-chip px-3 py-2">{primarySelectedRole.level}</span>
+                      {primarySelectedRole.ecosystems.map((ecosystem) => (
+                        <span key={ecosystem} className="ifu-chip px-3 py-2">
+                          {ecosystem}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="mt-2 text-2xl font-bold text-[var(--ifu-heading)]">
+                      Select one role to see your IFU value.
+                    </h3>
+                    <p className="ifu-copy mt-3">{selectedPersona.description}</p>
+                  </>
+                )}
 
-              {selectedRoles.length > 0 ? (
-                <div className="mt-5">
-                  <div className="flex items-center justify-between gap-4">
-                    <h4 className="text-sm font-bold text-[var(--ifu-heading)]">Selected roles</h4>
-                    <IFUActionButton
-                      type="button"
-                      onClick={() => setSelectedRoleSlugs([])}
-                      variant="outline"
-                      className="ifu-button-compact"
-                    >
-                      <X className="h-3.5 w-3.5" aria-hidden="true" />
-                      Clear
-                    </IFUActionButton>
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {selectedRoles.map((role) => (
-                      <button
-                        key={role.slug}
+                {selectedRoles.length > 0 ? (
+                  <div className="mt-5">
+                    <div className="flex items-center justify-between gap-4">
+                      <h4 className="text-sm font-bold text-[var(--ifu-heading)]">Selected roles</h4>
+                      <IFUActionButton
                         type="button"
-                        onClick={() => toggleRole(role.slug)}
-                        className="ifu-chip px-3 py-2"
+                        onClick={() => setSelectedRoleSlugs([])}
+                        variant="outline"
+                        className="ifu-button-compact"
                       >
-                        {role.title}
                         <X className="h-3.5 w-3.5" aria-hidden="true" />
-                      </button>
-                    ))}
+                        Clear
+                      </IFUActionButton>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {selectedRoles.map((role) => (
+                        <button
+                          key={role.slug}
+                          type="button"
+                          onClick={() => toggleRole(role.slug)}
+                          className="ifu-chip px-3 py-2"
+                        >
+                          {role.title}
+                          <X className="h-3.5 w-3.5" aria-hidden="true" />
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-5 grid gap-3">
+                      <IFUActionLink href={registerHref} icon={UserPlus}>
+                        Register
+                      </IFUActionLink>
+                      <IFUActionLink href={shareHref} variant="outline" icon={Share2}>
+                        Share invitation
+                      </IFUActionLink>
+                      <IFUActionLink href="#preview-application" variant="outline" icon={Send}>
+                        Share contact interests
+                      </IFUActionLink>
+                    </div>
                   </div>
-                  <div className="mt-5 grid gap-3">
-                    <IFUActionLink href={registerHref} icon={UserPlus}>
-                      Register
-                    </IFUActionLink>
-                    <IFUActionLink href={shareHref} variant="outline" icon={Share2}>
-                      Share invitation
-                    </IFUActionLink>
-                    <IFUActionLink href="#preview-application" variant="outline" icon={Send}>
-                      Share contact interests
-                    </IFUActionLink>
-                  </div>
-                </div>
-              ) : null}
-            </aside>
+                ) : null}
+              </aside>
+
+              <button
+                type="button"
+                onClick={() => selectPersona(allRolesPersona.slug)}
+                className={cn(
+                  "ifu-persona-button ifu-persona-button-sidebar",
+                  selectedPersona.slug === allRolesPersona.slug && "ifu-persona-button-active",
+                )}
+                aria-pressed={selectedPersona.slug === allRolesPersona.slug}
+              >
+                <span className="ifu-persona-label">{allRolesPersona.label}</span>
+                <span className="ifu-persona-prompt">{allRolesPersona.prompt}</span>
+              </button>
+            </div>
           </div>
         </IFUContainer>
       </IFUSection>

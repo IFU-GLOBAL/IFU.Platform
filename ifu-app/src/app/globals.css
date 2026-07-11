@@ -778,6 +778,13 @@ html {
   align-items: start;
 }
 
+.ifu-role-side-column {
+  position: sticky;
+  top: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
 .ifu-role-list-panel,
 .ifu-role-selection-panel {
   border: 1px solid var(--ifu-border);
@@ -791,9 +798,12 @@ html {
 }
 
 .ifu-role-selection-panel {
-  position: sticky;
-  top: 1rem;
   padding: 1.25rem;
+}
+
+.ifu-persona-button-sidebar {
+  min-height: 7rem;
+  box-shadow: var(--ifu-shadow);
 }
 
 .ifu-role-filter-row {
@@ -939,7 +949,7 @@ html {
     grid-template-columns: 1fr;
   }
 
-  .ifu-role-selection-panel {
+  .ifu-role-side-column {
     position: static;
   }
 }
