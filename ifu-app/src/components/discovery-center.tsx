@@ -480,7 +480,7 @@ export function DiscoveryCenter({
               <div className="ifu-home-role-intro">
                 <h2 id="ifu-home-role-title">🌍 Discover Your Place in the Global Agriculture ecosystem</h2>
                 <p>
-                  The International Farm Union (IFU) Platform is built for everyone in the global food and agriculture value chain. Whether you're a farmer, buyer, investor, researcher, student, government official, nonprofit leader, or simply exploring agriculture, IFU brings together people, organizations, and the world agricultural communities across the entire food and agriculture value chain in one platform.
+                  The International Farm Union (IFU) Platform is built for everyone in the global food and agriculture value chain. Whether you&apos;re a farmer, buyer, investor, researcher, student, government official, nonprofit leader, or simply exploring agriculture, IFU brings together people, organizations, and the world agricultural communities across the entire food and agriculture value chain in one platform.
                 </p>
                 <p>
                   IFU helps you discover the right people, programs, funding, markets, training, and opportunities in 190+ countries, 2Million+ farmers, 500+ partners in the world—all from one ai powered intelligent global platform.
@@ -489,7 +489,7 @@ export function DiscoveryCenter({
                   <strong>Who are you in agriculture?</strong>
                 </h3>
                 <p>
-                  Simply choose your role from 20+ categories and 260+ real agricultural roles roles below, and in less than one minute we'll personalize your IFU experience and we'll instantly show you the opportunities, tools, training, funding, intelligence, networking and global connections created specifically for you in your own Private Personalized Command Center Dashboard.
+                  Simply choose your role from 20+ categories and 260+ real agricultural roles roles below, and in less than one minute we&apos;ll personalize your IFU experience and we&apos;ll instantly show you the opportunities, tools, training, funding, intelligence, networking and global connections created specifically for you in your own Private Personalized Command Center Dashboard.
                 </p>
                 <h3>
                   <strong>WELCOME TO THE INTERNATIONAL FARM UNION (IFU) PLATFORM ROLES BASED DISCOVERY CENTER</strong>
