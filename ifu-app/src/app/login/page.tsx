@@ -36,7 +36,7 @@ const errorMessages: Record<string, string> = {
   missing_config: "Cognito setup is incomplete.",
 };
 
-const cognitoRegisterHref = "/api/auth/register?returnTo=%2Fprofile";
+const cognitoRegisterHref = "/register";
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = (await searchParams) ?? {};

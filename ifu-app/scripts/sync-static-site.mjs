@@ -34,7 +34,7 @@ const headerActionsHtml = `<h4 class="main-header__call__number">
   <span class="ifu-header-action-links">
     <a href="/api/auth/login?returnTo=%2Fprofile">Login</a>
     <span aria-hidden="true">&nbsp; | &nbsp;</span>
-    <a class="elementor-button elementor-button-link elementor-size-sm" href="/api/auth/register?returnTo=%2Fprofile">
+    <a class="elementor-button elementor-button-link elementor-size-sm" href="/register">
       <span class="elementor-button-content-wrapper">
         <span class="elementor-button-text">Join IFU</span>
       </span>
@@ -44,6 +44,14 @@ const headerActionsHtml = `<h4 class="main-header__call__number">
 const joinButtonHrefPattern =
   /(<a class="elementor-button elementor-button-link elementor-size-sm" href=")[^"]*(">\s*<span class="elementor-button-content-wrapper">\s*<span class="elementor-button-text">Join IFU<\/span>)/g;
 const discoverMoreButtonPattern = /<a href="home\.html#"\s+class="cherito-btn">/g;
+const huManityCookiePopupPattern =
+  /(?:<!--\s*Cookie Compliance\s*-->\s*)?(?:<!---?\s*Cookie compliance[\s\S]*?)?<link rel=["']dns-prefetch["'] href=["']https:\/\/cdn\.hu-manity\.co\/["']\s*\/>\s*<script[^>]*>var huOptions = [\s\S]*?<\/script>\s*<script[^>]*src=["']https:\/\/cdn\.hu-manity\.co\/hu-banner\.min\.js["'][^>]*><\/script>\s*(?:---?>)?/gi;
+const accessibilityWidgetStylesPattern =
+  /<link rel='stylesheet' id='ea11y-[^']+'[^>]*>\s*/g;
+const accessibilityWidgetScriptPattern =
+  /<script id="ea11y-widget-js-extra">[\s\S]*?<\/script>\s*<script id="ea11y-widget-js"[\s\S]*?<\/script>/g;
+const accessibilitySkipLinkPattern =
+  /<a class="ea11y-skip-to-content-link"[\s\S]*?<div class="ea11y-skip-to-content-backdrop"><\/div>\s*/g;
 const socialHrefReplacements = [
   [/href="https:\/\/facebook\.com"/g, 'href="https://facebook.com/IFUPlatform" aria-label="Facebook placeholder"'],
   [/href="https:\/\/twitter\.com"/g, 'href="https://x.com/IFUPlatform" aria-label="X placeholder"'],
@@ -507,6 +515,26 @@ function updateHomepageRoleSection(html) {
   return html.replace(homepageRoleSectionPattern, buildHomepageRoleSection());
 }
 
+function commentOutRegulatoryPopups(html) {
+  return html
+    .replace(
+      huManityCookiePopupPattern,
+      "\n<!-- Regulatory cookie/privacy popup disabled for this development milestone. -->\n",
+    )
+    .replace(
+      accessibilityWidgetStylesPattern,
+      "<!-- Regulatory accessibility widget stylesheet disabled for this development milestone. -->\n",
+    )
+    .replace(
+      accessibilitySkipLinkPattern,
+      "<!-- Regulatory accessibility skip-link overlay disabled for this development milestone. -->\n",
+    )
+    .replace(
+      accessibilityWidgetScriptPattern,
+      "<!-- Regulatory accessibility widget script disabled for this development milestone. -->",
+    );
+}
+
 function shouldUpdateStaticTextFile(filePath, fileName) {
   return (
     fileName.endsWith(".html") ||
@@ -518,7 +546,7 @@ function shouldUpdateStaticTextFile(filePath, fileName) {
 
 function updateStaticText(filePath) {
   const html = readFileSync(filePath, "utf8");
-  let updatedHtml = html;
+  let updatedHtml = commentOutRegulatoryPopups(html);
 
   if (updatedHtml.includes("menu-item-ifu-discovery")) {
     updatedHtml = updatedHtml.replace(injectedDiscoveryNavPattern, discoveryNavItem);
@@ -528,7 +556,7 @@ function updateStaticText(filePath) {
 
   updatedHtml = updatedHtml
     .replace(headerActionsPattern, headerActionsHtml)
-    .replace(joinButtonHrefPattern, "$1/api/auth/register?returnTo=%2Fprofile$2")
+    .replace(joinButtonHrefPattern, "$1/register$2")
     .replace(
       discoverMoreButtonPattern,
       '<a href="javascript:void(0)" aria-disabled="true" class="cherito-btn">',

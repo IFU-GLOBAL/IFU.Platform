@@ -86,6 +86,9 @@ model User {
   cognitoId        String?            @unique
   email            String             @unique
   fullName         String
+  firstName        String?
+  lastName         String?
+  preferredDisplayName String?
   accessStatus     AccessStatus       @default(PENDING)
   profile          UserProfile?
   selectedRoles    UserSelectedRole[]
@@ -116,6 +119,7 @@ model UserProfile {
   longitude         Float?
   organization      String?
   phone             String?
+  preferredLanguage String?
   interests         String[] @default([])
   profileCompletion Int      @default(0)
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)

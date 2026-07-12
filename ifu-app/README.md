@@ -7,11 +7,13 @@ Next.js application for the IFU Role-Based Discovery & Education Center, preview
 - `/` redirects to `/discovery`.
 - `/discovery` is the public Role-Based Discovery & Education Center with the 260-role matrix.
 - `/invitation` is the preview invitation letter.
-- `/register` starts Cognito sign-up.
+- `/register` collects IFU registration profile details before creating the Cognito account.
 - `/login` starts Cognito sign-in.
 - `/profile` is the authenticated post-login profile completion form.
 - `/dashboard` is the authenticated Personal Command Center Dashboard.
 - `/api/preview-applications` stores preview form submissions.
+- `/api/auth/signup` creates Cognito users from the custom IFU registration form.
+- `/api/auth/confirm-signup` confirms Cognito signup codes.
 - `/api/profile` saves authenticated profile completion fields.
 - `/api/dashboard` loads/persists dashboard actions.
 - `/api/geolocation` stores browser/CloudFront geolocation events.
@@ -27,6 +29,7 @@ AUTH_SESSION_SECRET="at-least-32-characters"
 COGNITO_REGION="us-east-1"
 COGNITO_USER_POOL_ID="us-east-1_pfz7IT7lv"
 COGNITO_CLIENT_ID="2d8h65gh2hr3sc3m2nrhbhg963"
+COGNITO_CLIENT_SECRET="optional-app-client-secret"
 COGNITO_DOMAIN="https://us-east-1pfz7it7lv.auth.us-east-1.amazoncognito.com"
 COGNITO_SCOPES="openid email profile"
 
@@ -82,6 +85,8 @@ The Prisma schema includes the package-required platform surface:
 ## AWS Notes
 
 Amplify builds this app as a WEB_COMPUTE Next.js app from `ifu-app`.
+
+Custom registration uses the Cognito User Pools `SignUp` and `ConfirmSignUp` APIs from server routes. The app client must allow self-service sign-up and write access to `email`, `name`, `given_name`, `family_name`, `locale`, and `phone_number` if phone collection is enabled.
 
 The helper script below checks the required AWS surfaces without making destructive changes:
 
