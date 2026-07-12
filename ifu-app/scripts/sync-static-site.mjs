@@ -455,33 +455,7 @@ function buildHomepageRoleSection() {
 }
 </style>
 
-<section class="ifu-home-role-catalog" id="ifu-home-role-catalog" aria-labelledby="ifu-home-role-title">
-  <div class="ifu-home-role-shell">
-    <div class="ifu-home-role-header">
-      <div class="ifu-home-role-intro">
-        <h2 id="ifu-home-role-title">🌍 Discover Your Place in the Global Agriculture ecosystem</h2>
-        <p>The International Farm Union (IFU) Platform is built for everyone in the global food and agriculture value chain. Whether you're a farmer, buyer, investor, researcher, student, government official, nonprofit leader, or simply exploring agriculture, IFU brings together people, organizations, and the world agricultural communities across the entire food and agriculture value chain in one platform.</p>
-        <p>IFU helps you discover the right people, programs, funding, markets, training, and opportunities in 190+ countries, 2Million+ farmers, 500+ partners in the world—all from one ai powered intelligent global platform.</p>
-        <h3><strong>Who are you in agriculture?</strong></h3>
-        <p>Simply choose your role from 20+ categories and 260+ real agricultural roles roles below, and in less than one minute we'll personalize your IFU experience and we'll instantly show you the opportunities, tools, training, funding, intelligence, networking and global connections created specifically for you in your own Private Personalized Command Center Dashboard.</p>
-        <h3><strong>WELCOME TO THE INTERNATIONAL FARM UNION (IFU) PLATFORM ROLES BASED DISCOVERY CENTER</strong></h3>
-        <p><strong>🌍 IFU Is Live. 🌎 IFU Is Global. 📍 Yet IFU Is Local.</strong></p>
-        <p><strong>Powered by 10 AI Unified Ecosystems. One Platform. Endless Opportunities.</strong> Real-Time Intelligence • Global Connections • Local Opportunities</p>
-        <p>➡️ Choose your role to get started.</p>
-        <h3><strong>Search and select your IFU roles below</strong></h3>
-      </div>
-    </div>
 
-    <div class="ifu-home-persona-grid" aria-label="Choose your IFU role path">${personaMarkup}</div>
-
-    <div class="ifu-home-role-controls">
-      <input class="ifu-home-role-search" id="ifu-home-role-search" type="search" placeholder="Search all ${roleCount} roles" autocomplete="off">
-    </div>
-
-    <div class="ifu-home-role-categories" id="ifu-home-role-categories">${categoryMarkup}</div>
-    <p class="ifu-home-role-empty" id="ifu-home-role-empty">No matching roles found.</p>
-  </div>
-</section>
 
 <script>
 (function(){

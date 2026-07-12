@@ -434,6 +434,116 @@ html {
   border-radius: 0.5rem;
 }
 
+.ifu-home-role-catalog {
+  border-block: 1px solid var(--ifu-border-soft);
+}
+
+.ifu-home-role-shell {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.ifu-home-role-intro {
+  max-width: 980px;
+}
+
+.ifu-home-role-intro h2 {
+  color: var(--ifu-heading);
+  font-size: clamp(2rem, 3.5vw, 3.125rem);
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+.ifu-home-role-intro h3 {
+  margin-top: 1.35rem;
+  color: var(--ifu-heading);
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.ifu-home-role-intro p {
+  margin-top: 1rem;
+  color: var(--ifu-muted);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.ifu-home-role-intro strong {
+  color: var(--ifu-heading);
+}
+
+.ifu-home-persona-grid,
+.ifu-home-role-categories {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ifu-home-persona-card {
+  min-height: 7rem;
+}
+
+.ifu-home-role-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.ifu-home-role-controls .ifu-button {
+  min-height: 3rem;
+  white-space: nowrap;
+}
+
+.ifu-home-role-category {
+  display: flex;
+  min-height: 5.75rem;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding: 0.95rem;
+  text-align: left;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.ifu-home-role-category:hover,
+.ifu-home-role-category-active {
+  border-color: var(--ifu-primary);
+  background: var(--ifu-selected);
+  box-shadow: 0 14px 30px rgba(20, 94, 20, 0.12);
+  transform: translateY(-1px);
+}
+
+.ifu-home-role-category strong {
+  color: var(--ifu-heading);
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.ifu-home-role-category span {
+  margin-top: 0.65rem;
+  color: var(--ifu-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.ifu-home-role-empty {
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding: 1rem;
+  color: var(--ifu-muted-strong);
+  font-weight: 700;
+}
+
 .ifu-hero {
   position: relative;
   overflow: hidden;
@@ -945,6 +1055,11 @@ html {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .ifu-home-persona-grid,
+  .ifu-home-role-categories {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .ifu-role-workbench {
     grid-template-columns: 1fr;
   }
@@ -1056,6 +1171,16 @@ html {
   .ifu-persona-grid,
   .ifu-role-filter-row {
     grid-template-columns: 1fr;
+  }
+
+  .ifu-home-persona-grid,
+  .ifu-home-role-categories,
+  .ifu-home-role-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .ifu-home-role-controls .ifu-button {
+    width: 100%;
   }
 
   .ifu-persona-button {
