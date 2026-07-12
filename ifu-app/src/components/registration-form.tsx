@@ -2,49 +2,30 @@
 
 import { CheckCircle2, LoaderCircle, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { IFUActionButton, cn } from "@/components/ifu-ui";
 
 type RegistrationFormState = {
   firstName: string;
   lastName: string;
-  preferredDisplayName: string;
   email: string;
-  mobilePhone: string;
   password: string;
   confirmPassword: string;
-  country: string;
-  stateProvince: string;
-  city: string;
-  timezone: string;
-  preferredLanguage: string;
+  consentTerms: boolean;
+  marketingOptIn: boolean;
+  ageConfirmed: boolean;
 };
 
 const initialFormState: RegistrationFormState = {
   firstName: "",
   lastName: "",
-  preferredDisplayName: "",
   email: "",
-  mobilePhone: "",
   password: "",
   confirmPassword: "",
-  country: "",
-  stateProvince: "",
-  city: "",
-  timezone: "",
-  preferredLanguage: "English",
+  consentTerms: false,
+  marketingOptIn: false,
+  ageConfirmed: false,
 };
-
-const languageOptions = [
-  "English",
-  "Spanish",
-  "French",
-  "Portuguese",
-  "Arabic",
-  "Mandarin",
-  "Hindi",
-  "Other",
-];
 
 function TextInput({
   label,
@@ -53,7 +34,6 @@ function TextInput({
   required,
   type = "text",
   autoComplete,
-  helper,
 }: {
   label: string;
   value: string;
@@ -61,7 +41,6 @@ function TextInput({
   required?: boolean;
   type?: string;
   autoComplete?: string;
-  helper?: string;
 }) {
   return (
     <label className="ifu-field-label">
@@ -74,7 +53,36 @@ function TextInput({
         autoComplete={autoComplete}
         className="ifu-field-control ifu-input mt-2"
       />
-      {helper ? <span className="mt-1 block text-xs text-[var(--ifu-muted)]">{helper}</span> : null}
+    </label>
+  );
+}
+
+function ConsentCheckbox({
+  checked,
+  onChange,
+  required,
+  title,
+  children,
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  required?: boolean;
+  title: string;
+  children: string;
+}) {
+  return (
+    <label className="flex gap-3 rounded-[var(--ifu-radius)] border border-[var(--ifu-border-soft)] bg-white px-3 py-3 text-sm text-[var(--ifu-muted-strong)]">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        required={required}
+        className="ifu-checkbox mt-0.5 shrink-0"
+      />
+      <span>
+        <span className="block font-semibold text-[var(--ifu-text)]">{title}</span>
+        <span className="mt-1 block leading-6">{children}</span>
+      </span>
     </label>
   );
 }
@@ -84,31 +92,6 @@ export function RegistrationForm() {
   const [formState, setFormState] = useState<RegistrationFormState>(initialFormState);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
-
-  useEffect(() => {
-    const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const detectedLanguage = navigator.language?.split("-")[0];
-    const language =
-      detectedLanguage === "es"
-        ? "Spanish"
-        : detectedLanguage === "fr"
-          ? "French"
-          : detectedLanguage === "pt"
-            ? "Portuguese"
-            : detectedLanguage === "ar"
-              ? "Arabic"
-              : detectedLanguage === "zh"
-                ? "Mandarin"
-                : detectedLanguage === "hi"
-                  ? "Hindi"
-                  : "English";
-
-    setFormState((current) => ({
-      ...current,
-      timezone: current.timezone || detectedTimezone || "America/New_York",
-      preferredLanguage: current.preferredLanguage || language,
-    }));
-  }, []);
 
   function updateField<K extends keyof RegistrationFormState>(field: K, value: RegistrationFormState[K]) {
     setFormState((current) => ({ ...current, [field]: value }));
@@ -146,48 +129,77 @@ export function RegistrationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="ifu-card ifu-card-muted p-5">
-      <fieldset className="ifu-fieldset p-4">
-        <legend className="px-2">Basic identity</legend>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <TextInput label="First name" value={formState.firstName} onChange={(value) => updateField("firstName", value)} required autoComplete="given-name" />
-          <TextInput label="Last name" value={formState.lastName} onChange={(value) => updateField("lastName", value)} required autoComplete="family-name" />
-          <TextInput label="Preferred display name" value={formState.preferredDisplayName} onChange={(value) => updateField("preferredDisplayName", value)} autoComplete="nickname" />
-          <TextInput label="Email address" value={formState.email} onChange={(value) => updateField("email", value)} required type="email" autoComplete="email" />
-          <TextInput label="Mobile phone" value={formState.mobilePhone} onChange={(value) => updateField("mobilePhone", value)} type="tel" autoComplete="tel" helper="Recommended. Use international format, for example +15551234567." />
-          <div className="hidden sm:block" />
-          <TextInput label="Password" value={formState.password} onChange={(value) => updateField("password", value)} required type="password" autoComplete="new-password" />
-          <TextInput label="Confirm password" value={formState.confirmPassword} onChange={(value) => updateField("confirmPassword", value)} required type="password" autoComplete="new-password" />
-        </div>
-      </fieldset>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <TextInput
+          label="First name"
+          value={formState.firstName}
+          onChange={(value) => updateField("firstName", value)}
+          required
+          autoComplete="given-name"
+        />
+        <TextInput
+          label="Last name"
+          value={formState.lastName}
+          onChange={(value) => updateField("lastName", value)}
+          required
+          autoComplete="family-name"
+        />
+        <TextInput
+          label="Email address"
+          value={formState.email}
+          onChange={(value) => updateField("email", value)}
+          required
+          type="email"
+          autoComplete="email"
+        />
+        <div className="hidden sm:block" />
+        <TextInput
+          label="Password"
+          value={formState.password}
+          onChange={(value) => updateField("password", value)}
+          required
+          type="password"
+          autoComplete="new-password"
+        />
+        <TextInput
+          label="Confirm password"
+          value={formState.confirmPassword}
+          onChange={(value) => updateField("confirmPassword", value)}
+          required
+          type="password"
+          autoComplete="new-password"
+        />
+      </div>
 
-      <fieldset className="ifu-fieldset mt-6 p-4">
-        <legend className="px-2">Location</legend>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <TextInput label="Country" value={formState.country} onChange={(value) => updateField("country", value)} required autoComplete="country-name" />
-          <TextInput label="State/province" value={formState.stateProvince} onChange={(value) => updateField("stateProvince", value)} required autoComplete="address-level1" />
-          <TextInput label="City" value={formState.city} onChange={(value) => updateField("city", value)} required autoComplete="address-level2" />
-          <TextInput label="Time zone" value={formState.timezone} onChange={(value) => updateField("timezone", value)} required />
-          <label className="ifu-field-label sm:col-span-2">
-            Preferred language
-            <select
-              value={formState.preferredLanguage}
-              onChange={(event) => updateField("preferredLanguage", event.target.value)}
-              required
-              className="ifu-field-control ifu-select mt-2"
-            >
-              {languageOptions.map((language) => (
-                <option key={language} value={language}>
-                  {language}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </fieldset>
+      <div className="mt-5 grid gap-3">
+        <ConsentCheckbox
+          title="Consent + Terms"
+          checked={formState.consentTerms}
+          onChange={(checked) => updateField("consentTerms", checked)}
+          required
+        >
+          I agree to the Terms of Service and Privacy Notice, and consent to IFU storing my information to provide the platform. My data is never sold, and I can request deletion anytime.
+        </ConsentCheckbox>
+        <ConsentCheckbox
+          title="Marketing opt-in"
+          checked={formState.marketingOptIn}
+          onChange={(checked) => updateField("marketingOptIn", checked)}
+        >
+          Send me opportunity alerts and IFU updates.
+        </ConsentCheckbox>
+        <ConsentCheckbox
+          title="Age attestation"
+          checked={formState.ageConfirmed}
+          onChange={(checked) => updateField("ageConfirmed", checked)}
+          required
+        >
+          I confirm I am 16 or older.
+        </ConsentCheckbox>
+      </div>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="ifu-copy text-sm">
-          IFU creates the Cognito account only after these registration details pass validation.
+          Profile details move to the skippable prompt after first login.
         </p>
         <IFUActionButton type="submit" disabled={status === "submitting"}>
           {status === "submitting" ? (

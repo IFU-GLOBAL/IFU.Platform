@@ -7,9 +7,9 @@ Next.js application for the IFU Role-Based Discovery & Education Center, preview
 - `/` redirects to `/discovery`.
 - `/discovery` is the public Role-Based Discovery & Education Center with the 260-role matrix.
 - `/invitation` is the preview invitation letter.
-- `/register` collects IFU registration profile details before creating the Cognito account.
+- `/register` is the short Tier 1 signup screen: name, email, password, required terms/data consent, optional marketing opt-in, and required 16+ attestation.
 - `/login` starts Cognito sign-in.
-- `/profile` is the authenticated post-login profile completion form.
+- `/profile` is the authenticated, skippable Tier 2 profile prompt for better local and opportunity matching.
 - `/dashboard` is the authenticated Personal Command Center Dashboard.
 - `/api/preview-applications` stores preview form submissions.
 - `/api/auth/signup` creates Cognito users from the custom IFU registration form.
@@ -75,7 +75,7 @@ npm run maintenance:referral-cleanup
 The Prisma schema includes the package-required platform surface:
 
 - users, user profiles, selected roles
-- profile interests for post-login personalization
+- profile interests, crops/livestock, farm size band, goals, and consent fields for post-login personalization
 - role categories and the 260 role records from the developer package
 - preview submissions and preview applications
 - recommended contacts and referral sources
@@ -86,7 +86,7 @@ The Prisma schema includes the package-required platform surface:
 
 Amplify builds this app as a WEB_COMPUTE Next.js app from `ifu-app`.
 
-Custom registration uses the Cognito User Pools `SignUp` and `ConfirmSignUp` APIs from server routes. The app client must allow self-service sign-up and write access to `email`, `name`, `given_name`, `family_name`, `locale`, and `phone_number` if phone collection is enabled.
+Custom registration uses the Cognito User Pools `SignUp` and `ConfirmSignUp` APIs from server routes. The app client must allow self-service sign-up and write access to `email`, `name`, `given_name`, and `family_name`.
 
 The helper script below checks the required AWS surfaces without making destructive changes:
 

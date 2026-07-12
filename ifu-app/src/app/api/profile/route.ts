@@ -25,30 +25,26 @@ function cleanStringArray(value: unknown, maxItems = 24) {
 }
 
 function computeProfileCompletion(input: {
-  fullName: string;
-  phone: string;
-  country: string;
   stateProvince: string;
   city: string;
   organization: string;
   timezone: string;
-  selectedRoleCount: number;
-  interestCount: number;
+  cropLivestockCount: number;
+  farmSizeBand: string;
+  goals: string;
 }) {
   const fields = [
-    input.fullName,
-    input.phone,
-    input.country,
     input.stateProvince,
     input.city,
     input.organization,
     input.timezone,
-    input.selectedRoleCount > 0 ? "roles" : "",
-    input.interestCount > 0 ? "interests" : "",
+    input.cropLivestockCount > 0 ? "crops" : "",
+    input.farmSizeBand,
+    input.goals,
   ];
   const completed = fields.filter(Boolean).length;
 
-  return Math.round((completed / fields.length) * 100);
+  return Math.max(20, Math.round((completed / fields.length) * 100));
 }
 
 export async function POST(request: NextRequest) {
@@ -64,112 +60,108 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const fullName = cleanString(body.fullName);
-  const phone = cleanString(body.phone, 40);
   const country = cleanString(body.country);
   const stateProvince = cleanString(body.stateProvince);
   const city = cleanString(body.city);
   const organization = cleanString(body.organization);
-  const timezone = cleanString(body.timezone, 80) || "America/New_York";
+  const timezone = cleanString(body.timezone, 80);
+  const primaryCropsLivestock = cleanStringArray(body.primaryCropsLivestock, 5);
+  const farmSizeBand = cleanString(body.farmSizeBand, 40);
+  const goals = cleanString(body.goals, 600);
+  const hasInterests = Array.isArray(body.interests);
   const interests = cleanStringArray(body.interests, 12);
   const selectedRoleSlugs = cleanStringArray(body.selectedRoleSlugs, 12);
 
-  if (!fullName) {
-    return NextResponse.json({ ok: false, error: "Full name is required" }, { status: 400 });
-  }
-
-  if (!country) {
-    return NextResponse.json({ ok: false, error: "Country is required" }, { status: 400 });
-  }
-
-  if (selectedRoleSlugs.length === 0) {
-    return NextResponse.json({ ok: false, error: "Select at least one IFU role" }, { status: 400 });
-  }
-
   const prisma = getPrisma();
   const user = await syncAuthenticatedUser(session);
-  const roles = await prisma.role.findMany({
-    where: {
-      slug: {
-        in: selectedRoleSlugs,
-      },
-    },
-    select: {
-      id: true,
-      slug: true,
-      categoryId: true,
-    },
-  });
+  const roles = selectedRoleSlugs.length
+    ? await prisma.role.findMany({
+        where: {
+          slug: {
+            in: selectedRoleSlugs,
+          },
+        },
+        select: {
+          id: true,
+          slug: true,
+          categoryId: true,
+        },
+      })
+    : [];
   type SelectedRole = (typeof roles)[number];
   const rolesBySlug = new Map(roles.map((role) => [role.slug, role]));
   const orderedRoles = selectedRoleSlugs
     .map((slug) => rolesBySlug.get(slug))
     .filter((role): role is SelectedRole => Boolean(role));
 
-  if (orderedRoles.length === 0) {
+  if (selectedRoleSlugs.length > 0 && orderedRoles.length === 0) {
     return NextResponse.json({ ok: false, error: "Selected roles were not found" }, { status: 400 });
   }
 
   const primaryRole = orderedRoles[0];
-  const profileCompletion = computeProfileCompletion({
-    fullName,
-    phone,
-    country,
-    stateProvince,
-    city,
-    organization,
-    timezone,
-    selectedRoleCount: orderedRoles.length,
-    interestCount: interests.length,
-  });
-
-  await prisma.$transaction([
-    prisma.user.update({
-      where: { id: user.id },
-      data: { fullName },
+  const profileCompletion = Math.max(
+    user.profile?.profileCompletion ?? 0,
+    computeProfileCompletion({
+      stateProvince,
+      city,
+      organization,
+      timezone,
+      cropLivestockCount: primaryCropsLivestock.length,
+      farmSizeBand,
+      goals,
     }),
-    prisma.userProfile.upsert({
+  );
+
+  await prisma.$transaction(async (transaction) => {
+    await transaction.userProfile.upsert({
       where: { userId: user.id },
       update: {
-        country,
+        country: country || undefined,
         stateProvince: stateProvince || null,
         city: city || null,
-        region: country,
-        timezone,
+        region: country || undefined,
+        timezone: timezone || undefined,
         organization: organization || null,
-        phone: phone || null,
-        interests,
-        primaryRoleId: primaryRole.id,
-        primaryCategoryId: primaryRole.categoryId,
+        interests: hasInterests ? interests : undefined,
+        primaryCropsLivestock,
+        farmSizeBand: farmSizeBand || null,
+        goals: goals || null,
+        primaryRoleId: primaryRole?.id,
+        primaryCategoryId: primaryRole?.categoryId,
         profileCompletion,
       },
       create: {
         userId: user.id,
-        country,
+        country: country || null,
         stateProvince: stateProvince || null,
         city: city || null,
-        region: country,
-        timezone,
+        region: country || "Global IFU Network",
+        timezone: timezone || "America/New_York",
         organization: organization || null,
-        phone: phone || null,
         interests,
-        primaryRoleId: primaryRole.id,
-        primaryCategoryId: primaryRole.categoryId,
+        primaryCropsLivestock,
+        farmSizeBand: farmSizeBand || null,
+        goals: goals || null,
+        primaryRoleId: primaryRole?.id,
+        primaryCategoryId: primaryRole?.categoryId,
         profileCompletion,
       },
-    }),
-    prisma.userSelectedRole.deleteMany({
-      where: { userId: user.id },
-    }),
-    prisma.userSelectedRole.createMany({
-      data: orderedRoles.map((role, index) => ({
-        userId: user.id,
-        roleId: role.id,
-        isPrimary: index === 0,
-      })),
-      skipDuplicates: true,
-    }),
-  ]);
+    });
+
+    if (orderedRoles.length > 0) {
+      await transaction.userSelectedRole.deleteMany({
+        where: { userId: user.id },
+      });
+      await transaction.userSelectedRole.createMany({
+        data: orderedRoles.map((role, index) => ({
+          userId: user.id,
+          roleId: role.id,
+          isPrimary: index === 0,
+        })),
+        skipDuplicates: true,
+      });
+    }
+  });
 
   const workspaceUpdate = await prisma.workspaceItem.updateMany({
     where: {
@@ -177,8 +169,8 @@ export async function POST(request: NextRequest) {
       title: "Complete location and role profile",
     },
     data: {
-      status: "COMPLETED",
-      progress: 100,
+      status: profileCompletion >= 60 ? "COMPLETED" : "ACTIVE",
+      progress: profileCompletion,
     },
   });
 
@@ -188,9 +180,9 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         title: "Complete location and role profile",
         itemType: DashboardItemType.RESOURCE,
-        status: "COMPLETED",
-        progress: 100,
-        notes: "Profile completed from the post-login profile form.",
+        status: profileCompletion >= 60 ? "COMPLETED" : "ACTIVE",
+        progress: profileCompletion,
+        notes: "Profile updated from the post-login progressive profile form.",
       },
     });
   }

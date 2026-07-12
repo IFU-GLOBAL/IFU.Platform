@@ -75,11 +75,9 @@ export async function POST(request: Request) {
       password: payload.password,
       firstName: payload.firstName,
       lastName: payload.lastName,
-      preferredDisplayName: payload.preferredDisplayName,
-      mobilePhone: payload.mobilePhone,
-      preferredLanguage: payload.preferredLanguage,
     });
     const fullName = `${payload.firstName} ${payload.lastName}`.trim();
+    const now = new Date();
 
     await prisma.user.create({
       data: {
@@ -88,17 +86,14 @@ export async function POST(request: Request) {
         fullName,
         firstName: payload.firstName,
         lastName: payload.lastName,
-        preferredDisplayName: payload.preferredDisplayName || null,
+        termsAccepted: true,
+        termsAcceptedAt: now,
+        marketingOptIn: payload.marketingOptIn,
+        marketingOptInAt: payload.marketingOptIn ? now : null,
+        ageConfirmedAt: now,
         profile: {
           create: {
-            country: payload.country,
-            stateProvince: payload.stateProvince,
-            city: payload.city,
-            region: payload.country,
-            timezone: payload.timezone,
-            preferredLanguage: payload.preferredLanguage,
-            phone: payload.mobilePhone || null,
-            profileCompletion: 67,
+            profileCompletion: 20,
           },
         },
       },

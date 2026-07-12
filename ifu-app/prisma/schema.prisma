@@ -82,49 +82,57 @@ model Role {
 }
 
 model User {
-  id               String             @id @default(cuid())
-  cognitoId        String?            @unique
-  email            String             @unique
-  fullName         String
-  firstName        String?
-  lastName         String?
+  id                   String             @id @default(cuid())
+  cognitoId            String?            @unique
+  email                String             @unique
+  fullName             String
+  firstName            String?
+  lastName             String?
   preferredDisplayName String?
-  accessStatus     AccessStatus       @default(PENDING)
-  profile          UserProfile?
-  selectedRoles    UserSelectedRole[]
-  workspaceItems   WorkspaceItem[]
-  bookmarks        Bookmark[]
-  applications     Application[]
-  documents        Document[]
-  messagesSent     Message[]          @relation("sentMessages")
-  messagesReceived Message[]          @relation("receivedMessages")
-  activityLogs     ActivityLog[]
-  geoEvents        GeoEvent[]
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  termsAccepted        Boolean            @default(false)
+  termsAcceptedAt      DateTime?
+  marketingOptIn       Boolean            @default(false)
+  marketingOptInAt     DateTime?
+  ageConfirmedAt       DateTime?
+  accessStatus         AccessStatus       @default(PENDING)
+  profile              UserProfile?
+  selectedRoles        UserSelectedRole[]
+  workspaceItems       WorkspaceItem[]
+  bookmarks            Bookmark[]
+  applications         Application[]
+  documents            Document[]
+  messagesSent         Message[]          @relation("sentMessages")
+  messagesReceived     Message[]          @relation("receivedMessages")
+  activityLogs         ActivityLog[]
+  geoEvents            GeoEvent[]
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
 }
 
 model UserProfile {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  primaryRoleId     String?
-  primaryCategoryId String?
-  country           String?
-  stateProvince     String?
-  city              String?
-  region            String?
-  timezone          String?
-  localTimeLabel    String?
-  latitude          Float?
-  longitude         Float?
-  organization      String?
-  phone             String?
-  preferredLanguage String?
-  interests         String[] @default([])
-  profileCompletion Int      @default(0)
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  primaryRoleId         String?
+  primaryCategoryId     String?
+  country               String?
+  stateProvince         String?
+  city                  String?
+  region                String?
+  timezone              String?
+  localTimeLabel        String?
+  latitude              Float?
+  longitude             Float?
+  organization          String?
+  phone                 String?
+  preferredLanguage     String?
+  interests             String[] @default([])
+  primaryCropsLivestock String[] @default([])
+  farmSizeBand          String?
+  goals                 String?
+  profileCompletion     Int      @default(0)
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   @@index([primaryRoleId])
   @@index([primaryCategoryId])

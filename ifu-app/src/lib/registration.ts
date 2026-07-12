@@ -1,23 +1,21 @@
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const e164PhonePattern = /^\+[1-9]\d{7,14}$/;
-
 export type RegistrationPayload = {
   firstName: string;
   lastName: string;
-  preferredDisplayName?: string;
   email: string;
-  mobilePhone?: string;
   password: string;
   confirmPassword: string;
-  country: string;
-  stateProvince: string;
-  city: string;
-  timezone: string;
-  preferredLanguage: string;
+  consentTerms: boolean;
+  marketingOptIn: boolean;
+  ageConfirmed: boolean;
 };
 
 function cleanString(value: unknown, maxLength = 160) {
   return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+}
+
+function cleanBoolean(value: unknown) {
+  return value === true || value === "true";
 }
 
 export function parseRegistrationPayload(value: unknown) {
@@ -29,16 +27,12 @@ export function parseRegistrationPayload(value: unknown) {
   const payload: RegistrationPayload = {
     firstName: cleanString(body.firstName, 80),
     lastName: cleanString(body.lastName, 80),
-    preferredDisplayName: cleanString(body.preferredDisplayName, 120),
     email: cleanString(body.email, 160).toLowerCase(),
-    mobilePhone: cleanString(body.mobilePhone, 40),
     password: cleanString(body.password, 256),
     confirmPassword: cleanString(body.confirmPassword, 256),
-    country: cleanString(body.country, 120),
-    stateProvince: cleanString(body.stateProvince, 120),
-    city: cleanString(body.city, 120),
-    timezone: cleanString(body.timezone, 80),
-    preferredLanguage: cleanString(body.preferredLanguage, 80),
+    consentTerms: cleanBoolean(body.consentTerms),
+    marketingOptIn: cleanBoolean(body.marketingOptIn),
+    ageConfirmed: cleanBoolean(body.ageConfirmed),
   };
 
   if (!payload.firstName || !payload.lastName) {
@@ -49,13 +43,6 @@ export function parseRegistrationPayload(value: unknown) {
     return { ok: false as const, error: "A valid email address is required" };
   }
 
-  if (payload.mobilePhone && !e164PhonePattern.test(payload.mobilePhone)) {
-    return {
-      ok: false as const,
-      error: "Mobile phone must use international format, for example +15551234567",
-    };
-  }
-
   if (payload.password.length < 8) {
     return { ok: false as const, error: "Password must be at least 8 characters" };
   }
@@ -64,16 +51,12 @@ export function parseRegistrationPayload(value: unknown) {
     return { ok: false as const, error: "Password and confirmation do not match" };
   }
 
-  if (!payload.country || !payload.stateProvince || !payload.city) {
-    return { ok: false as const, error: "Country, state/province, and city are required" };
+  if (!payload.consentTerms) {
+    return { ok: false as const, error: "Terms, privacy notice, and data storage consent are required" };
   }
 
-  if (!payload.timezone) {
-    return { ok: false as const, error: "Time zone is required" };
-  }
-
-  if (!payload.preferredLanguage) {
-    return { ok: false as const, error: "Preferred language is required" };
+  if (!payload.ageConfirmed) {
+    return { ok: false as const, error: "Age confirmation is required" };
   }
 
   return { ok: true as const, payload };

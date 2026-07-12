@@ -1,0 +1,11 @@
+ALTER TABLE "User"
+ADD COLUMN "termsAccepted" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN "termsAcceptedAt" TIMESTAMP(3),
+ADD COLUMN "marketingOptIn" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN "marketingOptInAt" TIMESTAMP(3),
+ADD COLUMN "ageConfirmedAt" TIMESTAMP(3);
+
+ALTER TABLE "UserProfile"
+ADD COLUMN "primaryCropsLivestock" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+ADD COLUMN "farmSizeBand" TEXT,
+ADD COLUMN "goals" TEXT;

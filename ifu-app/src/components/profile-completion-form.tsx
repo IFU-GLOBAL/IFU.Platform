@@ -2,7 +2,7 @@
 
 import { LoaderCircle, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   IFUActionButton,
   IFUActionLink,
@@ -11,89 +11,105 @@ import {
 } from "@/components/ifu-ui";
 
 type ProfileFormInitial = {
-  fullName: string;
-  email: string;
-  phone: string;
-  country: string;
   stateProvince: string;
   city: string;
   organization: string;
   timezone: string;
-  selectedRoleSlugs: string[];
-  interests: string[];
-};
-
-type RoleOption = {
-  slug: string;
-  title: string;
-  categoryName: string;
+  primaryCropsLivestock: string[];
+  farmSizeBand: string;
+  goals: string;
 };
 
 type ProfileCompletionFormProps = {
   initial: ProfileFormInitial;
-  roles: RoleOption[];
 };
 
-const interestOptions = [
-  "Funding",
-  "Markets",
-  "Training",
-  "Technology",
-  "Research",
-  "Policy",
-  "Sustainability",
-  "Investment",
-  "Partnerships",
-  "Youth and education",
+const cropLivestockOptions = [
+  "Corn",
+  "Rice",
+  "Wheat",
+  "Soybeans",
+  "Coffee",
+  "Cocoa",
+  "Cotton",
+  "Fruits",
+  "Vegetables",
+  "Dairy",
+  "Beef cattle",
+  "Poultry",
+  "Aquaculture",
+  "Other",
+];
+
+const farmSizeOptions = [
+  { label: "Select a band", value: "" },
+  { label: "<1 ha", value: "<1 ha" },
+  { label: "1-5 ha", value: "1-5 ha" },
+  { label: "5-20 ha", value: "5-20 ha" },
+  { label: "20+ ha", value: "20+ ha" },
 ];
 
 function TextInput({
   label,
   value,
   onChange,
-  required,
-  readOnly,
-  type = "text",
+  helper,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  required?: boolean;
-  readOnly?: boolean;
-  type?: string;
+  helper: string;
 }) {
   return (
     <label className="ifu-field-label">
       {label}
       <input
-        type={type}
+        type="text"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        required={required}
-        readOnly={readOnly}
         className="ifu-field-control ifu-input mt-2"
       />
+      <span className="mt-1 block text-xs text-[var(--ifu-muted)]">{helper}</span>
     </label>
   );
 }
 
-export function ProfileCompletionForm({ initial, roles }: ProfileCompletionFormProps) {
+export function ProfileCompletionForm({ initial }: ProfileCompletionFormProps) {
   const router = useRouter();
   const [formState, setFormState] = useState(initial);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
 
+  useEffect(() => {
+    const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    if (detectedTimezone) {
+      setFormState((current) => ({
+        ...current,
+        timezone: current.timezone || detectedTimezone,
+      }));
+    }
+  }, []);
+
   function updateField<K extends keyof ProfileFormInitial>(field: K, value: ProfileFormInitial[K]) {
     setFormState((current) => ({ ...current, [field]: value }));
   }
 
-  function toggleInterest(value: string) {
-    setFormState((current) => ({
-      ...current,
-      interests: current.interests.includes(value)
-        ? current.interests.filter((item) => item !== value)
-        : [...current.interests, value],
-    }));
+  function toggleCropLivestock(value: string) {
+    setFormState((current) => {
+      const isSelected = current.primaryCropsLivestock.includes(value);
+
+      if (!isSelected && current.primaryCropsLivestock.length >= 5) {
+        return current;
+      }
+
+      return {
+        ...current,
+        primaryCropsLivestock: isSelected
+          ? current.primaryCropsLivestock.filter((item) => item !== value)
+          : [...current.primaryCropsLivestock, value],
+      };
+    });
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -124,60 +140,101 @@ export function ProfileCompletionForm({ initial, roles }: ProfileCompletionFormP
   return (
     <IFUCard className="p-5">
       <form onSubmit={handleSubmit}>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <TextInput label="Full name" value={formState.fullName} onChange={(value) => updateField("fullName", value)} required />
-          <TextInput label="Email" value={formState.email} onChange={() => undefined} type="email" readOnly />
-          <TextInput label="Phone" value={formState.phone} onChange={(value) => updateField("phone", value)} />
-          <TextInput label="Country" value={formState.country} onChange={(value) => updateField("country", value)} required />
-          <TextInput label="State or province" value={formState.stateProvince} onChange={(value) => updateField("stateProvince", value)} />
-          <TextInput label="City" value={formState.city} onChange={(value) => updateField("city", value)} />
-          <TextInput label="Organization" value={formState.organization} onChange={(value) => updateField("organization", value)} />
-          <TextInput label="Timezone" value={formState.timezone} onChange={(value) => updateField("timezone", value)} />
+        <div className="mb-5">
+          <p className="ifu-eyebrow">Progressive profile</p>
+          <h2 className="mt-2 text-2xl font-semibold text-[var(--ifu-text)]">
+            Complete your profile - unlock better matches
+          </h2>
         </div>
 
-        <label className="ifu-field-label mt-6">
-          IFU roles
-          <select
-            multiple
-            size={10}
-            value={formState.selectedRoleSlugs}
-            onChange={(event) =>
-              updateField(
-                "selectedRoleSlugs",
-                Array.from(event.currentTarget.selectedOptions, (option) => option.value),
-              )
-            }
-            required
-            className="ifu-field-control ifu-select mt-2 min-h-56"
-          >
-            {roles.map((role) => (
-              <option key={role.slug} value={role.slug}>
-                {role.categoryName} - {role.title}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextInput
+            label="State or province"
+            value={formState.stateProvince}
+            onChange={(value) => updateField("stateProvince", value)}
+            helper="Add your region to surface nearby opportunities."
+          />
+          <TextInput
+            label="City"
+            value={formState.city}
+            onChange={(value) => updateField("city", value)}
+            helper="Add your city to power the welcome bar and local context."
+          />
+          <TextInput
+            label="Organization or farm name"
+            value={formState.organization}
+            onChange={(value) => updateField("organization", value)}
+            helper="Tell us your organization to improve partner matching."
+          />
+          <label className="ifu-field-label">
+            Farm size band
+            <select
+              value={formState.farmSizeBand}
+              onChange={(event) => updateField("farmSizeBand", event.target.value)}
+              className="ifu-field-control ifu-select mt-2"
+            >
+              {farmSizeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <span className="mt-1 block text-xs text-[var(--ifu-muted)]">
+              Choose a band to get scale-appropriate resources.
+            </span>
+          </label>
+        </div>
 
         <fieldset className="ifu-fieldset mt-6 p-4">
-          <legend className="px-2">Interests</legend>
+          <legend className="px-2">Primary crops or livestock</legend>
+          <p className="ifu-copy mb-3 text-sm">
+            Tell us your crops - get buyer requests that match. Choose up to 5.
+          </p>
           <div className="grid gap-3 sm:grid-cols-2">
-            {interestOptions.map((option) => (
-              <label key={option} className="flex items-center gap-3 rounded-[var(--ifu-radius)] border border-[var(--ifu-border-soft)] bg-white px-3 py-3 text-sm font-medium text-[var(--ifu-muted-strong)]">
-                <input
-                  type="checkbox"
-                  checked={formState.interests.includes(option)}
-                  onChange={() => toggleInterest(option)}
-                  className="ifu-checkbox"
-                />
-                {option}
-              </label>
-            ))}
+            {cropLivestockOptions.map((option) => {
+              const checked = formState.primaryCropsLivestock.includes(option);
+              const disabled = !checked && formState.primaryCropsLivestock.length >= 5;
+
+              return (
+                <label
+                  key={option}
+                  className={cn(
+                    "flex items-center gap-3 rounded-[var(--ifu-radius)] border border-[var(--ifu-border-soft)] bg-white px-3 py-3 text-sm font-medium text-[var(--ifu-muted-strong)]",
+                    disabled ? "opacity-50" : "",
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    disabled={disabled}
+                    onChange={() => toggleCropLivestock(option)}
+                    className="ifu-checkbox"
+                  />
+                  {option}
+                </label>
+              );
+            })}
           </div>
         </fieldset>
 
+        <label className="ifu-field-label mt-6">
+          What are you hoping to achieve?
+          <textarea
+            value={formState.goals}
+            onChange={(event) => updateField("goals", event.target.value)}
+            rows={4}
+            className="ifu-field-control ifu-input mt-2 min-h-28 resize-y"
+          />
+          <span className="mt-1 block text-xs text-[var(--ifu-muted)]">
+            Share your goals to tune training, funding, market, and network recommendations.
+          </span>
+        </label>
+
+        <input type="hidden" name="timezone" value={formState.timezone} />
+
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <IFUActionLink href="/dashboard" variant="outline">
-            Back to dashboard
+            Skip for now
           </IFUActionLink>
           <IFUActionButton type="submit" disabled={status === "submitting"}>
             {status === "submitting" ? (
@@ -185,7 +242,7 @@ export function ProfileCompletionForm({ initial, roles }: ProfileCompletionFormP
             ) : (
               <Save className="h-4 w-4" aria-hidden="true" />
             )}
-            Save profile
+            Save and continue
           </IFUActionButton>
         </div>
 

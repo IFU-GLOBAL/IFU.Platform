@@ -13,7 +13,7 @@ import { getPrisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Complete IFU Profile | IFU Platform",
-  description: "Complete your IFU profile after login.",
+  description: "Complete your optional IFU profile details after login.",
 };
 
 export const dynamic = "force-dynamic";
@@ -27,39 +27,12 @@ export default async function ProfilePage() {
 
   const prisma = getPrisma();
   const syncedUser = await syncAuthenticatedUser(session);
-  const [user, roles] = await Promise.all([
-    prisma.user.findUniqueOrThrow({
-      where: { id: syncedUser.id },
-      include: {
-        profile: true,
-        selectedRoles: {
-          include: {
-            role: {
-              select: {
-                slug: true,
-              },
-            },
-          },
-          orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
-        },
-      },
-    }),
-    prisma.role.findMany({
-      where: { isActive: true },
-      orderBy: [{ category: { sortOrder: "asc" } }, { sortOrder: "asc" }, { title: "asc" }],
-      select: {
-        slug: true,
-        title: true,
-        category: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    }),
-  ]);
-
-  const selectedRoleSlugs = user.selectedRoles.map(({ role }) => role.slug);
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: syncedUser.id },
+    include: {
+      profile: true,
+    },
+  });
 
   return (
     <IFUPage>
@@ -68,28 +41,20 @@ export default async function ProfilePage() {
           <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
             <IFUSectionHeader
               eyebrow="Profile completion"
-              title="Complete your IFU profile"
-              description="Country, role, organization, and interest details personalize the private IFU command center after login."
+              title="Complete your profile - unlock better matches"
+              description="This post-login step is optional. Add only the details you want IFU to use for local opportunities and matching."
               className="md:block"
             />
             <ProfileCompletionForm
               initial={{
-                fullName: user.fullName,
-                email: user.email,
-                phone: user.profile?.phone ?? session.phoneNumber ?? "",
-                country: user.profile?.country === "Profile Pending" ? "" : user.profile?.country ?? "",
                 stateProvince: user.profile?.stateProvince === "Profile Pending" ? "" : user.profile?.stateProvince ?? "",
                 city: user.profile?.city === "Profile Pending" ? "" : user.profile?.city ?? "",
                 organization: user.profile?.organization ?? "",
                 timezone: user.profile?.timezone ?? "America/New_York",
-                selectedRoleSlugs,
-                interests: user.profile?.interests ?? [],
+                primaryCropsLivestock: user.profile?.primaryCropsLivestock ?? [],
+                farmSizeBand: user.profile?.farmSizeBand ?? "",
+                goals: user.profile?.goals ?? "",
               }}
-              roles={roles.map((role) => ({
-                slug: role.slug,
-                title: role.title,
-                categoryName: role.category.name,
-              }))}
             />
           </div>
         </IFUContainer>

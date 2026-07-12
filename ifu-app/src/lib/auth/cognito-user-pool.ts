@@ -27,9 +27,6 @@ export async function signUpCognitoUser(input: {
   password: string;
   firstName: string;
   lastName: string;
-  preferredDisplayName?: string;
-  mobilePhone?: string;
-  preferredLanguage: string;
 }) {
   const config = getCognitoConfig();
   const username = input.email.toLowerCase();
@@ -38,12 +35,7 @@ export async function signUpCognitoUser(input: {
     { Name: "name", Value: `${input.firstName} ${input.lastName}`.trim() },
     { Name: "given_name", Value: input.firstName },
     { Name: "family_name", Value: input.lastName },
-    { Name: "locale", Value: input.preferredLanguage },
   ];
-
-  if (input.mobilePhone) {
-    attributes.push({ Name: "phone_number", Value: input.mobilePhone });
-  }
 
   const result = await getCognitoIdentityClient(config.region).send(
     new SignUpCommand({
@@ -54,7 +46,8 @@ export async function signUpCognitoUser(input: {
       UserAttributes: attributes,
       ClientMetadata: {
         registration_source: "ifu_custom_registration",
-        preferred_display_name: input.preferredDisplayName ?? "",
+        consent_terms: "true",
+        age_confirmed: "true",
       },
     }),
   );

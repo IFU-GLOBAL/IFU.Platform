@@ -12,7 +12,7 @@ import { getAuthSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
   title: "Create IFU Account | IFU Platform",
-  description: "Create an IFU platform account with required registration profile details.",
+  description: "Create an IFU platform account with the short Tier 1 registration flow.",
 };
 
 export const dynamic = "force-dynamic";
@@ -31,7 +31,7 @@ export default async function RegisterPage() {
           <IFUSectionHeader
             eyebrow="IFU registration"
             title="Create your IFU account"
-            description="Complete the required identity and location details before IFU creates your Cognito account."
+            description="Create the account first. Location and farm details move to the optional profile prompt after login."
             className="md:block"
             action={
               <IFUActionLink href="/login?returnTo=%2Fprofile" variant="outline">
