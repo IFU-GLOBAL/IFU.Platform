@@ -63,6 +63,25 @@ type IFUPersonalCommandCenterProps = {
   view: DashboardViewModel;
 };
 
+type SamplePage = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  metrics: Array<{
+    label: string;
+    value: string;
+    helper: string;
+    iconKey: DashboardIconKey;
+  }>;
+  panels: Array<{
+    title: string;
+    summary: string;
+    items: string[];
+    iconKey: DashboardIconKey;
+  }>;
+  steps: string[];
+};
+
 function getIcon(iconKey?: DashboardIconKey) {
   return iconMap[iconKey ?? "layoutDashboard"] ?? LayoutDashboard;
 }
@@ -108,6 +127,233 @@ function getRelatedItems(
   return (matches.length > 0 ? matches : items).slice(0, limit);
 }
 
+const samplePages: Record<string, SamplePage> = {
+  [WORKSPACE_SECTION_ID]: {
+    eyebrow: "Sample workspace page",
+    title: "My IFU Workspace",
+    description:
+      "A placeholder operating page for tasks, drafts, saved resources, and profile follow-up. This is wired to the left navigation and replaces the right panel.",
+    metrics: [
+      {
+        label: "Active items",
+        value: "6",
+        helper: "Tasks waiting for review",
+        iconKey: "checkSquare",
+      },
+      {
+        label: "Saved drafts",
+        value: "3",
+        helper: "Applications and notes",
+        iconKey: "fileText",
+      },
+      {
+        label: "Profile tasks",
+        value: "2",
+        helper: "Items to improve matching",
+        iconKey: "settings",
+      },
+    ],
+    panels: [
+      {
+        title: "Applications in progress",
+        summary: "Draft funding, training, and marketplace submissions stay grouped here.",
+        iconKey: "briefcaseBusiness",
+        items: ["Complete eligibility answers", "Attach organization profile", "Review submission checklist"],
+      },
+      {
+        title: "Saved resources",
+        summary: "Bookmarks and role-specific tools that the member wants to revisit.",
+        iconKey: "archive",
+        items: ["Buyer request template", "Country onboarding guide", "Certification checklist"],
+      },
+    ],
+    steps: ["Confirm profile details", "Pick one active opportunity", "Move ready items to submission"],
+  },
+  "daily-journey": {
+    eyebrow: "Sample journey page",
+    title: "My Daily Journey",
+    description:
+      "A lightweight daily plan page that can later become the member's guided sequence of recommended actions.",
+    metrics: [
+      {
+        label: "Today",
+        value: "4",
+        helper: "Recommended actions",
+        iconKey: "route",
+      },
+      {
+        label: "Quick win",
+        value: "15m",
+        helper: "Estimated time",
+        iconKey: "star",
+      },
+      {
+        label: "Priority",
+        value: "1",
+        helper: "Opportunity to review",
+        iconKey: "searchCheck",
+      },
+    ],
+    panels: [
+      {
+        title: "Morning check-in",
+        summary: "A short scan of profile status, local updates, and new matches.",
+        iconKey: "layoutDashboard",
+        items: ["Review welcome bar", "Check regional opportunities", "Save one useful resource"],
+      },
+      {
+        title: "Recommended next step",
+        summary: "A single focused action based on the member role and profile completion.",
+        iconKey: "route",
+        items: ["Open matched buyer request", "Confirm crops or services", "Add to workspace"],
+      },
+    ],
+    steps: ["Review today's match", "Save or dismiss", "Complete one profile improvement"],
+  },
+  "recommended-pathway": {
+    eyebrow: "Sample pathway page",
+    title: "Recommended Pathway",
+    description:
+      "A placeholder pathway page showing how IFU can guide members from onboarding into training, opportunities, funding, and network actions.",
+    metrics: [
+      {
+        label: "Pathway steps",
+        value: "5",
+        helper: "Draft sequence",
+        iconKey: "route",
+      },
+      {
+        label: "Training match",
+        value: "2",
+        helper: "Recommended modules",
+        iconKey: "graduationCap",
+      },
+      {
+        label: "Opportunity match",
+        value: "4",
+        helper: "Role-based matches",
+        iconKey: "star",
+      },
+    ],
+    panels: [
+      {
+        title: "Role-based sequence",
+        summary: "Suggested order for setup, learning, and opportunity review.",
+        iconKey: "searchCheck",
+        items: ["Confirm primary role", "Complete matching details", "Review pathway recommendations"],
+      },
+      {
+        title: "Next unlocks",
+        summary: "Future real content can unlock as the user completes setup.",
+        iconKey: "shieldCheck",
+        items: ["Training modules", "Funding readiness", "Expert introductions"],
+      },
+    ],
+    steps: ["Set primary role", "Complete profile", "Start training", "Review opportunities", "Connect with IFU network"],
+  },
+};
+
+function SampleDashboardPage({ page }: { page: SamplePage }) {
+  return (
+    <section className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
+      <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
+        <div className="max-w-3xl">
+          <p className="ifu-eyebrow text-[var(--ifu-primary)]">{page.eyebrow}</p>
+          <h2 className="mt-1 text-2xl font-bold leading-tight text-[var(--ifu-heading)]">
+            {page.title}
+          </h2>
+          <p className="mt-2 text-sm leading-5 text-[var(--ifu-muted-strong)]">
+            {page.description}
+          </p>
+        </div>
+        <span className="rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] px-3 py-2 text-xs font-bold uppercase leading-tight text-[var(--ifu-primary-deep)]">
+          Right panel page
+        </span>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        {page.metrics.map((metric) => {
+          const Icon = getIcon(metric.iconKey);
+
+          return (
+            <div
+              key={metric.label}
+              className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-3"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase leading-tight text-[var(--ifu-muted)]">
+                    {metric.label}
+                  </p>
+                  <p className="mt-1 text-2xl font-bold leading-tight text-[var(--ifu-heading)]">
+                    {metric.value}
+                  </p>
+                </div>
+                <Icon className="h-5 w-5 text-[var(--ifu-primary)]" />
+              </div>
+              <p className="mt-2 text-xs font-semibold leading-tight text-[var(--ifu-muted-strong)]">
+                {metric.helper}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-4 grid gap-3 lg:grid-cols-2">
+        {page.panels.map((panel) => {
+          const Icon = getIcon(panel.iconKey);
+
+          return (
+            <article
+              key={panel.title}
+              className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]"
+            >
+              <div className="flex items-start gap-3">
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <div>
+                  <h3 className="text-lg font-bold leading-tight text-[var(--ifu-heading)]">
+                    {panel.title}
+                  </h3>
+                  <p className="mt-1 text-sm leading-5 text-[var(--ifu-muted)]">
+                    {panel.summary}
+                  </p>
+                </div>
+              </div>
+              <ul className="mt-3 grid gap-2">
+                {panel.items.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-2 rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] px-3 py-2 text-sm font-semibold leading-tight text-[var(--ifu-muted-strong)]"
+                  >
+                    <CheckSquare className="h-4 w-4 shrink-0 text-[var(--ifu-primary)]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="mt-4 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[#03182d] p-4 text-white">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/60">Sample flow</p>
+        <div className="mt-3 grid gap-2 md:grid-cols-3">
+          {page.steps.map((step, index) => (
+            <div key={step} className="rounded-[var(--ifu-radius)] bg-white/8 p-3">
+              <span className="text-xs font-bold text-[#9fe28d]">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <p className="mt-1 text-sm font-semibold leading-tight">{step}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps) {
   const [activeSectionId, setActiveSectionId] = useState(view.menu[0]?.id ?? HOME_SECTION_ID);
   const [drawerItem, setDrawerItem] = useState<DashboardDrawerItem | null>(null);
@@ -115,6 +361,7 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
   const { profile } = view;
   const activeSection =
     view.menu.find((item) => item.id === activeSectionId) ?? view.menu[0];
+  const activeSamplePage = activeSection ? samplePages[activeSection.id] : undefined;
   const activeCards = activeSection
     ? getRelatedItems(
         view.cards,
@@ -178,6 +425,12 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
     }
   }
 
+  function selectSection(sectionId: string) {
+    setActiveSectionId(sectionId);
+    setDrawerItem(null);
+    setActionStatus(null);
+  }
+
   if (!activeSection) {
     return null;
   }
@@ -212,7 +465,7 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => setActiveSectionId(item.id)}
+                  onClick={() => selectSection(item.id)}
                   className={cn(
                     "flex min-h-9 min-w-48 items-center gap-2 rounded-[var(--ifu-radius)] px-2.5 py-1.5 text-left text-[0.82rem] font-semibold leading-tight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:min-w-0",
                     active
@@ -302,13 +555,6 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
                 </div>
 
                 <div className="flex shrink-0 flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setDrawerItem(activeSection)}
-                    className="ifu-button ifu-button-outline bg-white"
-                  >
-                    Open details
-                  </button>
                   {activeSection.actions?.slice(0, 2).map((action) => (
                     <button
                       key={action}
@@ -323,139 +569,109 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
               </div>
             </section>
 
-            {activeSection.id === HOME_SECTION_ID || activeSection.id === GLOBAL_MAP_SECTION_ID ? (
-              <MiniGeoGlobalMap profile={profile} onSelect={setDrawerItem} />
-            ) : null}
+            {activeSamplePage ? (
+              <SampleDashboardPage page={activeSamplePage} />
+            ) : (
+              <>
+                {activeSection.id === HOME_SECTION_ID || activeSection.id === GLOBAL_MAP_SECTION_ID ? (
+                  <MiniGeoGlobalMap profile={profile} onSelect={setDrawerItem} />
+                ) : null}
 
-            <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-              {activeCards.map((card) => {
-                const Icon = getIcon(card.iconKey);
+                <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                  {activeCards.map((card) => {
+                    const Icon = getIcon(card.iconKey);
 
-                return (
-                  <button
-                    key={card.id}
-                    type="button"
-                    onClick={() => setDrawerItem(card)}
-                    className="group flex min-h-40 flex-col justify-between rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 text-left shadow-[var(--ifu-shadow)] transition hover:-translate-y-0.5 hover:border-[var(--ifu-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ifu-primary)]"
-                  >
-                    <div>
-                      <div className="flex items-start justify-between gap-3">
-                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
-                          <Icon className="h-4 w-4" />
+                    return (
+                      <button
+                        key={card.id}
+                        type="button"
+                        onClick={() => setDrawerItem(card)}
+                        className="group flex min-h-40 flex-col justify-between rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 text-left shadow-[var(--ifu-shadow)] transition hover:-translate-y-0.5 hover:border-[var(--ifu-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ifu-primary)]"
+                      >
+                        <div>
+                          <div className="flex items-start justify-between gap-3">
+                            <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
+                              <Icon className="h-4 w-4" />
+                            </span>
+                            {card.metric ? (
+                              <span className="rounded-[var(--ifu-radius)] bg-[#f7efe1] px-2.5 py-1 text-xs font-bold text-[#7a4a12]">
+                                {card.metric}
+                              </span>
+                            ) : null}
+                          </div>
+                          <p className="mt-3 text-xs font-bold uppercase leading-tight text-[var(--ifu-primary-deep)]">
+                            {card.type}
+                          </p>
+                          <h2 className="mt-1 text-lg font-bold leading-tight text-[var(--ifu-heading)]">
+                            {card.title}
+                          </h2>
+                          <p className="mt-2 text-sm leading-5 text-[var(--ifu-muted)]">
+                            {card.summary}
+                          </p>
+                        </div>
+                        <span className="mt-4 text-sm font-bold leading-tight text-[var(--ifu-primary-deep)]">
+                          Open drawer
                         </span>
-                        {card.metric ? (
-                          <span className="rounded-[var(--ifu-radius)] bg-[#f7efe1] px-2.5 py-1 text-xs font-bold text-[#7a4a12]">
-                            {card.metric}
-                          </span>
-                        ) : null}
+                      </button>
+                    );
+                  })}
+                </section>
+
+                <section className="grid gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.65fr)]">
+                  <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
+                    <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+                      <div>
+                        <p className="ifu-eyebrow text-[var(--ifu-primary)]">IFU ecosystem</p>
+                        <h2 className="mt-1 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
+                          Powered By 10 Unified Ecosystems
+                        </h2>
+                        <p className="mt-1 text-sm leading-5 text-[var(--ifu-muted)]">
+                          One Engine - One Platform - One Agricultural World. Everything You Need - All
+                          In One Place.
+                        </p>
                       </div>
-                      <p className="mt-3 text-xs font-bold uppercase leading-tight text-[var(--ifu-primary-deep)]">
-                        {card.type}
-                      </p>
-                      <h2 className="mt-1 text-lg font-bold leading-tight text-[var(--ifu-heading)]">
-                        {card.title}
-                      </h2>
-                      <p className="mt-2 text-sm leading-5 text-[var(--ifu-muted)]">
-                        {card.summary}
-                      </p>
+                      <Globe2 className="hidden h-10 w-10 text-[var(--ifu-primary)] sm:block" />
                     </div>
-                    <span className="mt-4 text-sm font-bold leading-tight text-[var(--ifu-primary-deep)]">
-                      Open drawer
-                    </span>
-                  </button>
-                );
-              })}
-            </section>
-
-            {activeSection.id === WORKSPACE_SECTION_ID ? (
-              <section className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
-                <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
-                  <div>
-                    <p className="ifu-eyebrow text-[var(--ifu-primary)]">Workspace</p>
-                    <h2 className="mt-1 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
-                      Active Work Items
-                    </h2>
-                  </div>
-                  <IFUActionLink href="/profile" variant="outline" icon={Settings}>
-                    Update profile
-                  </IFUActionLink>
-                </div>
-                <div className="mt-3 grid gap-2 md:grid-cols-2">
-                  {view.workspaceItems.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setDrawerItem(item)}
-                      className="flex items-start gap-3 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-3 text-left transition hover:bg-white"
-                    >
-                      <CheckSquare className="mt-0.5 h-4 w-4 shrink-0 text-[var(--ifu-primary)]" />
-                      <span>
-                        <span className="block text-sm font-bold leading-tight text-[var(--ifu-heading)]">
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                      {activeEcosystemItems.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => setDrawerItem(item)}
+                          className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] px-2.5 py-2 text-left text-[0.82rem] font-bold leading-tight text-[var(--ifu-heading)] transition hover:border-[var(--ifu-primary)] hover:bg-white"
+                        >
+                          <Sprout className="mb-1 h-4 w-4 text-[var(--ifu-primary)]" />
                           {item.title}
-                        </span>
-                        <span className="mt-1 block text-xs font-semibold leading-tight text-[var(--ifu-muted)]">
-                          {item.summary}
-                        </span>
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            <section className="grid gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.65fr)]">
-              <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
-                <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
-                  <div>
-                    <p className="ifu-eyebrow text-[var(--ifu-primary)]">IFU ecosystem</p>
-                    <h2 className="mt-1 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
-                      Powered By 10 Unified Ecosystems
-                    </h2>
-                    <p className="mt-1 text-sm leading-5 text-[var(--ifu-muted)]">
-                      One Engine - One Platform - One Agricultural World. Everything You Need - All
-                      In One Place.
-                    </p>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <Globe2 className="hidden h-10 w-10 text-[var(--ifu-primary)] sm:block" />
-                </div>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                  {activeEcosystemItems.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setDrawerItem(item)}
-                      className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] px-2.5 py-2 text-left text-[0.82rem] font-bold leading-tight text-[var(--ifu-heading)] transition hover:border-[var(--ifu-primary)] hover:bg-white"
-                    >
-                      <Sprout className="mb-1 h-4 w-4 text-[var(--ifu-primary)]" />
-                      {item.title}
-                    </button>
-                  ))}
-                </div>
-              </div>
 
-              <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
-                <p className="ifu-eyebrow text-[var(--ifu-primary)]">Workspace snapshot</p>
-                <h2 className="mt-1 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
-                  Next Actions
-                </h2>
-                <div className="mt-3 grid gap-2">
-                  {activeWorkspaceItems.map((item, index) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setDrawerItem(item)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-2.5 text-left text-[0.82rem] font-semibold leading-tight text-[var(--ifu-muted-strong)] transition hover:bg-white",
-                        index === 0 && "border-[var(--ifu-primary)] bg-[var(--ifu-selected)]",
-                      )}
-                    >
-                      <CheckSquare className="h-4 w-4 shrink-0 text-[var(--ifu-primary)]" />
-                      <span>{item.title}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </section>
+                  <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
+                    <p className="ifu-eyebrow text-[var(--ifu-primary)]">Workspace snapshot</p>
+                    <h2 className="mt-1 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
+                      Next Actions
+                    </h2>
+                    <div className="mt-3 grid gap-2">
+                      {activeWorkspaceItems.map((item, index) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => setDrawerItem(item)}
+                          className={cn(
+                            "flex items-center gap-2 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-2.5 text-left text-[0.82rem] font-semibold leading-tight text-[var(--ifu-muted-strong)] transition hover:bg-white",
+                            index === 0 && "border-[var(--ifu-primary)] bg-[var(--ifu-selected)]",
+                          )}
+                        >
+                          <CheckSquare className="h-4 w-4 shrink-0 text-[var(--ifu-primary)]" />
+                          <span>{item.title}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              </>
+            )}
           </div>
         </section>
       </div>
