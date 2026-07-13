@@ -205,7 +205,6 @@ export function DiscoveryCenter({
   const [statusMessage, setStatusMessage] = useState("");
 
   const roles = useMemo(() => categories.flatMap((category) => category.roles), [categories]);
-  const roleCount = roles.length || metrics.roles;
   const rolesBySlug = useMemo(() => new Map(roles.map((role) => [role.slug, role])), [roles]);
   const personaOptions = useMemo(() => discoveryPersonas, []);
   const selectablePersonaOptions = useMemo(() => [allRolesPersona, ...discoveryPersonas], []);
@@ -468,120 +467,6 @@ export function DiscoveryCenter({
           </div>
         </IFUContainer>
       </IFUSection>
-
-      <section
-        id="ifu-home-role-catalog"
-        className="ifu-section-muted ifu-home-role-catalog"
-        aria-labelledby="ifu-home-role-title"
-      >
-        <IFUContainer size="wide" className="py-12 lg:py-16">
-          <div className="ifu-home-role-shell">
-            <div className="ifu-home-role-header">
-              <div className="ifu-home-role-intro">
-                <h2 id="ifu-home-role-title">🌍 Discover Your Place in the Global Agriculture ecosystem</h2>
-                <p>
-                  The International Farm Union (IFU) Platform is built for everyone in the global food and agriculture value chain. Whether you&apos;re a farmer, buyer, investor, researcher, student, government official, nonprofit leader, or simply exploring agriculture, IFU brings together people, organizations, and the world agricultural communities across the entire food and agriculture value chain in one platform.
-                </p>
-                <p>
-                  IFU helps you discover the right people, programs, funding, markets, training, and opportunities in 190+ countries, 2Million+ farmers, 500+ partners in the world—all from one ai powered intelligent global platform.
-                </p>
-                <h3>
-                  <strong>Who are you in agriculture?</strong>
-                </h3>
-                <p>
-                  Simply choose your role from 20+ categories and 260+ real agricultural roles roles below, and in less than one minute we&apos;ll personalize your IFU experience and we&apos;ll instantly show you the opportunities, tools, training, funding, intelligence, networking and global connections created specifically for you in your own Private Personalized Command Center Dashboard.
-                </p>
-                <h3>
-                  <strong>WELCOME TO THE INTERNATIONAL FARM UNION (IFU) PLATFORM ROLES BASED DISCOVERY CENTER</strong>
-                </h3>
-                <p>
-                  <strong>🌍 IFU Is Live. 🌎 IFU Is Global. 📍 Yet IFU Is Local.</strong>
-                </p>
-                <p>
-                  <strong>Powered by 10 AI Unified Ecosystems. One Platform. Endless Opportunities.</strong> Real-Time Intelligence • Global Connections • Local Opportunities
-                </p>
-                <p>➡️ Choose your role to get started.</p>
-                <h3>
-                  <strong>Search and select your IFU roles below</strong>
-                </h3>
-              </div>
-            </div>
-
-            <div className="ifu-home-persona-grid" aria-label="Choose your IFU role path">
-              {personaOptions.map((persona) => {
-                const active = selectedPersona.slug === persona.slug;
-
-                return (
-                  <button
-                    key={persona.slug}
-                    type="button"
-                    onClick={() => selectPersona(persona.slug)}
-                    className={cn("ifu-persona-button", "ifu-home-persona-card", active && "ifu-persona-button-active")}
-                    aria-pressed={active}
-                  >
-                    <span className="ifu-persona-label">{persona.label}</span>
-                    <span className="ifu-persona-prompt">{persona.prompt}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="ifu-home-role-controls">
-              <label className="relative block">
-                <Search
-                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ifu-muted)]"
-                  aria-hidden="true"
-                />
-                <input
-                  className="ifu-field-control ifu-input h-12 !pl-12 pr-4"
-                  id="ifu-home-role-search"
-                  type="search"
-                  placeholder={`Search all ${roleCount} roles`}
-                  autoComplete="off"
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                />
-              </label>
-              <IFUActionLink href="#role-matrix" variant="primary" icon={ArrowRight}>
-                View matching roles
-              </IFUActionLink>
-            </div>
-
-            <div className="ifu-home-role-categories" id="ifu-home-role-categories" aria-label="Filter by IFU role category">
-              <button
-                type="button"
-                onClick={() => setCategoryFilter("all")}
-                className={cn("ifu-home-role-category", categoryFilter === "all" && "ifu-home-role-category-active")}
-                aria-pressed={categoryFilter === "all"}
-              >
-                <strong>All categories</strong>
-                <span>{metrics.categories} categories</span>
-              </button>
-              {categories.map((category) => {
-                const active = categoryFilter === category.slug;
-
-                return (
-                  <button
-                    key={category.slug}
-                    type="button"
-                    onClick={() => setCategoryFilter(category.slug)}
-                    className={cn("ifu-home-role-category", active && "ifu-home-role-category-active")}
-                    aria-pressed={active}
-                  >
-                    <strong>{category.name}</strong>
-                    <span>{category.roles.length} roles</span>
-                  </button>
-                );
-              })}
-            </div>
-            {filteredRoles.length === 0 ? (
-              <p className="ifu-home-role-empty" id="ifu-home-role-empty">
-                No matching roles found.
-              </p>
-            ) : null}
-          </div>
-        </IFUContainer>
-      </section>
 
       <IFUSection>
         <IFUContainer size="wide" className="py-12 lg:py-16">
