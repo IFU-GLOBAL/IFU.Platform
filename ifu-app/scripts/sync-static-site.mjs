@@ -146,7 +146,6 @@ function readRoleCatalog() {
 
 function buildHomepageRoleSection() {
   const categories = readRoleCatalog();
-  const roleCount = categories.reduce((total, category) => total + category.roles.length, 0);
   const personaMarkup = homePersonas
     .map(
       ([slug, label, prompt]) => `<a class="ifu-home-persona-card" href="/discovery?persona=${encodeURIComponent(
@@ -158,33 +157,12 @@ function buildHomepageRoleSection() {
     )
     .join("");
   const categoryMarkup = categories
-    .map((category, index) => {
-      const roleMarkup = category.roles
-        .map((role) => {
-          const searchText = `${role.title} ${role.categoryName} ${role.pathway}`.toLowerCase();
-
-          return `<a class="ifu-home-role-card" href="/discovery?role=${encodeURIComponent(
-            role.slug,
-          )}#role-matrix" data-role-card data-role-text="${escapeHtml(searchText)}">
-            <span class="ifu-home-role-title">${escapeHtml(role.title)}</span>
-            <span class="ifu-home-role-meta">${escapeHtml(role.pathway)}</span>
-          </a>`;
-        })
-        .join("");
-
-      return `<details class="ifu-home-role-category" ${
-        index === 0 ? "open" : ""
-      } data-role-category>
-        <summary>
-          <span>
-            <strong>${escapeHtml(category.name)}</strong>
-            <em>${escapeHtml(category.summary)}</em>
-          </span>
-          <b>${category.roles.length} roles</b>
-        </summary>
-        <div class="ifu-home-role-list">${roleMarkup}</div>
-      </details>`;
-    })
+    .map(
+      (category) => `<a class="ifu-home-role-category" href="/discovery#role-matrix">
+        <strong>${escapeHtml(category.name)}</strong>
+        <span><b>${category.roles.length}</b> roles</span>
+      </a>`,
+    )
     .join("");
 
   return `<style>
@@ -204,43 +182,17 @@ function buildHomepageRoleSection() {
   margin: 0 auto;
 }
 
-.ifu-home-role-header {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  justify-items: center;
-  margin-bottom: 28px;
-  text-align: center;
-}
-
 .ifu-home-role-intro {
   max-width: 980px;
   margin: 0 auto;
+  text-align: center;
 }
 
 .ifu-home-role-intro h2 {
   margin: 0;
   color: #08233b;
-  font-size: clamp(30px, 4vw, 48px);
-  line-height: 1.08;
-}
-
-.ifu-home-role-intro p {
-  margin: 16px auto 0;
-  color: #55616f;
-  font-size: 16px;
-  line-height: 1.7;
-}
-
-.ifu-home-role-intro h3 {
-  margin: 22px auto 0;
-  color: #08233b;
-  font-size: clamp(20px, 2.6vw, 30px);
+  font-size: clamp(26px, 3vw, 40px);
   line-height: 1.2;
-}
-
-.ifu-home-role-intro strong {
-  color: #08233b;
 }
 
 .ifu-home-role-controls {
@@ -248,20 +200,8 @@ function buildHomepageRoleSection() {
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
-  margin-bottom: 18px;
-}
-
-.ifu-home-role-search {
-  min-width: min(100%, 440px);
-  flex: 1;
-  border: 1px solid rgba(8, 35, 59, .16);
-  border-radius: 999px;
-  background: #fff;
-  padding: 15px 20px;
-  color: #08233b;
-  font-size: 15px;
-  outline: none;
-  box-shadow: 0 12px 30px rgba(8, 35, 59, .06);
+  justify-content: center;
+  margin: 22px 0;
 }
 
 .ifu-home-role-cta {
@@ -281,7 +221,7 @@ function buildHomepageRoleSection() {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
-  margin-bottom: 18px;
+  margin: 24px 0 18px;
 }
 
 .ifu-home-persona-card {
@@ -320,130 +260,56 @@ function buildHomepageRoleSection() {
 
 .ifu-home-role-categories {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  max-height: 380px;
-  overflow: auto;
 }
 
 .ifu-home-role-category {
-  overflow: hidden;
+  display: grid;
+  min-height: 102px;
+  align-content: space-between;
   border: 1px solid rgba(8, 35, 59, .1);
   border-radius: 18px;
   background: #fff;
-  box-shadow: 0 12px 30px rgba(8, 35, 59, .06);
-}
-
-.ifu-home-role-category[hidden] {
-  display: none;
-}
-
-.ifu-home-role-category summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px;
-  align-items: center;
-  cursor: pointer;
-  padding: 18px 20px;
-  list-style: none;
-}
-
-.ifu-home-role-category summary::-webkit-details-marker {
-  display: none;
-}
-
-.ifu-home-role-category summary strong {
-  display: block;
-  color: #08233b;
-  font-size: 18px;
-}
-
-.ifu-home-role-category summary em {
-  display: block;
-  margin-top: 5px;
-  color: #667085;
-  font-size: 13px;
-  font-style: normal;
-  line-height: 1.5;
-}
-
-.ifu-home-role-category summary b {
-  border-radius: 999px;
-  background: #e9f7ee;
-  color: #0b7d35;
-  padding: 8px 12px;
-  font-size: 12px;
-}
-
-.ifu-home-role-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 10px;
-  padding: 0 20px 20px;
-}
-
-.ifu-home-role-card {
-  display: flex;
-  min-height: 82px;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid rgba(8, 35, 59, .08);
-  border-radius: 14px;
-  background: #f8faf9;
-  padding: 13px;
+  padding: 18px;
   color: #08233b !important;
   text-decoration: none !important;
+  box-shadow: 0 12px 30px rgba(8, 35, 59, .06);
   transition: transform .2s ease, border-color .2s ease, background .2s ease;
 }
 
-.ifu-home-role-card:hover {
+.ifu-home-role-category:hover {
   transform: translateY(-2px);
   border-color: rgba(11, 125, 53, .35);
   background: #f0fbf4;
 }
 
-.ifu-home-role-card[hidden] {
-  display: none;
+.ifu-home-role-category strong {
+  display: block;
+  font-size: 17px;
+  line-height: 1.25;
 }
 
-.ifu-home-role-title {
+.ifu-home-role-category span {
+  display: block;
+  margin-top: 14px;
+  color: #667085;
   font-size: 14px;
   font-weight: 800;
   line-height: 1.3;
 }
 
-.ifu-home-role-meta {
-  margin-top: 10px;
+.ifu-home-role-category b {
   color: #0b7d35;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-.ifu-home-role-empty {
-  display: none;
-  border: 1px dashed rgba(8, 35, 59, .25);
-  border-radius: 16px;
-  background: #fff;
-  padding: 18px;
-  color: #667085;
-  font-weight: 700;
-}
-
-.ifu-home-role-empty[data-visible="true"] {
-  display: block;
+  font-size: 18px;
 }
 
 @media (max-width: 900px) {
-  .ifu-home-role-header {
-    grid-template-columns: 1fr;
-  }
-
-  .ifu-home-role-stats {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
   .ifu-home-persona-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ifu-home-role-categories {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -457,54 +323,32 @@ function buildHomepageRoleSection() {
     grid-template-columns: 1fr;
   }
 
-  .ifu-home-role-category summary {
+  .ifu-home-role-categories {
     grid-template-columns: 1fr;
   }
 }
 </style>
 
-
-
-<script>
-(function(){
-  const search = document.getElementById('ifu-home-role-search');
-  const empty = document.getElementById('ifu-home-role-empty');
-  const categories = Array.from(document.querySelectorAll('[data-role-category]'));
-  const cards = Array.from(document.querySelectorAll('[data-role-card]'));
-
-  if (!search || !empty) {
-    return;
-  }
-
-  search.addEventListener('input', function(){
-    const query = search.value.trim().toLowerCase();
-    let visibleCardCount = 0;
-
-    cards.forEach(function(card){
-      const matches = !query || card.dataset.roleText.includes(query);
-      card.hidden = !matches;
-
-      if (matches) {
-        visibleCardCount += 1;
-      }
-    });
-
-    categories.forEach(function(category){
-      const visibleInCategory = Array.from(category.querySelectorAll('[data-role-card]')).some(function(card){
-        return !card.hidden;
-      });
-
-      category.hidden = !visibleInCategory;
-
-      if (query && visibleInCategory) {
-        category.open = true;
-      }
-    });
-
-    empty.dataset.visible = visibleCardCount === 0 ? 'true' : 'false';
-  });
-})();
-</script>`;
+<section class="ifu-home-role-catalog" aria-labelledby="ifu-home-role-title">
+  <div class="ifu-home-role-shell">
+    <div class="ifu-home-role-intro">
+      <h2 id="ifu-home-role-title">Search and select your IFU roles below</h2>
+    </div>
+    <div class="ifu-home-persona-grid" aria-label="Choose your IFU role path">
+      ${personaMarkup}
+    </div>
+    <div class="ifu-home-role-controls">
+      <a class="ifu-home-role-cta" href="/discovery#role-matrix">View matching roles</a>
+    </div>
+    <div class="ifu-home-role-categories" aria-label="IFU role category counts">
+      <a class="ifu-home-role-category" href="/discovery#role-matrix">
+        <strong>All categories</strong>
+        <span><b>${categories.length}</b> categories</span>
+      </a>
+      ${categoryMarkup}
+    </div>
+  </div>
+</section>`;
 }
 
 function updateHomepageRoleSection(html) {
