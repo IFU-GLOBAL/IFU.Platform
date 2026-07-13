@@ -1,9 +1,10 @@
 "use client";
 
-import { CheckCircle2, LoaderCircle, UserPlus } from "lucide-react";
+import { BadgeCheck, CheckCircle2, LoaderCircle, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { IFUActionButton, cn } from "@/components/ifu-ui";
+import { ORGANIC_REFERRAL_OPTIONS } from "@/lib/acquisition-options";
 
 type RegistrationFormState = {
   firstName: string;
@@ -14,6 +15,12 @@ type RegistrationFormState = {
   consentTerms: boolean;
   marketingOptIn: boolean;
   ageConfirmed: boolean;
+  invitationCode: string;
+  selfReportedSource: string;
+  selfReportedDetail: string;
+  utmSource: string;
+  utmCampaign: string;
+  utmMedium: string;
 };
 
 const initialFormState: RegistrationFormState = {
@@ -25,6 +32,46 @@ const initialFormState: RegistrationFormState = {
   consentTerms: false,
   marketingOptIn: false,
   ageConfirmed: false,
+  invitationCode: "",
+  selfReportedSource: "",
+  selfReportedDetail: "",
+  utmSource: "",
+  utmCampaign: "",
+  utmMedium: "",
+};
+
+type InvitationPreview = {
+  code: string;
+  name?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  country?: string | null;
+  suggestedRole?: string | null;
+  invitedBy?: string | null;
+  channel?: string | null;
+  expiresAt: string;
+};
+
+type InvitationLookupResult =
+  | {
+      ok?: boolean;
+      mode: "invited";
+      invitation: InvitationPreview;
+    }
+  | {
+      ok?: boolean;
+      mode: "organic";
+      reason?: string;
+    };
+
+type RegistrationFormProps = {
+  initialInvitationCode?: string;
+  initialUtm?: {
+    utmSource?: string;
+    utmCampaign?: string;
+    utmMedium?: string;
+  };
 };
 
 function TextInput({
@@ -87,11 +134,70 @@ function ConsentCheckbox({
   );
 }
 
-export function RegistrationForm() {
+export function RegistrationForm({ initialInvitationCode = "", initialUtm }: RegistrationFormProps) {
   const router = useRouter();
-  const [formState, setFormState] = useState<RegistrationFormState>(initialFormState);
+  const [formState, setFormState] = useState<RegistrationFormState>({
+    ...initialFormState,
+    invitationCode: initialInvitationCode,
+    utmSource: initialUtm?.utmSource ?? "",
+    utmCampaign: initialUtm?.utmCampaign ?? "",
+    utmMedium: initialUtm?.utmMedium ?? "",
+  });
+  const [invitationMode, setInvitationMode] = useState<"checking" | "invited" | "organic">(
+    initialInvitationCode ? "checking" : "organic",
+  );
+  const [invitation, setInvitation] = useState<InvitationPreview | null>(null);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
+
+  useEffect(() => {
+    if (!initialInvitationCode) {
+      setInvitationMode("organic");
+      return;
+    }
+
+    let isActive = true;
+
+    async function loadInvitation() {
+      setInvitationMode("checking");
+
+      try {
+        const response = await fetch(`/api/invitations/${encodeURIComponent(initialInvitationCode)}`);
+        const result = (await response.json()) as InvitationLookupResult;
+
+        if (!isActive) {
+          return;
+        }
+
+        if (response.ok && result.mode === "invited") {
+          setInvitation(result.invitation);
+          setInvitationMode("invited");
+          setFormState((current) => ({
+            ...current,
+            invitationCode: result.invitation.code,
+            firstName: current.firstName || result.invitation.firstName || "",
+            lastName: current.lastName || result.invitation.lastName || "",
+            email: current.email || result.invitation.email || "",
+          }));
+          return;
+        }
+      } catch {
+        // Invitation validation should never block registration.
+      }
+
+      if (isActive) {
+        setInvitation(null);
+        setInvitationMode("organic");
+        setFormState((current) => ({ ...current, invitationCode: "" }));
+      }
+    }
+
+    loadInvitation();
+
+    return () => {
+      isActive = false;
+    };
+  }, [initialInvitationCode]);
 
   function updateField<K extends keyof RegistrationFormState>(field: K, value: RegistrationFormState[K]) {
     setFormState((current) => ({ ...current, [field]: value }));
@@ -113,7 +219,10 @@ export function RegistrationForm() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formState),
+      body: JSON.stringify({
+        ...formState,
+        firstTouchUrl: window.location.href,
+      }),
     });
     const result = (await response.json()) as { ok?: boolean; error?: string; email?: string };
 
@@ -129,6 +238,29 @@ export function RegistrationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="ifu-card ifu-card-muted p-5">
+      <div className="mb-5 rounded-[var(--ifu-radius)] border border-[var(--ifu-border-soft)] bg-white p-4">
+        <div className="flex gap-3">
+          <BadgeCheck className="mt-1 h-5 w-5 shrink-0 text-[var(--ifu-primary)]" aria-hidden="true" />
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ifu-primary)]">
+              {invitationMode === "invited" ? "Invited access" : "IFU registration"}
+            </p>
+            <h2 className="mt-1 text-xl font-bold text-[var(--ifu-heading)]">
+              {invitationMode === "invited"
+                ? "You've been selected - complete your preview access"
+                : "Join farmers and agriculture partners across 190+ countries"}
+            </h2>
+            <p className="ifu-copy mt-2 text-sm">
+              {invitationMode === "checking"
+                ? "Checking invitation details..."
+                : invitationMode === "invited"
+                  ? `This invitation${invitation?.invitedBy ? ` from ${invitation.invitedBy}` : ""} will be attached to your account attribution. You can edit any prefilled identity fields.`
+                  : "Create your account, then add optional profile details after your first login."}
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <TextInput
           label="First name"
@@ -196,6 +328,34 @@ export function RegistrationForm() {
           I confirm I am 16 or older.
         </ConsentCheckbox>
       </div>
+
+      {invitationMode === "organic" ? (
+        <fieldset className="ifu-fieldset mt-5 p-4">
+          <legend className="px-2">Referral tracking</legend>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="ifu-field-label">
+              How did you hear about IFU?
+              <select
+                value={formState.selfReportedSource}
+                onChange={(event) => updateField("selfReportedSource", event.target.value)}
+                className="ifu-field-control ifu-select mt-2"
+              >
+                <option value="">Select one</option>
+                {ORGANIC_REFERRAL_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <TextInput
+              label="Referral detail"
+              value={formState.selfReportedDetail}
+              onChange={(value) => updateField("selfReportedDetail", value)}
+            />
+          </div>
+        </fieldset>
+      ) : null}
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="ifu-copy text-sm">

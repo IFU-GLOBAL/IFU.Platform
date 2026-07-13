@@ -19,6 +19,7 @@ import {
   IFUSection,
   IFUSectionHeader,
 } from "@/components/ifu-ui";
+import { CopyInvitationLinkButton } from "@/components/copy-invitation-link-button";
 
 export const metadata: Metadata = {
   title: "Invitation Letter | IFU Platform",
@@ -118,6 +119,7 @@ export default function InvitationPage() {
               <IFUActionLink href={cognitoRegisterHref} icon={UserPlus}>
                 Register
               </IFUActionLink>
+              <CopyInvitationLinkButton />
               {shareLinks.map((link) => (
                 <IFUActionLink
                   key={link.label}

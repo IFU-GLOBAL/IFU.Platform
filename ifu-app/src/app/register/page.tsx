@@ -17,12 +17,28 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function RegisterPage() {
+type RegisterPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function RegisterPage({ searchParams }: RegisterPageProps) {
   const session = await getAuthSession();
+  const params = searchParams ? await searchParams : {};
 
   if (session) {
     redirect("/dashboard");
   }
+
+  const invitationCode = firstParam(params.inv) ?? "";
+  const initialUtm = {
+    utmSource: firstParam(params.utm_source) ?? "",
+    utmCampaign: firstParam(params.utm_campaign) ?? "",
+    utmMedium: firstParam(params.utm_medium) ?? "",
+  };
 
   return (
     <IFUPage>
@@ -39,7 +55,7 @@ export default async function RegisterPage() {
               </IFUActionLink>
             }
           />
-          <RegistrationForm />
+          <RegistrationForm initialInvitationCode={invitationCode} initialUtm={initialUtm} />
         </IFUContainer>
       </IFUSection>
     </IFUPage>

@@ -39,6 +39,19 @@ enum ApplicationStatus {
   COMPLETED
 }
 
+enum InvitationStatus {
+  PENDING
+  OPENED
+  REGISTERED
+  EXPIRED
+  INVALIDATED
+}
+
+enum AcquisitionSource {
+  ORGANIC
+  INVITATION
+}
+
 model Organization {
   id        String   @id @default(cuid())
   name      String
@@ -82,31 +95,87 @@ model Role {
 }
 
 model User {
-  id                   String             @id @default(cuid())
-  cognitoId            String?            @unique
-  email                String             @unique
-  fullName             String
-  firstName            String?
-  lastName             String?
-  preferredDisplayName String?
-  termsAccepted        Boolean            @default(false)
-  termsAcceptedAt      DateTime?
-  marketingOptIn       Boolean            @default(false)
-  marketingOptInAt     DateTime?
-  ageConfirmedAt       DateTime?
-  accessStatus         AccessStatus       @default(PENDING)
-  profile              UserProfile?
-  selectedRoles        UserSelectedRole[]
-  workspaceItems       WorkspaceItem[]
-  bookmarks            Bookmark[]
-  applications         Application[]
-  documents            Document[]
-  messagesSent         Message[]          @relation("sentMessages")
-  messagesReceived     Message[]          @relation("receivedMessages")
-  activityLogs         ActivityLog[]
-  geoEvents            GeoEvent[]
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
+  id                    String             @id @default(cuid())
+  cognitoId             String?            @unique
+  email                 String             @unique
+  fullName              String
+  firstName             String?
+  lastName              String?
+  preferredDisplayName  String?
+  termsAccepted         Boolean            @default(false)
+  termsAcceptedAt       DateTime?
+  marketingOptIn        Boolean            @default(false)
+  marketingOptInAt      DateTime?
+  ageConfirmedAt        DateTime?
+  accessStatus          AccessStatus       @default(PENDING)
+  profile               UserProfile?
+  selectedRoles         UserSelectedRole[]
+  workspaceItems        WorkspaceItem[]
+  bookmarks             Bookmark[]
+  applications          Application[]
+  documents             Document[]
+  messagesSent          Message[]          @relation("sentMessages")
+  messagesReceived      Message[]          @relation("receivedMessages")
+  activityLogs          ActivityLog[]
+  geoEvents             GeoEvent[]
+  acquisition           UserAcquisition?
+  registeredInvitations Invitation[]
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+}
+
+model Invitation {
+  id               String            @id @default(cuid())
+  code             String            @unique
+  name             String?
+  email            String?
+  normalizedEmail  String?
+  phone            String?
+  normalizedPhone  String?
+  country          String?
+  suggestedRole    String?
+  invitedBy        String?
+  channel          String            @default("copy_link")
+  status           InvitationStatus  @default(PENDING)
+  expiresAt        DateTime
+  openedAt         DateTime?
+  registeredAt     DateTime?
+  registeredUserId String?
+  metadata         Json?
+  registeredUser   User?             @relation(fields: [registeredUserId], references: [id], onDelete: SetNull)
+  acquisitions     UserAcquisition[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([normalizedEmail, status])
+  @@index([normalizedPhone, status])
+  @@index([expiresAt])
+  @@index([registeredUserId])
+}
+
+model UserAcquisition {
+  id                 String            @id @default(cuid())
+  userId             String            @unique
+  source             AcquisitionSource @default(ORGANIC)
+  invitationId       String?
+  invitedBy          String?
+  inviteChannel      String?
+  selfReportedSource String?
+  selfReportedDetail String?
+  utmSource          String?
+  utmCampaign        String?
+  utmMedium          String?
+  firstTouchUrl      String?
+  metadata           Json?
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invitation         Invitation?       @relation(fields: [invitationId], references: [id], onDelete: SetNull)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([source])
+  @@index([invitationId])
+  @@index([inviteChannel])
+  @@index([utmSource, utmCampaign])
 }
 
 model UserProfile {

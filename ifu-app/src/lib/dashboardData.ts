@@ -1,6 +1,7 @@
 import { ApplicationStatus, DashboardItemType } from "@/generated/prisma/enums";
 import type { Prisma } from "@/generated/prisma/client";
 import type { AuthSession } from "@/lib/auth/session";
+import { finalizeUserAcquisition } from "@/lib/invitations";
 import {
   dashboardItemSeeds,
   workspaceSeedItems,
@@ -323,6 +324,14 @@ export async function syncAuthenticatedUser(session: AuthSession) {
       },
     });
   }
+
+  await prisma.$transaction((transaction) =>
+    finalizeUserAcquisition(transaction, {
+      userId: user.id,
+      email,
+      allowEmailFallback: true,
+    }),
+  );
 
   await syncPreviewRolesForUser(user.id, email);
 

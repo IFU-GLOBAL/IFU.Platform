@@ -6,6 +6,8 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 import { NextResponse } from "next/server";
 import { confirmCognitoUserSignUp } from "@/lib/auth/cognito-user-pool";
+import { finalizeUserAcquisition } from "@/lib/invitations";
+import { getPrisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -51,6 +53,21 @@ export async function POST(request: Request) {
 
   try {
     await confirmCognitoUserSignUp({ email, confirmationCode });
+    const prisma = getPrisma();
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+
+    if (user) {
+      await prisma.$transaction((transaction) =>
+        finalizeUserAcquisition(transaction, {
+          userId: user.id,
+          email,
+          allowEmailFallback: true,
+        }),
+      );
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

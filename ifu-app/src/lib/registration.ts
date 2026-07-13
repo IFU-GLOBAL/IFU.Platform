@@ -8,6 +8,13 @@ export type RegistrationPayload = {
   consentTerms: boolean;
   marketingOptIn: boolean;
   ageConfirmed: boolean;
+  invitationCode?: string;
+  selfReportedSource?: string;
+  selfReportedDetail?: string;
+  utmSource?: string;
+  utmCampaign?: string;
+  utmMedium?: string;
+  firstTouchUrl?: string;
 };
 
 function cleanString(value: unknown, maxLength = 160) {
@@ -33,6 +40,13 @@ export function parseRegistrationPayload(value: unknown) {
     consentTerms: cleanBoolean(body.consentTerms),
     marketingOptIn: cleanBoolean(body.marketingOptIn),
     ageConfirmed: cleanBoolean(body.ageConfirmed),
+    invitationCode: cleanString(body.invitationCode, 48),
+    selfReportedSource: cleanString(body.selfReportedSource, 120),
+    selfReportedDetail: cleanString(body.selfReportedDetail, 300),
+    utmSource: cleanString(body.utmSource, 120),
+    utmCampaign: cleanString(body.utmCampaign, 120),
+    utmMedium: cleanString(body.utmMedium, 120),
+    firstTouchUrl: cleanString(body.firstTouchUrl, 300),
   };
 
   if (!payload.firstName || !payload.lastName) {

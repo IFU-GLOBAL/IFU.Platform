@@ -14,6 +14,9 @@ Next.js application for the IFU Role-Based Discovery & Education Center, preview
 - `/api/preview-applications` stores preview form submissions.
 - `/api/auth/signup` creates Cognito users from the custom IFU registration form.
 - `/api/auth/confirm-signup` confirms Cognito signup codes.
+- `/api/invitations` creates no-privilege invitation links for sharing/import workflows.
+- `/api/invitations/[code]` validates invitation attribution for `/register?inv=...`.
+- `/i/[code]` is the short invitation URL that redirects to `/register?inv=...`.
 - `/api/profile` saves authenticated profile completion fields.
 - `/api/dashboard` loads/persists dashboard actions.
 - `/api/geolocation` stores browser/CloudFront geolocation events.
@@ -67,6 +70,21 @@ APP_BASE_URL="https://invite.ifuplatform.com" \
 CRON_SECRET="long-random-cron-secret" \
 npm run maintenance:referral-cleanup
 ```
+
+Invitation import:
+
+```bash
+npm run invitations:import -- ./invitations.csv > generated-invitation-links.csv
+```
+
+CSV columns:
+
+```csv
+name,email,phone,country,suggested_role,invited_by,channel,expires_at
+Jean Mbarga,jean@example.com,,Cameroon,Cocoa Farmer,Country Rep,whatsapp,
+```
+
+Blank `expires_at` values default to 90 days. The import prints each generated invitation code and short `/i/CODE` link.
 
 `/api/maintenance/referral-cleanup` accepts `Authorization: Bearer <secret>` or `x-maintenance-secret: <secret>`, using `MAINTENANCE_SECRET` or `CRON_SECRET`. Schedule that command, or an equivalent HTTPS POST, daily from EventBridge Scheduler, Amplify/hosting cron, or another production scheduler.
 

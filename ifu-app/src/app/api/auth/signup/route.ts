@@ -7,6 +7,7 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 import { NextResponse } from "next/server";
 import { signUpCognitoUser } from "@/lib/auth/cognito-user-pool";
+import { finalizeUserAcquisition } from "@/lib/invitations";
 import { getPrisma } from "@/lib/prisma";
 import { parseRegistrationPayload } from "@/lib/registration";
 
@@ -79,24 +80,39 @@ export async function POST(request: Request) {
     const fullName = `${payload.firstName} ${payload.lastName}`.trim();
     const now = new Date();
 
-    await prisma.user.create({
-      data: {
-        cognitoId: cognitoResult.userSub,
-        email: payload.email,
-        fullName,
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        termsAccepted: true,
-        termsAcceptedAt: now,
-        marketingOptIn: payload.marketingOptIn,
-        marketingOptInAt: payload.marketingOptIn ? now : null,
-        ageConfirmedAt: now,
-        profile: {
-          create: {
-            profileCompletion: 20,
+    await prisma.$transaction(async (transaction) => {
+      const user = await transaction.user.create({
+        data: {
+          cognitoId: cognitoResult.userSub,
+          email: payload.email,
+          fullName,
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+          termsAccepted: true,
+          termsAcceptedAt: now,
+          marketingOptIn: payload.marketingOptIn,
+          marketingOptInAt: payload.marketingOptIn ? now : null,
+          ageConfirmedAt: now,
+          profile: {
+            create: {
+              profileCompletion: 20,
+            },
           },
         },
-      },
+      });
+
+      await finalizeUserAcquisition(transaction, {
+        userId: user.id,
+        email: payload.email,
+        invitationCode: payload.invitationCode,
+        allowEmailFallback: false,
+        selfReportedSource: payload.selfReportedSource,
+        selfReportedDetail: payload.selfReportedDetail,
+        utmSource: payload.utmSource,
+        utmCampaign: payload.utmCampaign,
+        utmMedium: payload.utmMedium,
+        firstTouchUrl: payload.firstTouchUrl,
+      });
     });
 
     return NextResponse.json(
