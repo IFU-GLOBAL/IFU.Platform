@@ -125,13 +125,75 @@ html {
   font-weight: 700;
 }
 
-.ifu-static-language__select {
+.ifu-static-language__select,
+.ifu-gtranslate__control .gt_switcher .gt_selected a {
   border-radius: 999px;
   border: 1px solid rgba(8, 41, 71, 0.14);
   background: rgba(255, 255, 255, 0.72);
   padding: 0.25rem 0.625rem;
   color: var(--ifu-navy);
   font-size: 0.75rem;
+}
+
+.ifu-gtranslate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+
+.ifu-gtranslate__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ifu-gtranslate__control {
+  min-width: 9rem;
+}
+
+.ifu-gtranslate__control .gt_switcher {
+  width: auto !important;
+  min-width: 9rem;
+}
+
+.ifu-gtranslate__control .gt_switcher .gt_selected {
+  background: transparent !important;
+}
+
+.ifu-gtranslate__control .gt_switcher .gt_selected a {
+  width: auto !important;
+  min-height: 1.875rem;
+}
+
+.ifu-gtranslate__control .gt_switcher .gt_option {
+  border-radius: var(--ifu-radius);
+  box-shadow: var(--ifu-shadow);
+}
+
+.ifu-gtranslate-floating {
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  z-index: 80;
+  border-radius: 999px;
+  border: 1px solid rgba(8, 41, 71, 0.12);
+  background: rgba(255, 255, 255, 0.94);
+  padding: 0.45rem 0.55rem;
+  color: var(--ifu-navy);
+  box-shadow: 0 12px 34px rgba(8, 41, 71, 0.12);
+}
+
+@media (max-width: 640px) {
+  .ifu-gtranslate-floating {
+    left: 0.75rem;
+    right: 0.75rem;
+    justify-content: space-between;
+  }
+
+  .ifu-gtranslate__label span {
+    display: none;
+  }
 }
 
 .ifu-static-header {

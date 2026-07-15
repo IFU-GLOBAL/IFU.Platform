@@ -1,4 +1,0 @@
-
-> ifu-app@0.1.0 invitations:import
-> tsx scripts/import-invitations.ts ./invitations.csv
-

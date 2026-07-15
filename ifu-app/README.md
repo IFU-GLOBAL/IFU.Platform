@@ -74,7 +74,7 @@ npm run maintenance:referral-cleanup
 Invitation import:
 
 ```bash
-npm run invitations:import -- ./invitations.csv > generated-invitation-links.csv
+npm --silent run invitations:import -- ./invitations.csv > generated-invitation-links.csv
 ```
 
 CSV columns:

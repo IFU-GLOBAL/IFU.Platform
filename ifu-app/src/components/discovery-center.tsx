@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Globe2,
   Handshake,
-  Languages,
   LoaderCircle,
   Mail,
   MessageCircle,
@@ -33,6 +32,7 @@ import {
   IFUSectionHeader,
   cn,
 } from "@/components/ifu-ui";
+import { GTranslateWidget } from "@/components/gtranslate-widget";
 import {
   discoveryPersonas,
   type DiscoveryCategory,
@@ -348,11 +348,7 @@ export function DiscoveryCenter({
               </a>
             ))}
           </div>
-          <div className="ifu-static-language">
-            <Languages className="h-4 w-4" aria-hidden="true" />
-            <span>Global Language</span>
-            <span className="ifu-static-language__select">English</span>
-          </div>
+          <GTranslateWidget id="discovery" />
         </IFUContainer>
       </div>
 
