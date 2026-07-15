@@ -129,7 +129,7 @@ function collectLegacyDirectoryRoutes(directory = legacyStaticRoot, route = ""):
 }
 
 function collectLegacyPostRedirects(): Redirect[] {
-  const redirects = Object.entries(legacyPostRedirects).map(([postId, destination]) => ({
+  const redirects: Redirect[] = Object.entries(legacyPostRedirects).map(([postId, destination]) => ({
     source: "/index.html",
     has: [{ type: "query" as const, key: "p", value: postId }],
     destination,
@@ -138,7 +138,7 @@ function collectLegacyPostRedirects(): Redirect[] {
 
   redirects.push({
     source: "/index.html",
-    has: [{ type: "query", key: "wordfence_syncAttackData" }],
+    has: [{ type: "query", key: "wordfence_syncAttackData", value: ".*" }],
     destination: "/home",
     permanent: true,
   });
