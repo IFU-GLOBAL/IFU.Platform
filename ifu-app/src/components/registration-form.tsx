@@ -248,7 +248,7 @@ export function RegistrationForm({ initialInvitationCode = "", initialUtm }: Reg
             <h2 className="mt-1 text-xl font-bold text-[var(--ifu-heading)]">
               {invitationMode === "invited"
                 ? "You've been selected - complete your preview access"
-                : "Join farmers and agriculture partners across 190+ countries"}
+                : "Join farmers and agriculture partners in the IFU network"}
             </h2>
             <p className="ifu-copy mt-2 text-sm">
               {invitationMode === "checking"

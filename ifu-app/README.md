@@ -6,6 +6,8 @@ Next.js application for the IFU Role-Based Discovery & Education Center, preview
 
 - `/` redirects to `/discovery`.
 - `/discovery` is the public Role-Based Discovery & Education Center with the 260-role matrix.
+- `/country/[slug]` is the IFU-owned Country Agricultural Intelligence Center route used by public map clicks and dashboard country links.
+- Legacy `/index.html?p=...` URLs 301 redirect to clean IFU-owned routes in `next.config.ts`.
 - `/invitation` is the preview invitation letter.
 - `/register` is the short Tier 1 signup screen: name, email, password, required terms/data consent, optional marketing opt-in, and required 16+ attestation.
 - `/login` starts Cognito sign-in.
@@ -22,11 +24,22 @@ Next.js application for the IFU Role-Based Discovery & Education Center, preview
 - `/api/geolocation` stores browser/CloudFront geolocation events.
 - `/api/health/db` checks PostgreSQL connectivity.
 
+## Country Intelligence MVP
+
+The country route currently ships as a Tier 2 MVP:
+
+- Four views: overview, production, markets, and opportunities.
+- Pilot seed records live in `src/lib/country-intelligence.ts`.
+- Fallback country pages keep every public map click on an IFU-owned route.
+- Each country page exposes seed status, timestamp, source notes, and remaining data-lineage gaps.
+
+Before final acceptance, replace seed records with owner-approved country data, source citations, data licenses, and refresh cadence.
+
 ## Required Environment Variables
 
 ```bash
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/ifu_platform?schema=public&sslmode=require&uselibpqcompat=true"
-APP_BASE_URL="https://main.d34plke7xvuysn.amplifyapp.com"
+APP_BASE_URL="https://invite.ifuplatform.com"
 AUTH_SESSION_SECRET="at-least-32-characters"
 
 COGNITO_REGION="us-east-1"
@@ -34,6 +47,8 @@ COGNITO_USER_POOL_ID="us-east-1_pfz7IT7lv"
 COGNITO_CLIENT_ID="2d8h65gh2hr3sc3m2nrhbhg963"
 COGNITO_CLIENT_SECRET="optional-app-client-secret"
 COGNITO_DOMAIN="https://us-east-1pfz7it7lv.auth.us-east-1.amazoncognito.com"
+COGNITO_REDIRECT_URI="https://invite.ifuplatform.com/api/auth/callback"
+COGNITO_LOGOUT_URI="https://invite.ifuplatform.com/login?signedOut=1"
 COGNITO_SCOPES="openid email profile"
 
 SES_REGION="us-east-1"
@@ -53,6 +68,7 @@ npm install
 npm run dev
 npm run lint
 npm run build
+npm run auth:audit
 ```
 
 Prisma:
@@ -85,6 +101,15 @@ Jean Mbarga,jean@example.com,,Cameroon,Cocoa Farmer,Country Rep,whatsapp,
 ```
 
 Blank `expires_at` values default to 90 days. The import prints each generated invitation code and short `/i/CODE` link.
+
+Auth environment audit:
+
+```bash
+npm run auth:audit
+npm run auth:audit -- --strict
+```
+
+The audit prints the exact Cognito callback and sign-out URLs for the current `APP_BASE_URL`, checks required auth variables without exposing secrets, and lists the AWS console values that still need manual confirmation. Use `--strict` in CI or before deployment to fail on any mismatch or missing value.
 
 `/api/maintenance/referral-cleanup` accepts `Authorization: Bearer <secret>` or `x-maintenance-secret: <secret>`, using `MAINTENANCE_SECRET` or `CRON_SECRET`. Schedule that command, or an equivalent HTTPS POST, daily from EventBridge Scheduler, Amplify/hosting cron, or another production scheduler.
 

@@ -59,6 +59,55 @@ const socialHrefReplacements = [
   [/href="https:\/\/youtube\.com"/g, 'href="https://youtube.com/@IFUPlatform" aria-label="YouTube placeholder"'],
   [/href="home\.html#"/g, 'href="https://instagram.com/IFUPlatform" aria-label="Instagram placeholder"'],
 ];
+const staticContentReplacements = [
+  [/\bai powered\b/g, "AI-powered"],
+  [/scalable\.How/g, "scalable. How"],
+  [/roles roles/g, "roles"],
+  [/Roles roles/g, "Roles"],
+  [/Quantum Sphere/g, "AgriSphere"],
+  [/Our Ecosystem\. 9 Engines\. One Mission/g, "Our Ecosystem. 10 Engines. One Mission"],
+  [/190\+ Countries \| 2M\+ Farmers/g, "Official Placeholder: 190+ Countries | 2M+ Farmers"],
+  [/500\+ Partners \| 50\+ Projects/g, "Official Placeholder: 500+ Partners | 50+ Projects"],
+  [/(<span class="count-text" data-stop="190" data-speed="1500">)0(<\/span>)/g, "$1190$2"],
+  [/(<span class="count-text" data-stop="2" data-speed="1500">)0(<\/span>)/g, "$12$2"],
+  [/(<span class="count-text" data-stop="500" data-speed="1500">)0(<\/span>)/g, "$1500$2"],
+  [/(<span class="count-text" data-stop="50" data-speed="1500">)0(<\/span>)/g, "$150$2"],
+  [
+    /function showCountry\(country, lat = null, lon = null\)\{/g,
+    `function countryInsightsPath(country){
+            const slug = String(country || "")
+                .trim()
+                .toLowerCase()
+                .replace(/&/g, " and ")
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "");
+
+            return "/country/" + (slug || "global");
+        }
+
+        function showCountry(country, lat = null, lon = null){`,
+  ],
+  [
+    /<a href="home\.html#world-map" class="country-popup-link">/g,
+    '<a href="${countryInsightsPath(country)}" class="country-popup-link">',
+  ],
+  [
+    /(<li><span style="font-size: 19px;">● AgriCapital <\/span>to access funding and investment pathways<\/li>)(?!<li><span style="font-size: 19px;">● AgriFinance<\/span>)/g,
+    '$1<li><span style="font-size: 19px;">● AgriFinance</span> to manage payments, accounting, and financial workflows</li>',
+  ],
+  [
+    /<a href="https:\/\/www\.wpmapplugins\.com\/"[^>]*><tspan fill="#0066cc">wpmapplugins<\/tspan><\/a>/g,
+    '<tspan fill="#667085">map source</tspan>',
+  ],
+];
+const mainAgriFinanceNavItem =
+  '\n\t<li id="menu-item-ifu-agrifinance" class="menu-item menu-item-type-custom menu-item-object-custom megamenu-hide menu-item-ifu-agrifinance"><a href="/discovery#role-matrix">AgriFinance</a></li>';
+const footerAgriFinanceNavItem =
+  '\n<li id="menu-item-ifu-agrifinance-footer" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-ifu-agrifinance-footer"><a href="/discovery#role-matrix">AgriFinance</a></li>';
+const mainAgriFundsNavItemPattern =
+  /(<li id="menu-item-6444" class="menu-item menu-item-type-post_type menu-item-object-page megamenu-hide menu-item-6444"><a href="index\.html%3Fp=6419\.html">AgriFunds<\/a><\/li>)(?!\n\t<li id="menu-item-ifu-agrifinance")/g;
+const footerAgriFundsNavItemPattern =
+  /(<li id="menu-item-6454" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6454"><a href="index\.html%3Fp=6419\.html">AgriFunds<\/a><\/li>)(?!\n<li id="menu-item-ifu-agrifinance-footer")/g;
 const homepageRoleSectionPattern =
   /<style>\s*\.agrisphere-dashboard \*[\s\S]*?renderRoleTab\(currentRole,currentTab\);\s*<\/script>\s*<\/div>/;
 
@@ -379,6 +428,12 @@ function commentOutRegulatoryPopups(html) {
     );
 }
 
+function addAgriFinancePlatformLinks(html) {
+  return html
+    .replace(mainAgriFundsNavItemPattern, `$1${mainAgriFinanceNavItem}`)
+    .replace(footerAgriFundsNavItemPattern, `$1${footerAgriFinanceNavItem}`);
+}
+
 function shouldUpdateStaticTextFile(filePath, fileName) {
   return (
     fileName.endsWith(".html") ||
@@ -410,6 +465,12 @@ function updateStaticText(filePath) {
   for (const [pattern, replacement] of socialHrefReplacements) {
     updatedHtml = updatedHtml.replace(pattern, replacement);
   }
+
+  for (const [pattern, replacement] of staticContentReplacements) {
+    updatedHtml = updatedHtml.replace(pattern, replacement);
+  }
+
+  updatedHtml = addAgriFinancePlatformLinks(updatedHtml);
 
   if (filePath === publicHomePath) {
     updatedHtml = updateHomepageRoleSection(updatedHtml);

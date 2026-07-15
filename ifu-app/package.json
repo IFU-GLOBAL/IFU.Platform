@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "auth:audit": "node scripts/audit-auth-config.mjs",
     "db:generate": "prisma generate",
     "db:local": "prisma dev -d --name ifu-preview",
     "db:migrate": "prisma migrate dev",

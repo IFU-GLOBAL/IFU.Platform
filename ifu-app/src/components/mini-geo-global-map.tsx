@@ -1,8 +1,10 @@
 "use client";
 
 import { Clock3, LocateFixed, MapPin, Navigation } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { DashboardDrawerItem, DashboardProfile } from "@/lib/dashboard-model";
+import { getCountryIntelligencePath } from "@/lib/country-intelligence";
 
 type MiniGeoGlobalMapProps = {
   profile: DashboardProfile;
@@ -129,6 +131,11 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
       ? `${formatCoordinate(latitude)}, ${formatCoordinate(longitude)}`
       : "Location not synced";
   }, [displayedProfile.city, displayedProfile.country, displayedProfile.stateProvince, hasCoordinates, latitude, longitude]);
+
+  const countryCenterHref = useMemo(
+    () => getCountryIntelligencePath(displayedProfile.country || "global"),
+    [displayedProfile.country],
+  );
 
   const locationRows = useMemo(
     () => [
@@ -260,6 +267,13 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
             <MapPin className="h-4 w-4 text-[var(--ifu-primary)]" />
             Open location profile
           </button>
+          <Link
+            href={countryCenterHref}
+            className="inline-flex w-fit items-center gap-1.5 rounded-[var(--ifu-radius)] border border-white/40 bg-[#0b7d35] px-2.5 py-1.5 text-[0.82rem] font-bold leading-tight text-white transition hover:bg-[#0a6f30] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            <Navigation className="h-4 w-4" />
+            Open country center
+          </Link>
         </div>
       </div>
 

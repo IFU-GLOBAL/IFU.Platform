@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   IFUActionButton,
   IFUActionLink,
@@ -139,10 +139,10 @@ const socialLinks = [
 ];
 
 const impactStats = [
-  { value: "190+", label: "Countries Served", icon: Globe2 },
-  { value: "2M+", label: "Farmers Empowered", icon: Users },
+  { value: "190+", label: "Countries", icon: Globe2 },
+  { value: "2M+", label: "Farmers", icon: Users },
   { value: "500+", label: "Partners", icon: Handshake },
-  { value: "50+", label: "Country Programs", icon: Sprout },
+  { value: "50+", label: "Programs", icon: Sprout },
 ];
 
 const allRolesPersona: DiscoveryPersona = {
@@ -154,6 +154,7 @@ const allRolesPersona: DiscoveryPersona = {
 };
 
 const roleJourneySteps = ["Your role", "Your value", "Apply"];
+const rolePageSize = 40;
 
 const whyItems = [
   {
@@ -199,6 +200,7 @@ export function DiscoveryCenter({
       (initialRoleSlugs.length > 0 ? "all" : discoveryPersonas[0]?.slug ?? "all"),
   );
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [visibleRoleCount, setVisibleRoleCount] = useState(rolePageSize);
   const [selectedRoleSlugs, setSelectedRoleSlugs] = useState<string[]>(initialRoleSlugs);
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -250,6 +252,12 @@ export function DiscoveryCenter({
 
     return matchesPersona && matchesCategory && matchesQuery;
   });
+  const visibleRoles = filteredRoles.slice(0, visibleRoleCount);
+  const hasMoreRoles = visibleRoles.length < filteredRoles.length;
+
+  useEffect(() => {
+    setVisibleRoleCount(rolePageSize);
+  }, [categoryFilter, query, selectedPersonaSlug]);
 
   function updateField<K extends keyof FormState>(field: K, value: FormState[K]) {
     setFormState((current) => ({ ...current, [field]: value }));
@@ -393,7 +401,7 @@ export function DiscoveryCenter({
               <span className="ifu-static-title__green">IFU Platform</span>
             </h1>
             <p className="ifu-static-hero__copy">
-              One platform. 10 ecosystems. 190+ countries. Built for everyone in agriculture. In less than a minute, choose your role and discover how IFU connects you to global opportunities, knowledge, funding, markets, training, and partnerships.
+              One platform. 10 ecosystems. Global agricultural reach. In less than a minute, choose your role and discover how IFU connects you to global opportunities, knowledge, funding, markets, training, and partnerships.
             </p>
             <div className="ifu-static-hero__actions">
               <IFUActionLink href="#role-matrix" variant="primary" icon={ArrowRight} className="ifu-static-hero-button">
@@ -410,7 +418,7 @@ export function DiscoveryCenter({
       <section className="ifu-static-facts" aria-label="IFU reach">
         <IFUContainer size="wide">
           <div className="ifu-static-facts__bar">
-            <p className="ifu-static-facts__eyebrow">Our 2030 Vision</p>
+            <p className="ifu-static-facts__eyebrow">Official Placeholders</p>
             {impactStats.map((stat) => (
               <div key={stat.label} className="ifu-static-fact">
                 <span className="ifu-static-fact__icon">
@@ -469,7 +477,7 @@ export function DiscoveryCenter({
           <IFUSectionHeader
             eyebrow="Role-based preview"
             title="A coordinated ecosystem for agriculture"
-            description={`This app currently includes ${metrics.categories} role categories, ${metrics.roles} seeded roles, ${metrics.countries} country reach, and ${metrics.ecosystems} ecosystems for early access discovery.`}
+            description={`This app currently includes ${metrics.categories} role categories, ${metrics.roles} seeded roles, ${metrics.countries} official placeholder country reach, and ${metrics.ecosystems} ecosystem pathways for early access discovery.`}
           />
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
@@ -569,10 +577,10 @@ export function DiscoveryCenter({
 
               <div className="ifu-role-filter-summary">
                 <p>
-                  Showing <strong>{filteredRoles.length}</strong> roles for <strong>{selectedPersona.label}</strong>
+                  Showing <strong>{visibleRoles.length}</strong> of <strong>{filteredRoles.length}</strong> roles for <strong>{selectedPersona.label}</strong>
                 </p>
                 <p>
-                  Level indicates typical career stage: Foundation, Professional, or Leadership. It does not limit which roles you may select.
+                  Search and filters still cover the full 260-role catalog.
                 </p>
               </div>
 
@@ -588,7 +596,7 @@ export function DiscoveryCenter({
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredRoles.map((role) => {
+                      {visibleRoles.map((role) => {
                         const selected = selectedRoleSlugs.includes(role.slug);
 
                         return (
@@ -631,6 +639,18 @@ export function DiscoveryCenter({
                   </table>
                 </div>
               </div>
+
+              {hasMoreRoles ? (
+                <div className="mt-4 flex justify-center">
+                  <IFUActionButton
+                    type="button"
+                    variant="outline"
+                    onClick={() => setVisibleRoleCount((current) => current + rolePageSize)}
+                  >
+                    Show {Math.min(rolePageSize, filteredRoles.length - visibleRoles.length)} more roles
+                  </IFUActionButton>
+                </div>
+              ) : null}
             </div>
 
             <div className="ifu-role-side-column">
