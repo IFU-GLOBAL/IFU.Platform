@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock3, LocateFixed, MapPin, Navigation } from "lucide-react";
+import { Clock3, LocateFixed, MapPin, Navigation, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { DashboardDrawerItem, DashboardProfile } from "@/lib/dashboard-model";
@@ -136,6 +136,8 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
     () => getCountryIntelligencePath(displayedProfile.country || "global"),
     [displayedProfile.country],
   );
+  const profileIsComplete = displayedProfile.profileCompletion >= 100;
+  const profileActionLabel = profileIsComplete ? "Edit profile" : "Complete profile";
 
   const locationRows = useMemo(
     () => [
@@ -313,9 +315,13 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
               {localTime || "Syncing"}
             </p>
           </div>
-          <div className="rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] p-3">
+          <Link
+            href="/profile"
+            aria-label={`${profileActionLabel}: profile is ${displayedProfile.profileCompletion}% complete`}
+            className="rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] p-3 transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ifu-primary)]"
+          >
             <div className="flex items-center gap-1.5 text-[0.82rem] font-bold leading-tight text-[var(--ifu-heading)]">
-              <Navigation className="h-4 w-4 text-[var(--ifu-primary)]" />
+              <Pencil className="h-4 w-4 text-[var(--ifu-primary)]" />
               Profile
             </div>
             <p className="mt-2 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
@@ -327,7 +333,10 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
                 style={{ width: `${displayedProfile.profileCompletion}%` }}
               />
             </div>
-          </div>
+            <span className="mt-2 inline-flex text-xs font-bold leading-tight text-[var(--ifu-primary-deep)]">
+              {profileActionLabel}
+            </span>
+          </Link>
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderCircle, Save } from "lucide-react";
+import { CheckCircle2, LoaderCircle, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/components/ifu-ui";
 
 type ProfileFormInitial = {
+  country: string;
   stateProvince: string;
   city: string;
   organization: string;
@@ -22,6 +23,7 @@ type ProfileFormInitial = {
 
 type ProfileCompletionFormProps = {
   initial: ProfileFormInitial;
+  profileCompletion: number;
 };
 
 const cropLivestockOptions = [
@@ -74,11 +76,13 @@ function TextInput({
   );
 }
 
-export function ProfileCompletionForm({ initial }: ProfileCompletionFormProps) {
+export function ProfileCompletionForm({ initial, profileCompletion }: ProfileCompletionFormProps) {
   const router = useRouter();
   const [formState, setFormState] = useState(initial);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
+  const profileIsComplete = profileCompletion >= 100;
+  const progressLabel = profileIsComplete ? "Profile complete" : `${profileCompletion}% complete`;
 
   useEffect(() => {
     const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -143,11 +147,32 @@ export function ProfileCompletionForm({ initial }: ProfileCompletionFormProps) {
         <div className="mb-5">
           <p className="ifu-eyebrow">Progressive profile</p>
           <h2 className="mt-2 text-2xl font-semibold text-[var(--ifu-text)]">
-            Complete your profile - unlock better matches
+            {profileIsComplete ? "Edit your IFU profile" : "Complete your profile - unlock better matches"}
           </h2>
+          <div className="mt-4 rounded-[var(--ifu-radius)] border border-[var(--ifu-border-soft)] bg-white p-3">
+            <div className="flex items-center justify-between gap-3 text-sm font-bold leading-tight text-[var(--ifu-heading)]">
+              <span className="inline-flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-[var(--ifu-primary)]" aria-hidden="true" />
+                {progressLabel}
+              </span>
+              <span>{profileCompletion}%</span>
+            </div>
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--ifu-surface-muted)]">
+              <div
+                className="h-full rounded-full bg-[var(--ifu-primary)]"
+                style={{ width: `${profileCompletion}%` }}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
+          <TextInput
+            label="Country"
+            value={formState.country}
+            onChange={(value) => updateField("country", value)}
+            helper="Add your country to connect with the right IFU regional context."
+          />
           <TextInput
             label="State or province"
             value={formState.stateProvince}
@@ -234,7 +259,7 @@ export function ProfileCompletionForm({ initial }: ProfileCompletionFormProps) {
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <IFUActionLink href="/dashboard" variant="outline">
-            Skip for now
+            {profileIsComplete ? "Back to dashboard" : "Skip for now"}
           </IFUActionLink>
           <IFUActionButton type="submit" disabled={status === "submitting"}>
             {status === "submitting" ? (
@@ -242,7 +267,7 @@ export function ProfileCompletionForm({ initial }: ProfileCompletionFormProps) {
             ) : (
               <Save className="h-4 w-4" aria-hidden="true" />
             )}
-            Save and continue
+            {profileIsComplete ? "Save profile" : "Save and continue"}
           </IFUActionButton>
         </div>
 

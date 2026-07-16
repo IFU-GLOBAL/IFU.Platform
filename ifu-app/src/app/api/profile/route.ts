@@ -25,6 +25,7 @@ function cleanStringArray(value: unknown, maxItems = 24) {
 }
 
 function computeProfileCompletion(input: {
+  country: string;
   stateProvince: string;
   city: string;
   organization: string;
@@ -34,6 +35,7 @@ function computeProfileCompletion(input: {
   goals: string;
 }) {
   const fields = [
+    input.country,
     input.stateProvince,
     input.city,
     input.organization,
@@ -102,6 +104,7 @@ export async function POST(request: NextRequest) {
   const profileCompletion = Math.max(
     user.profile?.profileCompletion ?? 0,
     computeProfileCompletion({
+      country,
       stateProvince,
       city,
       organization,
