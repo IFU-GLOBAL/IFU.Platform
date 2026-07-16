@@ -11,7 +11,7 @@ import {
 export const metadata: Metadata = {
   title: "IFU Privacy Notice | IFU Platform",
   description:
-    "Short-form privacy notice for IFU pre-launch preview applications.",
+    "Short-form privacy notice for IFU pre-launch registrations.",
 };
 
 const noticeSections = [
@@ -21,11 +21,11 @@ const noticeSections = [
   },
   {
     title: "What we collect",
-    body: "When you submit the preview form, we collect the details you provide: name, email, phone, country, organization, current role, selected IFU roles, leadership interest, contribution preferences, and referral information.",
+    body: "When you register, we collect the details you provide: name, email, country, organization, current role, selected IFU roles, leadership interest, contribution preferences, and referral information.",
   },
   {
     title: "Why we collect it",
-    body: "We use this information to review your application, match you to your selected role, contact you about the IFU Platform preview and launch, and understand which roles and countries our early community represents.",
+    body: "We use this information to support your registration, match you to your selected role, contact you about the IFU Platform and launch, and understand which roles and countries our early community represents.",
   },
   {
     title: "What we never do",
@@ -37,11 +37,11 @@ const noticeSections = [
   },
   {
     title: "Your rights",
-    body: "You may request a copy of your data, correct it, or ask us to delete it at any time by emailing privacy@ifuplatform.com. If you are in the EU/EEA or UK, you have rights under the GDPR; if you are a California resident, you have rights under the CCPA. We honor these rights for all applicants worldwide.",
+    body: "You may request a copy of your data, correct it, or ask us to delete it at any time by emailing privacy@ifuplatform.com. If you are in the EU/EEA or UK, you have rights under the GDPR; if you are a California resident, you have rights under the CCPA. We honor these rights for all registrants worldwide.",
   },
   {
     title: "Retention",
-    body: "If the IFU Platform does not launch a membership for you, application data is deleted within 24 months of submission. Referred-person data is deleted within 90 days if the referred person does not respond.",
+    body: "If the IFU Platform does not launch a membership for you, registration data is deleted within 24 months of submission. Referred-person data is deleted within 90 days if the referred person does not respond.",
   },
 ];
 
@@ -50,8 +50,8 @@ export default function PrivacyPage() {
     <IFUPage>
       <IFUHero
         eyebrow="Privacy notice"
-        title="IFU Privacy Notice for Pre-Launch Applications"
-        description="Short-form privacy notice for people submitting IFU preview applications or receiving a one-time referral invitation."
+        title="IFU Privacy Notice for Pre-Launch Registrations"
+        description="Short-form privacy notice for people creating IFU accounts or receiving a one-time referral invitation."
       >
         <IFUActionLink href="/discovery" variant="ghost" icon={ArrowLeft}>
           Discovery center

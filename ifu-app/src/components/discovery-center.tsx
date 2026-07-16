@@ -109,7 +109,7 @@ const whyItems = [
   },
   {
     title: "Build trust before launch",
-    text: "Preview submissions create an early map of contributors, referrals, and implementation partners across regions.",
+    text: "Registrations create an early map of contributors, referrals, and implementation partners across regions.",
     icon: BadgeCheck,
   },
 ];
@@ -155,7 +155,7 @@ export function DiscoveryCenter({
   const shareLinks = [
     {
       label: "Email",
-      href: `mailto:?subject=${encodeURIComponent("IFU preview invitation")}&body=${encodedShareText}`,
+      href: `mailto:?subject=${encodeURIComponent("IFU invitation")}&body=${encodedShareText}`,
       icon: Mail,
     },
     {
@@ -410,11 +410,13 @@ export function DiscoveryCenter({
             <div className="ifu-role-list-panel">
               <div className="ifu-role-filter-row">
                 <label className="relative block">
+                  <span className="sr-only">Search IFU roles</span>
                   <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ifu-muted)]" aria-hidden="true" />
                   <input
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Search roles, levels, ecosystems, or keywords"
+                    aria-label="Search IFU roles"
                     className="ifu-field-control ifu-input h-12 !pl-12 pr-4"
                   />
                 </label>
@@ -422,6 +424,7 @@ export function DiscoveryCenter({
                 <select
                   value={categoryFilter}
                   onChange={(event) => setCategoryFilter(event.target.value)}
+                  aria-label="Filter IFU roles by category"
                   className="ifu-field-control ifu-select h-12"
                 >
                   <option value="all">All categories</option>
@@ -445,6 +448,9 @@ export function DiscoveryCenter({
               <div className="ifu-table-shell mt-4">
                 <div className="ifu-role-table-scroll">
                   <table className="ifu-table ifu-role-table">
+                    <caption className="sr-only">
+                      IFU role selection table. Select one or more roles before registration.
+                    </caption>
                     <thead className="sticky top-0 z-10">
                       <tr>
                         <th className="w-14">Select</th>
@@ -558,6 +564,7 @@ export function DiscoveryCenter({
                           key={role.slug}
                           type="button"
                           onClick={() => toggleRole(role.slug)}
+                          aria-label={`Remove ${role.title} from selected roles`}
                           className="ifu-chip px-3 py-2"
                         >
                           {role.title}

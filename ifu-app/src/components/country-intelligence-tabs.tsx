@@ -1,15 +1,18 @@
 "use client";
 
-import { BarChart3, Factory, LineChart, Sprout } from "lucide-react";
+import { BarChart3, Factory, Route, Sprout } from "lucide-react";
 import { useState } from "react";
 import { IFUCard, cn } from "@/components/ifu-ui";
-import type { CountryIntelligenceRecord } from "@/lib/country-intelligence";
+import {
+  countryIntelligenceSource,
+  type CountryIntelligenceRecord,
+} from "@/lib/country-intelligence";
 
 const tabs = [
   { id: "overview", label: "Overview", icon: BarChart3 },
-  { id: "production", label: "Production", icon: Sprout },
-  { id: "markets", label: "Markets", icon: LineChart },
+  { id: "commodities", label: "Commodities", icon: Sprout },
   { id: "opportunities", label: "Opportunities", icon: Factory },
+  { id: "ifu-path", label: "IFU Path", icon: Route },
 ] as const;
 
 type CountryTabId = (typeof tabs)[number]["id"];
@@ -31,11 +34,28 @@ function ChipList({ items }: { items: string[] }) {
 }
 
 function SourceNotes({ country }: { country: CountryIntelligenceRecord }) {
+  const lineageRows = [
+    ["Register", countryIntelligenceSource.label],
+    ["Record status", country.confidence],
+    ["Last updated", country.lastUpdated],
+    ["Refresh cadence", countryIntelligenceSource.refreshCadence],
+    ["License status", countryIntelligenceSource.license],
+    ["Map attribution", countryIntelligenceSource.geometryAttribution],
+  ];
+
   return (
     <div className="mt-6 rounded-[var(--ifu-radius)] border border-[var(--ifu-border-soft)] bg-white p-4">
       <p className="text-xs font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
         Data Lineage
       </p>
+      <dl className="mt-3 grid gap-3 text-sm leading-6 text-[var(--ifu-muted-strong)] md:grid-cols-2">
+        {lineageRows.map(([label, value]) => (
+          <div key={label}>
+            <dt className="font-bold text-[var(--ifu-heading)]">{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
       <ul className="mt-3 grid gap-2 text-sm leading-6 text-[var(--ifu-muted-strong)]">
         {country.sourceNotes.map((note) => (
           <li key={note}>{note}</li>
@@ -46,109 +66,121 @@ function SourceNotes({ country }: { country: CountryIntelligenceRecord }) {
 }
 
 function TabPanel({ country, activeTab }: { country: CountryIntelligenceRecord; activeTab: CountryTabId }) {
-  if (activeTab === "production") {
-    return (
-      <IFUCard className="p-6">
-        <h2 className="text-2xl font-bold text-[var(--ifu-heading)]">Production Profile</h2>
-        <p className="ifu-copy mt-3">
-          Seeded crop and production indicators used by the public country map.
-        </p>
-        <div className="mt-5 grid gap-5 md:grid-cols-2">
-          <div>
-            <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
-              Key Crops
-            </p>
-            <ChipList items={country.keyCrops} />
-          </div>
-          <div>
-            <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
-              Risk Signals
-            </p>
-            <ChipList items={country.riskSignals} />
-          </div>
-        </div>
-        <SourceNotes country={country} />
-      </IFUCard>
-    );
-  }
+  const panelId = `country-tabpanel-${activeTab}`;
+  const labelledBy = `country-tab-${activeTab}`;
 
-  if (activeTab === "markets") {
+  if (activeTab === "commodities") {
     return (
-      <IFUCard className="p-6">
-        <h2 className="text-2xl font-bold text-[var(--ifu-heading)]">Market Intelligence</h2>
-        <p className="ifu-copy mt-3">{country.marketOutlook}</p>
-        <div className="mt-5">
-          <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
-            Major Exports
+      <div id={panelId} role="tabpanel" aria-labelledby={labelledBy}>
+        <IFUCard className="p-6">
+          <h2 className="text-2xl font-bold text-[var(--ifu-heading)]">Commodity Profile</h2>
+          <p className="ifu-copy mt-3">
+            Seeded crop, export, and commodity indicators used by the public country map.
           </p>
-          <ChipList items={country.majorExports} />
-        </div>
-        <SourceNotes country={country} />
-      </IFUCard>
+          <div className="mt-5 grid gap-5 md:grid-cols-2">
+            <div>
+              <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
+                Key Crops
+              </p>
+              <ChipList items={country.keyCrops} />
+            </div>
+            <div>
+              <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
+                Major Exports
+              </p>
+              <ChipList items={country.majorExports} />
+            </div>
+          </div>
+          <SourceNotes country={country} />
+        </IFUCard>
+      </div>
     );
   }
 
   if (activeTab === "opportunities") {
     return (
-      <IFUCard className="p-6">
-        <h2 className="text-2xl font-bold text-[var(--ifu-heading)]">IFU Opportunities</h2>
-        <p className="ifu-copy mt-3">
-          Country-specific entry points for onboarding, partnerships, training, and future dashboard actions.
-        </p>
-        <div className="mt-5 grid gap-5 md:grid-cols-2">
-          <div>
+      <div id={panelId} role="tabpanel" aria-labelledby={labelledBy}>
+        <IFUCard className="p-6">
+          <h2 className="text-2xl font-bold text-[var(--ifu-heading)]">IFU Opportunities</h2>
+          <p className="ifu-copy mt-3">
+            Country-specific entry points for onboarding, partnerships, training, and future
+            dashboard actions.
+          </p>
+          <div className="mt-5">
             <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
               Opportunity Areas
             </p>
             <ChipList items={country.opportunities} />
           </div>
-          <div>
-            <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
-              IFU Pathways
-            </p>
-            <ChipList items={country.ifuPathways} />
+          <SourceNotes country={country} />
+        </IFUCard>
+      </div>
+    );
+  }
+
+  if (activeTab === "ifu-path") {
+    return (
+      <div id={panelId} role="tabpanel" aria-labelledby={labelledBy}>
+        <IFUCard className="p-6">
+          <h2 className="text-2xl font-bold text-[var(--ifu-heading)]">IFU Path</h2>
+          <p className="ifu-copy mt-3">{country.marketOutlook}</p>
+          <div className="mt-5 grid gap-5 md:grid-cols-2">
+            <div>
+              <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
+                IFU Pathways
+              </p>
+              <ChipList items={country.ifuPathways} />
+            </div>
+            <div>
+              <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[var(--ifu-muted)]">
+                Risk Signals
+              </p>
+              <ChipList items={country.riskSignals} />
+            </div>
           </div>
-        </div>
-        <SourceNotes country={country} />
-      </IFUCard>
+          <SourceNotes country={country} />
+        </IFUCard>
+      </div>
     );
   }
 
   return (
-    <IFUCard className="p-6">
-      <div className="grid gap-5 md:grid-cols-[1fr_280px]">
-        <div>
-          <h2 className="text-2xl font-bold text-[var(--ifu-heading)]">
-            {country.name} Agricultural Intelligence
-          </h2>
-          <p className="ifu-copy mt-3">
-            {country.name} is tracked in the IFU country intelligence seed register for regional
-            discovery, role matching, market orientation, and future Data Engine workflows.
-          </p>
+    <div id={panelId} role="tabpanel" aria-labelledby={labelledBy}>
+      <IFUCard className="p-6">
+        <div className="grid gap-5 md:grid-cols-[1fr_280px]">
+          <div>
+            <h2 className="text-2xl font-bold text-[var(--ifu-heading)]">
+              {country.name} Agricultural Intelligence
+            </h2>
+            <p className="ifu-copy mt-3">
+              {country.name} is tracked in the IFU country intelligence seed register for regional
+              discovery, role matching, market orientation, and future Data Engine workflows.
+            </p>
+          </div>
+          <dl className="grid gap-3 rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] p-4 text-sm">
+            <div>
+              <dt className="text-[var(--ifu-muted)]">Region</dt>
+              <dd className="font-bold text-[var(--ifu-heading)]">{country.region}</dd>
+            </div>
+            <div>
+              <dt className="text-[var(--ifu-muted)]">Coordinates</dt>
+              <dd className="font-bold text-[var(--ifu-heading)]">
+                {country.latitude.toFixed(2)}, {country.longitude.toFixed(2)}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[var(--ifu-muted)]">Record Status</dt>
+              <dd className="font-bold text-[var(--ifu-heading)]">{country.confidence}</dd>
+            </div>
+            <div>
+              <dt className="text-[var(--ifu-muted)]">Updated</dt>
+              <dd className="font-bold text-[var(--ifu-heading)]">{country.lastUpdated}</dd>
+            </div>
+          </dl>
         </div>
-        <dl className="grid gap-3 rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] p-4 text-sm">
-          <div>
-            <dt className="text-[var(--ifu-muted)]">Region</dt>
-            <dd className="font-bold text-[var(--ifu-heading)]">{country.region}</dd>
-          </div>
-          <div>
-            <dt className="text-[var(--ifu-muted)]">Coordinates</dt>
-            <dd className="font-bold text-[var(--ifu-heading)]">
-              {country.latitude.toFixed(2)}, {country.longitude.toFixed(2)}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-[var(--ifu-muted)]">Record Status</dt>
-            <dd className="font-bold text-[var(--ifu-heading)]">{country.confidence}</dd>
-          </div>
-          <div>
-            <dt className="text-[var(--ifu-muted)]">Updated</dt>
-            <dd className="font-bold text-[var(--ifu-heading)]">{country.lastUpdated}</dd>
-          </div>
-        </dl>
-      </div>
-      <SourceNotes country={country} />
-    </IFUCard>
+        <SourceNotes country={country} />
+      </IFUCard>
+    </div>
   );
 }
 
@@ -169,9 +201,11 @@ export function CountryIntelligenceTabs({ country }: CountryIntelligenceTabsProp
           return (
             <button
               key={tab.id}
+              id={`country-tab-${tab.id}`}
               type="button"
               role="tab"
               aria-selected={isActive}
+              aria-controls={`country-tabpanel-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
                 "inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--ifu-radius)] px-3 py-2 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ifu-primary)]",

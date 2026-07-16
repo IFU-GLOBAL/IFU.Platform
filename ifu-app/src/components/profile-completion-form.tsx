@@ -189,7 +189,7 @@ export function ProfileCompletionForm({
 
   return (
     <IFUCard className="p-5">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} aria-busy={status === "submitting"}>
         <div className="mb-5">
           <p className="ifu-eyebrow">Progressive profile</p>
           <h2 className="mt-2 text-2xl font-semibold text-[var(--ifu-text)]">
@@ -203,7 +203,14 @@ export function ProfileCompletionForm({
               </span>
               <span>{profileCompletion}%</span>
             </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--ifu-surface-muted)]">
+            <div
+              className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--ifu-surface-muted)]"
+              role="progressbar"
+              aria-label="Profile completion"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={profileCompletion}
+            >
               <div
                 className="h-full rounded-full bg-[var(--ifu-primary)]"
                 style={{ width: `${profileCompletion}%` }}
@@ -397,6 +404,8 @@ export function ProfileCompletionForm({
 
         {statusMessage ? (
           <div
+            role={status === "error" ? "alert" : "status"}
+            aria-live={status === "error" ? "assertive" : "polite"}
             className={cn(
               "ifu-status mt-4",
               status === "success" ? "ifu-status-success" : "ifu-status-error",

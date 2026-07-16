@@ -274,7 +274,11 @@ export function RegistrationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="ifu-card ifu-card-muted p-5">
+    <form
+      onSubmit={handleSubmit}
+      className="ifu-card ifu-card-muted p-5"
+      aria-busy={status === "submitting"}
+    >
       <div className="mb-5 rounded-[var(--ifu-radius)] border border-[var(--ifu-border-soft)] bg-white p-4">
         <div className="flex gap-3">
           <BadgeCheck className="mt-1 h-5 w-5 shrink-0 text-[var(--ifu-primary)]" aria-hidden="true" />
@@ -410,6 +414,8 @@ export function RegistrationForm({
 
       {statusMessage ? (
         <div
+          role={status === "error" ? "alert" : "status"}
+          aria-live={status === "error" ? "assertive" : "polite"}
           className={cn(
             "ifu-status mt-4",
             status === "success" ? "ifu-status-success" : "ifu-status-error",

@@ -11,6 +11,8 @@
     "start": "next start",
     "lint": "eslint",
     "auth:audit": "node scripts/audit-auth-config.mjs",
+    "review:audit": "node scripts/review-audit.mjs",
+    "review:smoke": "node scripts/review-smoke.mjs",
     "db:generate": "prisma generate",
     "db:local": "prisma dev -d --name ifu-preview",
     "db:migrate": "prisma migrate dev",

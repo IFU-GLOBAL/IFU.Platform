@@ -211,7 +211,7 @@ function DashboardSectionPage({
                     {metric.value}
                   </p>
                 </div>
-                <Icon className="h-5 w-5 text-[var(--ifu-primary)]" />
+                <Icon className="h-5 w-5 text-[var(--ifu-primary)]" aria-hidden="true" />
               </div>
               <p className="mt-2 text-xs font-semibold leading-tight text-[var(--ifu-muted-strong)]">
                 {metric.helper}
@@ -225,7 +225,7 @@ function DashboardSectionPage({
         <article className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
-              <BriefcaseBusiness className="h-4 w-4" />
+              <BriefcaseBusiness className="h-4 w-4" aria-hidden="true" />
             </span>
             <div>
               <h3 className="text-lg font-bold leading-tight text-[var(--ifu-heading)]">
@@ -244,7 +244,7 @@ function DashboardSectionPage({
                 onClick={() => onSelectItem(item)}
                 className="flex items-center gap-2 rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] px-3 py-2 text-left text-sm font-semibold leading-tight text-[var(--ifu-muted-strong)] transition hover:bg-white"
               >
-                <CheckSquare className="h-4 w-4 shrink-0 text-[var(--ifu-primary)]" />
+                <CheckSquare className="h-4 w-4 shrink-0 text-[var(--ifu-primary)]" aria-hidden="true" />
                 <span>{item.title}</span>
               </button>
             ))}
@@ -254,7 +254,7 @@ function DashboardSectionPage({
         <article className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
-              <Star className="h-4 w-4" />
+              <Star className="h-4 w-4" aria-hidden="true" />
             </span>
             <div>
               <h3 className="text-lg font-bold leading-tight text-[var(--ifu-heading)]">
@@ -291,7 +291,7 @@ function DashboardSectionPage({
               IFU operating pathways
             </h3>
           </div>
-          <Sprout className="hidden h-8 w-8 text-[var(--ifu-primary)] sm:block" />
+          <Sprout className="hidden h-8 w-8 text-[var(--ifu-primary)] sm:block" aria-hidden="true" />
         </div>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {primaryEcosystemItems.map((item) => (
@@ -502,7 +502,11 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
 
           <div className="grid max-w-6xl gap-4 px-4 py-4 sm:px-5 lg:px-6">
             {actionStatus ? (
-              <div className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white px-3 py-2 text-sm font-semibold leading-tight text-[var(--ifu-muted-strong)]">
+              <div
+                className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white px-3 py-2 text-sm font-semibold leading-tight text-[var(--ifu-muted-strong)]"
+                role={actionStatus.startsWith("Saved:") ? "status" : "alert"}
+                aria-live={actionStatus.startsWith("Saved:") ? "polite" : "assertive"}
+              >
                 {actionStatus}
               </div>
             ) : null}
@@ -511,7 +515,7 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
               <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
                 <div className="flex min-w-0 gap-3">
                   <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
-                    <ActiveSectionIcon className="h-5 w-5" />
+                    <ActiveSectionIcon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <div className="min-w-0">
                     <p className="ifu-eyebrow text-[var(--ifu-primary)]">{activeSection.type}</p>

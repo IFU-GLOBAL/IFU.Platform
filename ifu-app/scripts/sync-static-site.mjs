@@ -32,7 +32,7 @@ const headerActionsPattern =
   /<h4 class="main-header__call__number">[\s\S]*?<span class="elementor-button-text">Join IFU<\/span>[\s\S]*?<\/h4><!-- \/.main-header__call__number -->/;
 const headerActionsHtml = `<h4 class="main-header__call__number">
   <span class="ifu-header-action-links">
-    <a href="/api/auth/login?returnTo=%2Fprofile">Login</a>
+    <a href="/api/auth/login?returnTo=%2Fdashboard">Login</a>
     <span aria-hidden="true">&nbsp; | &nbsp;</span>
     <a class="elementor-button elementor-button-link elementor-size-sm" href="/register">
       <span class="elementor-button-content-wrapper">
@@ -61,6 +61,7 @@ const socialHrefReplacements = [
 ];
 const staticContentReplacements = [
   [/\bai powered\b/g, "AI-powered"],
+  [/\bAI powered\b/g, "AI-powered"],
   [/scalable\.How/g, "scalable. How"],
   [/roles roles/g, "roles"],
   [/Roles roles/g, "Roles"],

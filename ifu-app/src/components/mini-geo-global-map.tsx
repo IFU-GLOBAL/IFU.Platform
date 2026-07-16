@@ -244,7 +244,7 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
 
         <div className="absolute left-3 top-3 z-10">
           <span className="inline-flex items-center gap-1.5 rounded-[var(--ifu-radius)] bg-[#03182d]/82 px-2.5 py-1 text-[0.68rem] font-bold uppercase leading-tight text-white shadow">
-            <LocateFixed className="h-3.5 w-3.5" />
+            <LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />
             Mini Geolocation Map
           </span>
         </div>
@@ -266,14 +266,14 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
             onClick={openLocationProfile}
             className="inline-flex w-fit items-center gap-1.5 rounded-[var(--ifu-radius)] bg-white px-2.5 py-1.5 text-[0.82rem] font-bold leading-tight text-[var(--ifu-primary-deep)] transition hover:bg-white/92 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
-            <MapPin className="h-4 w-4 text-[var(--ifu-primary)]" />
+            <MapPin className="h-4 w-4 text-[var(--ifu-primary)]" aria-hidden="true" />
             Open location profile
           </button>
           <Link
             href={countryCenterHref}
             className="inline-flex w-fit items-center gap-1.5 rounded-[var(--ifu-radius)] border border-white/40 bg-[#0b7d35] px-2.5 py-1.5 text-[0.82rem] font-bold leading-tight text-white transition hover:bg-[#0a6f30] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
-            <Navigation className="h-4 w-4" />
+            <Navigation className="h-4 w-4" aria-hidden="true" />
             Open country center
           </Link>
         </div>
@@ -286,11 +286,15 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
             onClick={syncBrowserLocation}
             className="mb-1 inline-flex w-fit items-center gap-1.5 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white px-2.5 py-1.5 text-[0.82rem] font-bold leading-tight text-[var(--ifu-primary-deep)] transition hover:border-[var(--ifu-primary)]"
           >
-            <LocateFixed className="h-4 w-4" />
+            <LocateFixed className="h-4 w-4" aria-hidden="true" />
             Sync location
           </button>
           {syncStatus ? (
-            <p className="mb-1 text-[0.82rem] font-semibold leading-tight text-[var(--ifu-muted-strong)]">
+            <p
+              className="mb-1 text-[0.82rem] font-semibold leading-tight text-[var(--ifu-muted-strong)]"
+              role="status"
+              aria-live="polite"
+            >
               {syncStatus}
             </p>
           ) : null}
@@ -308,7 +312,7 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
         <div className="grid gap-2 sm:grid-cols-2">
           <div className="rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] p-3">
             <div className="flex items-center gap-1.5 text-[0.82rem] font-bold leading-tight text-[var(--ifu-heading)]">
-              <Clock3 className="h-4 w-4 text-[var(--ifu-primary)]" />
+              <Clock3 className="h-4 w-4 text-[var(--ifu-primary)]" aria-hidden="true" />
               Local Time
             </div>
             <p className="mt-2 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
@@ -322,13 +326,20 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
             className="rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] p-3 transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ifu-primary)]"
           >
             <div className="flex items-center gap-1.5 text-[0.82rem] font-bold leading-tight text-[var(--ifu-heading)]">
-              <Pencil className="h-4 w-4 text-[var(--ifu-primary)]" />
+              <Pencil className="h-4 w-4 text-[var(--ifu-primary)]" aria-hidden="true" />
               Profile
             </div>
             <p className="mt-2 text-xl font-bold leading-tight text-[var(--ifu-heading)]">
               {displayedProfile.profileCompletion}%
             </p>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white">
+            <div
+              className="mt-2 h-1.5 overflow-hidden rounded-full bg-white"
+              role="progressbar"
+              aria-label="Dashboard profile completion"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={displayedProfile.profileCompletion}
+            >
               <div
                 className="h-full rounded-full bg-[var(--ifu-primary)]"
                 style={{ width: `${displayedProfile.profileCompletion}%` }}

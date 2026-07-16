@@ -34,7 +34,16 @@ export async function generateMetadata({ params }: CountryPageProps): Promise<Me
 
   return {
     title: `${country.name} Agricultural Intelligence | IFU`,
-    description: `IFU country intelligence seed profile for ${country.name}, including production, markets, opportunities, and data lineage.`,
+    description: `IFU country intelligence seed profile for ${country.name}, including commodities, opportunities, IFU pathways, and data lineage.`,
+    alternates: {
+      canonical: `/country/${country.slug}`,
+    },
+    openGraph: {
+      title: `${country.name} Agricultural Intelligence | IFU`,
+      description: `IFU country intelligence seed profile for ${country.name}, including commodities, opportunities, IFU pathways, and data lineage.`,
+      url: `/country/${country.slug}`,
+      type: "article",
+    },
   };
 }
 
@@ -85,7 +94,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
               <Database className="h-5 w-5 text-[var(--ifu-primary)]" aria-hidden="true" />
               <h2 className="mt-3 text-lg font-bold text-[var(--ifu-heading)]">Four Core Views</h2>
               <p className="ifu-copy mt-2 text-sm">
-                Overview, production, markets, and opportunities are separated for review and
+                Overview, commodities, opportunities, and IFU Path are separated for review and
                 future data expansion.
               </p>
             </IFUCard>

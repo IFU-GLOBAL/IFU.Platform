@@ -24,7 +24,7 @@ import { CopyInvitationLinkButton } from "@/components/copy-invitation-link-butt
 export const metadata: Metadata = {
   title: "Invitation Letter | IFU Platform",
   description:
-    "Read the IFU preview invitation letter and continue to the Role-Based Discovery Center.",
+    "Read the IFU invitation letter and continue to the Role-Based Discovery Center.",
 };
 
 const previewPoints = [
@@ -35,22 +35,22 @@ const previewPoints = [
 ];
 
 const letterParagraphs = [
-  "The International Farm Union invites you to preview the IFU platform and help shape the next stage of global agricultural collaboration.",
+  "The International Farm Union invites you to explore the IFU platform and help shape the next stage of global agricultural collaboration.",
   "IFU is being built as a connected ecosystem for farmers, cooperatives, researchers, development institutions, buyers, educators, funders, technology partners, and community leaders. The platform is designed to help people discover where they fit, identify useful role pathways, and connect with the programs, tools, data, training, markets, and leadership opportunities most relevant to them.",
-  "This preview invitation is an early opportunity to explore the Role-Based Discovery Center before broader public rollout. Your selections will help IFU understand your interests, your organization or community context, and the kinds of follow-up that would be most useful.",
-  "The preview form is not a final membership commitment. It is a structured way to express interest, recommend contacts, identify role pathways, and help IFU prepare a practical onboarding process for different regions, sectors, and partner groups.",
+  "This invitation is an early opportunity to explore the Role-Based Discovery Center before broader public rollout. Your selections will help IFU understand your interests, your organization or community context, and the kinds of follow-up that would be most useful.",
+  "The registration flow is not a final membership commitment. It is a structured way to express interest, recommend contacts, identify role pathways, and help IFU prepare a practical onboarding process for different regions, sectors, and partner groups.",
   "We welcome your participation, feedback, referrals, and leadership interest as IFU prepares the next phase of platform access.",
 ];
 
 const cognitoRegisterHref = "/register";
 const discoveryShareUrl = "https://ifuplatform.com/discovery";
 const invitationShareText =
-  "You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you.";
+  "You are invited to the International Farm Union platform and can choose the IFU role pathway that fits you.";
 const encodedShareText = encodeURIComponent(`${invitationShareText} ${discoveryShareUrl}`);
 const shareLinks = [
   {
     label: "Email",
-    href: `mailto:?subject=${encodeURIComponent("IFU preview invitation")}&body=${encodedShareText}`,
+    href: `mailto:?subject=${encodeURIComponent("IFU invitation")}&body=${encodedShareText}`,
     icon: Mail,
   },
   {
@@ -71,8 +71,8 @@ export default function InvitationPage() {
   return (
     <IFUPage className="ifu-invitation-page">
       <IFUHero
-        eyebrow="Preview invitation"
-        title="You are invited to preview the IFU ecosystem"
+        eyebrow="IFU invitation"
+        title="You are invited to explore the IFU ecosystem"
         description="Read the invitation, choose the IFU roles that match your work, then register or share the invitation with someone who belongs in the IFU community."
         aside={
           <IFUCard tone="hero" className="p-6">
@@ -82,7 +82,7 @@ export default function InvitationPage() {
             </p>
             <p className="mt-2 text-3xl font-bold text-white">Early access</p>
             <p className="mt-3 text-sm leading-6 text-white/70">
-              Role selection, referral intake, and preview submissions are open for review.
+              Role selection, referral intake, and IFU registrations are open for review.
             </p>
           </IFUCard>
         }
@@ -146,13 +146,13 @@ export default function InvitationPage() {
                 Invitation purpose
               </h3>
               <p className="ifu-copy mt-2 text-sm">
-                The letter gives invitees a clear entry point before they choose roles or submit the preview form.
+                The letter gives invitees a clear entry point before they choose roles or register.
               </p>
             </IFUCard>
 
             <IFUCard className="p-5">
               <h3 className="text-lg font-bold text-[var(--ifu-heading)]">
-                What preview participants can do
+                What invitees can do
               </h3>
               <ul className="mt-4 space-y-3">
                 {previewPoints.map((point) => (

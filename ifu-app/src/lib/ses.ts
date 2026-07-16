@@ -59,17 +59,17 @@ export async function sendPreviewConfirmationEmail(input: PreviewEmailInput) {
       Content: {
         Simple: {
           Subject: {
-            Data: "IFU preview application received",
+            Data: "IFU registration received",
           },
           Body: {
             Text: {
               Data: `Hello ${input.firstName},
 
-Thank you for submitting your IFU preview application. We received your selected role interests:
+Thank you for creating your IFU registration. We received your selected role interests:
 
 ${roleList}
 
-The IFU team will review your interests and follow up with the next preview steps.
+The IFU team will review your interests and follow up with the next steps.
 
 International Farm Union`,
             },
@@ -104,18 +104,18 @@ export async function sendReferralInvitationEmail(input: ReferralEmailInput) {
       Content: {
         Simple: {
           Subject: {
-            Data: "You were invited to preview IFU",
+            Data: "You were invited to IFU",
           },
           Body: {
             Text: {
               Data: `${greeting}
 
-${input.referrerName} recommended you for an early preview invitation to the International Farm Union platform.
+${input.referrerName} recommended you for an International Farm Union invitation.
 
 You can review the Role-Based Discovery Center here:
 ${input.discoveryUrl}
 
-This is a one-time invitation. IFU will not contact you again unless you respond or submit your own preview application.
+This is a one-time invitation. IFU will not contact you again unless you respond or create your own IFU registration.
 
 To decline or request deletion of this referral record, use:
 ${input.deleteUrl}

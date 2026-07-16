@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GTranslateWidget } from "@/components/gtranslate-widget";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +15,53 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IFU Role-Based Discovery & Education Center",
+  metadataBase: new URL(getSiteUrl()),
+  applicationName: "IFU Platform",
+  title: {
+    default: "IFU Platform | Global Agriculture Network",
+    template: "%s | IFU Platform",
+  },
   description:
-    "Preview the International Farm Union ecosystem, discover role pathways, and submit your IFU preview application.",
+    "Discover IFU role pathways, country intelligence, invitation flows, and the International Farm Union agriculture network.",
+  keywords: [
+    "International Farm Union",
+    "IFU Platform",
+    "agriculture network",
+    "farmer cooperative",
+    "agricultural intelligence",
+    "AgriFinance",
+    "AgriSphere",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "IFU Platform",
+    title: "IFU Platform | Global Agriculture Network",
+    description:
+      "Discover IFU role pathways, country intelligence, invitation flows, and the International Farm Union agriculture network.",
+    url: "/",
+    images: [
+      {
+        url: "/images/ifu-logo-hero.png",
+        width: 1200,
+        height: 630,
+        alt: "International Farm Union",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IFU Platform | Global Agriculture Network",
+    description:
+      "Discover IFU role pathways, country intelligence, invitation flows, and the International Farm Union agriculture network.",
+    images: ["/images/ifu-logo-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
