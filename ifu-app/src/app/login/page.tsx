@@ -47,7 +47,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   }
 
   const status = getAuthConfigurationStatus();
-  const returnTo = params.returnTo?.startsWith("/") ? params.returnTo : "/profile";
+  const returnTo = params.returnTo?.startsWith("/") ? params.returnTo : "/dashboard";
   const loginHref = `/api/auth/login?returnTo=${encodeURIComponent(returnTo)}`;
   const devLoginHref = `/api/auth/dev-login?returnTo=${encodeURIComponent(returnTo)}`;
   const isLocalDev = process.env.NODE_ENV !== "production";

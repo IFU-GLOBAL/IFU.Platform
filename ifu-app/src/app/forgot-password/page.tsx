@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "Recover access to an IFU platform account.",
 };
 
-const cognitoLoginHref = "/api/auth/login?returnTo=%2Fprofile";
+const cognitoLoginHref = "/api/auth/login?returnTo=%2Fdashboard";
 
 export default function ForgotPasswordPage() {
   return (

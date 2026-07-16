@@ -61,7 +61,7 @@ const navItems = [
   { label: "Gallery", href: "/gallery/" },
 ];
 
-const cognitoLoginHref = "/api/auth/login?returnTo=%2Fprofile";
+const cognitoLoginHref = "/api/auth/login?returnTo=%2Fdashboard";
 const discoveryShareUrl = "https://ifuplatform.com/discovery";
 const invitationShareText =
   "You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you.";
@@ -620,7 +620,7 @@ export function DiscoveryCenter({
                 description="Create your account to enter the IFU dashboard. Profile details and role matching continue after login."
                 className="md:block"
                 action={
-                  <IFUActionLink href="/login?returnTo=%2Fprofile" variant="outline">
+                  <IFUActionLink href="/login?returnTo=%2Fdashboard" variant="outline">
                     Already have an account?
                   </IFUActionLink>
                 }

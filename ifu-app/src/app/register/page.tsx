@@ -50,7 +50,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
             description="Create the account first. Location and farm details move to the optional profile prompt after login."
             className="md:block"
             action={
-              <IFUActionLink href="/login?returnTo=%2Fprofile" variant="outline">
+              <IFUActionLink href="/login?returnTo=%2Fdashboard" variant="outline">
                 Already have an account?
               </IFUActionLink>
             }

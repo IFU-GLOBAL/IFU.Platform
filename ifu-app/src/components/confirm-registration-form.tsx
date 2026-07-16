@@ -67,7 +67,7 @@ export function ConfirmRegistrationForm({ initialEmail }: { initialEmail: string
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           {status === "success" ? (
-            <IFUActionLink href="/login?returnTo=%2Fprofile" icon={ShieldCheck}>
+            <IFUActionLink href="/login?returnTo=%2Fdashboard" icon={ShieldCheck}>
               Continue to sign in
             </IFUActionLink>
           ) : (
@@ -83,7 +83,7 @@ export function ConfirmRegistrationForm({ initialEmail }: { initialEmail: string
         </div>
 
         <div className="mt-4">
-          <IFUActionLink href="/login?returnTo=%2Fprofile" variant="outline" icon={LogIn}>
+          <IFUActionLink href="/login?returnTo=%2Fdashboard" variant="outline" icon={LogIn}>
             Sign in to your account
           </IFUActionLink>
         </div>
