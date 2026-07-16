@@ -418,7 +418,7 @@ export function DiscoveryCenter({
       <section className="ifu-static-facts" aria-label="IFU reach">
         <IFUContainer size="wide">
           <div className="ifu-static-facts__bar">
-            <p className="ifu-static-facts__eyebrow">Official Placeholders</p>
+            <p className="ifu-static-facts__eyebrow">2030 vision</p>
             {impactStats.map((stat) => (
               <div key={stat.label} className="ifu-static-fact">
                 <span className="ifu-static-fact__icon">
