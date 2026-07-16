@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   IFUActionButton,
   IFUActionLink,
@@ -74,10 +74,10 @@ const socialLinks = [
 ];
 
 const impactStats = [
-  { value: "190+", label: "Countries", icon: Globe2 },
-  { value: "2M+", label: "Farmers", icon: Users },
-  { value: "500+", label: "Partners", icon: Handshake },
-  { value: "50+", label: "Programs", icon: Sprout },
+  { target: 190, suffix: "+", label: "Countries", icon: Globe2 },
+  { target: 2, suffix: "M+", label: "Farmers", icon: Users },
+  { target: 500, suffix: "+", label: "Partners", icon: Handshake },
+  { target: 50, suffix: "+", label: "Projects", icon: Sprout },
 ];
 
 const allRolesPersona: DiscoveryPersona = {
@@ -117,6 +117,101 @@ const whyItems = [
 function includesSearch(role: DiscoveryRole, query: string) {
   const haystack = `${role.title} ${role.summary} ${role.pathway} ${role.categoryName} ${role.level} ${role.ecosystems.join(" ")} ${role.personaLabel}`.toLowerCase();
   return haystack.includes(query.toLowerCase());
+}
+
+function easeOutCubic(progress: number) {
+  return 1 - Math.pow(1 - progress, 3);
+}
+
+function CountUpMetric({
+  label,
+  suffix,
+  target,
+}: {
+  label: string;
+  suffix: string;
+  target: number;
+}) {
+  const numberRef = useRef<HTMLElement>(null);
+  const [currentValue, setCurrentValue] = useState(0);
+
+  useEffect(() => {
+    const element = numberRef.current;
+
+    if (!element) {
+      return;
+    }
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (reducedMotion.matches) {
+      setCurrentValue(target);
+      return;
+    }
+
+    let animationFrame = 0;
+    let started = false;
+
+    const animate = () => {
+      if (started) {
+        return;
+      }
+
+      started = true;
+      const duration = 1500;
+      const startedAt = performance.now();
+
+      const step = (timestamp: number) => {
+        const progress = Math.min((timestamp - startedAt) / duration, 1);
+        const nextValue = Math.round(target * easeOutCubic(progress));
+
+        setCurrentValue(nextValue);
+
+        if (progress < 1) {
+          animationFrame = requestAnimationFrame(step);
+          return;
+        }
+
+        setCurrentValue(target);
+      };
+
+      animationFrame = requestAnimationFrame(step);
+    };
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            observer.disconnect();
+            animate();
+          }
+        },
+        { threshold: 0.35 },
+      );
+
+      observer.observe(element);
+
+      return () => {
+        observer.disconnect();
+        cancelAnimationFrame(animationFrame);
+      };
+    }
+
+    animate();
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [target]);
+
+  return (
+    <strong
+      ref={numberRef}
+      className="ifu-static-fact__number"
+      aria-label={`${target}${suffix} ${label}`}
+    >
+      {currentValue}
+      {suffix}
+    </strong>
+  );
 }
 
 export function DiscoveryCenter({
@@ -283,7 +378,7 @@ export function DiscoveryCenter({
                   <stat.icon className="h-6 w-6" aria-hidden="true" />
                 </span>
                 <span className="ifu-static-fact__content">
-                  <strong>{stat.value}</strong>
+                  <CountUpMetric target={stat.target} suffix={stat.suffix} label={stat.label} />
                   <span>{stat.label}</span>
                 </span>
               </div>

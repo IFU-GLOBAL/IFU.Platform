@@ -488,7 +488,7 @@ function buildHomepageRoleSection() {
   }
 }
 </style>
-
+<!--
 <section class="ifu-home-role-catalog" aria-labelledby="ifu-home-role-title">
   <div class="ifu-home-role-shell">
     <div class="ifu-home-role-intro">
@@ -509,7 +509,8 @@ function buildHomepageRoleSection() {
       ${categoryMarkup}
     </div>
   </div>
-</section>`;
+</section>
+-->`;
 }
 
 function updateHomepageRoleSection(html) {

@@ -158,9 +158,9 @@ assertContains({
 });
 assertContains({
   file: "public/index.html",
-  id: "homepage:role-catalog-copy",
-  label: "Generated homepage role section states it comes from the IFU role catalog.",
-  expected: "Generated from the same IFU role catalog used by Discovery Center and database seeding.",
+  id: "homepage:role-catalog-hidden",
+  label: "Generated homepage role catalog section is commented out for the current review.",
+  expected: '<!--\n<section class="ifu-home-role-catalog"',
 });
 assertContains({
   file: "public/index.html",
@@ -191,6 +191,18 @@ assertContains({
   id: "sync:placeholder-metrics",
   label: "Static sync labels homepage metrics as official placeholders.",
   expected: "Official Placeholder: 190+ Countries | 2M+ Farmers",
+});
+assertContains({
+  file: "src/components/discovery-center.tsx",
+  id: "discovery:count-up-metrics",
+  label: "Discovery Center 2030 vision metrics use count-up animation.",
+  expected: "function CountUpMetric",
+});
+assertContains({
+  file: "src/components/discovery-center.tsx",
+  id: "discovery:project-metric-label",
+  label: "Discovery Center 2030 vision metric labels use Projects.",
+  expected: 'label: "Projects"',
 });
 
 const userFacingFiles = [

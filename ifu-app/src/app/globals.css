@@ -422,6 +422,12 @@ html {
   line-height: 1;
 }
 
+.ifu-static-fact__number {
+  display: inline-block;
+  min-width: 4ch;
+  font-variant-numeric: tabular-nums;
+}
+
 .ifu-static-fact span span {
   margin-top: 0.375rem;
   color: var(--ifu-muted);
