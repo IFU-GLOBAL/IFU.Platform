@@ -11,6 +11,7 @@ import { getAuthSession } from "@/lib/auth/session";
 import { syncAuthenticatedUser } from "@/lib/dashboardData";
 import { getDiscoveryCategories } from "@/lib/discovery-data";
 import { getPrisma } from "@/lib/prisma";
+import { mergeProfileCompletion } from "@/lib/profile-completion";
 
 export const metadata: Metadata = {
   title: "IFU Profile | IFU Platform",
@@ -47,7 +48,23 @@ export default async function ProfilePage() {
     }),
     getDiscoveryCategories(),
   ]);
-  const profileCompletion = user.profile?.profileCompletion ?? 0;
+  const selectedRoleSlugs = user.selectedRoles.map(({ role }) => role.slug);
+  const profileCompletion = mergeProfileCompletion(
+    user.profile?.profileCompletion,
+    {
+      selectedRoleCount: selectedRoleSlugs.length,
+      country: user.profile?.country,
+      stateProvince: user.profile?.stateProvince,
+      city: user.profile?.city,
+      organization: user.profile?.organization,
+      preferredLanguage: user.profile?.preferredLanguage,
+      interestCount: user.profile?.interests.length ?? 0,
+      timezone: user.profile?.timezone,
+      cropLivestockCount: user.profile?.primaryCropsLivestock.length ?? 0,
+      farmSizeBand: user.profile?.farmSizeBand,
+      goals: user.profile?.goals,
+    },
+  );
   const profileIsComplete = profileCompletion >= 100;
   const cleanPendingValue = (value: string | null | undefined) =>
     value === "Profile Pending" ? "" : value ?? "";
@@ -82,7 +99,7 @@ export default async function ProfilePage() {
                 primaryCropsLivestock: user.profile?.primaryCropsLivestock ?? [],
                 farmSizeBand: user.profile?.farmSizeBand ?? "",
                 goals: user.profile?.goals ?? "",
-                selectedRoleSlugs: user.selectedRoles.map(({ role }) => role.slug),
+                selectedRoleSlugs,
               }}
             />
           </div>

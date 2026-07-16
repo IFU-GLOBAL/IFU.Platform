@@ -11,6 +11,7 @@ import {
   type DashboardViewModel,
 } from "@/lib/dashboard-model";
 import { getPrisma } from "@/lib/prisma";
+import { mergeProfileCompletion } from "@/lib/profile-completion";
 
 type DashboardMetadata = {
   actions?: string[];
@@ -33,6 +34,12 @@ type DashboardUser = {
     timezone: string | null;
     latitude: number | null;
     longitude: number | null;
+    organization: string | null;
+    preferredLanguage: string | null;
+    interests: string[];
+    primaryCropsLivestock: string[];
+    farmSizeBand: string | null;
+    goals: string | null;
     profileCompletion: number;
   } | null;
   selectedRoles: Array<{
@@ -354,6 +361,12 @@ export async function getDashboardUser(session: AuthSession): Promise<DashboardU
           timezone: true,
           latitude: true,
           longitude: true,
+          organization: true,
+          preferredLanguage: true,
+          interests: true,
+          primaryCropsLivestock: true,
+          farmSizeBand: true,
+          goals: true,
           profileCompletion: true,
         },
       },
@@ -431,6 +444,22 @@ export async function getDashboardViewModel(session: AuthSession): Promise<Dashb
   );
 
   const selectedRole = user.selectedRoles[0]?.role;
+  const profileCompletion = mergeProfileCompletion(
+    user.profile?.profileCompletion,
+    {
+      selectedRoleCount: user.selectedRoles.length,
+      country: user.profile?.country,
+      stateProvince: user.profile?.stateProvince,
+      city: user.profile?.city,
+      organization: user.profile?.organization,
+      preferredLanguage: user.profile?.preferredLanguage,
+      interestCount: user.profile?.interests.length ?? 0,
+      timezone: user.profile?.timezone,
+      cropLivestockCount: user.profile?.primaryCropsLivestock.length ?? 0,
+      farmSizeBand: user.profile?.farmSizeBand,
+      goals: user.profile?.goals,
+    },
+  );
 
   return {
     profile: {
@@ -445,7 +474,7 @@ export async function getDashboardViewModel(session: AuthSession): Promise<Dashb
       timezone: user.profile?.timezone ?? "America/New_York",
       latitude: user.profile?.latitude ?? undefined,
       longitude: user.profile?.longitude ?? undefined,
-      profileCompletion: user.profile?.profileCompletion ?? 40,
+      profileCompletion,
       sessionExpiresAt: new Date(session.expiresAt).toLocaleString(),
     },
     menu: grouped.menu.sort((a, b) => a.order - b.order).map(({ item }) => item),

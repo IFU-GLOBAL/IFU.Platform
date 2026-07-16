@@ -3,6 +3,7 @@ import { DashboardItemType } from "@/generated/prisma/enums";
 import { getAuthSession } from "@/lib/auth/session";
 import { syncAuthenticatedUser } from "@/lib/dashboardData";
 import { getPrisma } from "@/lib/prisma";
+import { mergeProfileCompletion } from "@/lib/profile-completion";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,37 +23,6 @@ function cleanStringArray(value: unknown, maxItems = 24) {
       .map((item) => item.trim())
       .filter(Boolean),
   )).slice(0, maxItems);
-}
-
-function computeProfileCompletion(input: {
-  country: string;
-  stateProvince: string;
-  city: string;
-  organization: string;
-  phone: string;
-  preferredLanguage: string;
-  interestCount: number;
-  timezone: string;
-  cropLivestockCount: number;
-  farmSizeBand: string;
-  goals: string;
-}) {
-  const fields = [
-    input.country,
-    input.stateProvince,
-    input.city,
-    input.organization,
-    input.phone,
-    input.preferredLanguage,
-    input.interestCount > 0 ? "interests" : "",
-    input.timezone,
-    input.cropLivestockCount > 0 ? "crops" : "",
-    input.farmSizeBand,
-    input.goals,
-  ];
-  const completed = fields.filter(Boolean).length;
-
-  return Math.max(20, Math.round((completed / fields.length) * 100));
 }
 
 export async function POST(request: NextRequest) {
@@ -110,21 +80,21 @@ export async function POST(request: NextRequest) {
   }
 
   const primaryRole = orderedRoles[0];
-  const profileCompletion = Math.max(
-    user.profile?.profileCompletion ?? 0,
-    computeProfileCompletion({
+  const profileCompletion = mergeProfileCompletion(
+    user.profile?.profileCompletion,
+    {
+      selectedRoleCount: selectedRoleSlugs.length,
       country,
       stateProvince,
       city,
       organization,
-      phone,
       preferredLanguage,
       interestCount: interests.length,
       timezone,
       cropLivestockCount: primaryCropsLivestock.length,
       farmSizeBand,
       goals,
-    }),
+    },
   );
 
   await prisma.$transaction(async (transaction) => {
