@@ -27,7 +27,6 @@ export function computeProfileCompletion(input: ProfileCompletionInput) {
     hasProfileValue(input.organization),
     hasProfileValue(input.preferredLanguage),
     input.interestCount > 0,
-    hasProfileValue(input.timezone),
     input.cropLivestockCount > 0,
     hasProfileValue(input.farmSizeBand),
     hasProfileValue(input.goals),

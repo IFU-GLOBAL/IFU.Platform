@@ -25,7 +25,7 @@ Notes to record:
 - Review URL tested:
 - Build date/time:
 - Commit hash:
-- Any SSL/DNS blocker:
+- Any SSL/DNS blocker: I cannot get my route 53 
 
 ## Cognito
 
@@ -35,7 +35,7 @@ Capture:
 - App client overview for the web client.
 - OAuth flow settings.
 - Callback URLs showing `<APP_BASE_URL>/api/auth/callback`.
-- Sign-out URLs showing `<APP_BASE_URL>/login?signedOut=1`.
+- Sign-out URLs showing `<APP_BASE_URL>/`.
 - Managed login domain screen.
 - Test user list or a single test user detail view with email redacted.
 
@@ -45,7 +45,7 @@ Functional evidence to capture:
 - Registration lands in dashboard.
 - Regular login lands in dashboard.
 - Dashboard Edit Profile opens `/profile` directly while signed in.
-- Logout returns to `/login?signedOut=1`.
+- Logout returns to the home page.
 - Password reset opens Cognito recovery.
 
 ## RDS / Database

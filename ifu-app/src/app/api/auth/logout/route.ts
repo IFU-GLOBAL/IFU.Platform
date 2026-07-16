@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   const status = getAuthConfigurationStatus(requestOrigin);
   const logoutUrl = status.configured
     ? buildCognitoLogoutUrl(getCognitoConfig(requestOrigin))
-    : buildAppUrl("/login?signedOut=1", requestOrigin);
+    : buildAppUrl("/", requestOrigin);
   const response = NextResponse.redirect(logoutUrl);
 
   clearAuthCookies(response);

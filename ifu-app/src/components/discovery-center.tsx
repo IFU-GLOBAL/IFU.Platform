@@ -88,7 +88,7 @@ const allRolesPersona: DiscoveryPersona = {
   categorySlugs: [],
 };
 
-const roleJourneySteps = ["Your role", "Your value", "Apply"];
+const roleJourneySteps = ["Your role", "Your value", "Register"];
 const rolePageSize = 40;
 
 const whyItems = [
@@ -304,7 +304,7 @@ export function DiscoveryCenter({
                 At the core of IFU is a transformative model that integrates technology, data, and global trade to expand market access, strengthen rural economies, and improve livelihoods for farming communities worldwide.
               </p>
               <p>
-                This preview center brings that same ecosystem into the platform app, helping visitors find roles, select pathways, and request guided follow-up before public rollout.
+                This registration center brings that same ecosystem into the platform app, helping visitors find roles, select pathways, and request guided follow-up before public rollout.
               </p>
             </div>
 

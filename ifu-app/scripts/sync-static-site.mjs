@@ -16,6 +16,7 @@ const sourceRoot = resolve(repoRoot, "ifu-static-site", "dist");
 const publicRoot = resolve(appRoot, "public");
 const roleCatalogPath = resolve(appRoot, "src", "lib", "role-catalog.ts");
 const publicHomePath = resolve(publicRoot, "index.html");
+const localHeroImagePath = "/wp-content/uploads/2026/04/hero-home-use.jpg";
 
 if (!existsSync(sourceRoot)) {
   throw new Error(`Static site export not found at ${sourceRoot}`);
@@ -69,10 +70,18 @@ const staticContentReplacements = [
   [/Our Ecosystem\. 9 Engines\. One Mission/g, "Our Ecosystem. 10 Engines. One Mission"],
   [/190\+ Countries \| 2M\+ Farmers/g, "Official Placeholder: 190+ Countries | 2M+ Farmers"],
   [/500\+ Partners \| 50\+ Projects/g, "Official Placeholder: 500+ Partners | 50+ Projects"],
-  [/(<span class="count-text" data-stop="190" data-speed="1500">)0(<\/span>)/g, "$1190$2"],
-  [/(<span class="count-text" data-stop="2" data-speed="1500">)0(<\/span>)/g, "$12$2"],
-  [/(<span class="count-text" data-stop="500" data-speed="1500">)0(<\/span>)/g, "$1500$2"],
-  [/(<span class="count-text" data-stop="50" data-speed="1500">)0(<\/span>)/g, "$150$2"],
+  [/(<span class="count-text" data-stop="190" data-speed="1500">)(?:0|190)(<\/span>)/g, "$10$2"],
+  [/(<span class="count-text" data-stop="2" data-speed="1500">)(?:0|2)(<\/span>)/g, "$10$2"],
+  [/(<span class="count-text" data-stop="500" data-speed="1500">)(?:0|500)(<\/span>)/g, "$10$2"],
+  [/(<span class="count-text" data-stop="50" data-speed="1500">)(?:0|50)(<\/span>)/g, "$10$2"],
+  [
+    /(?:https:)?\/\/internationalfarmunion\.com\/wp-content\/uploads\/2026\/04\/hero-home-use\.jpg/g,
+    localHeroImagePath,
+  ],
+  [
+    /https:\\\/\\\/internationalfarmunion\.com\\\/wp-content\\\/uploads\\\/2026\\\/04\\\/hero-home-use\.jpg/g,
+    localHeroImagePath,
+  ],
   [
     /function showCountry\(country, lat = null, lon = null\)\{/g,
     `function countryInsightsPath(country){
@@ -111,6 +120,98 @@ const footerAgriFundsNavItemPattern =
   /(<li id="menu-item-6454" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6454"><a href="index\.html%3Fp=6419\.html">AgriFunds<\/a><\/li>)(?!\n<li id="menu-item-ifu-agrifinance-footer")/g;
 const homepageRoleSectionPattern =
   /<style>\s*\.agrisphere-dashboard \*[\s\S]*?renderRoleTab\(currentRole,currentTab\);\s*<\/script>\s*<\/div>/;
+const countUpScript = `<script id="ifu-count-up-script">
+(function () {
+  function animateCounter(counter) {
+    if (counter.dataset.ifuCounted === "true") {
+      return;
+    }
+
+    var target = Number(counter.getAttribute("data-stop") || "0");
+    var duration = Number(counter.getAttribute("data-speed") || "1500");
+
+    if (!Number.isFinite(target) || target <= 0) {
+      return;
+    }
+
+    counter.dataset.ifuCounted = "true";
+    counter.textContent = "0";
+
+    var start = null;
+
+    function step(timestamp) {
+      if (start === null) {
+        start = timestamp;
+      }
+
+      var progress = Math.min((timestamp - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      counter.textContent = String(Math.round(target * eased));
+
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      } else {
+        counter.textContent = String(target);
+      }
+    }
+
+    window.requestAnimationFrame(step);
+  }
+
+  function runCounters() {
+    var counters = Array.prototype.slice.call(document.querySelectorAll(".count-text[data-stop]"));
+
+    if (!("IntersectionObserver" in window)) {
+      counters.forEach(animateCounter);
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.35 });
+
+    counters.forEach(function (counter) {
+      counter.textContent = "0";
+      observer.observe(counter);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", runCounters);
+  } else {
+    runCounters();
+  }
+})();
+</script>`;
+const homeHeroFallbackHead = `<link rel="preload" as="image" href="${localHeroImagePath}">
+<style id="ifu-home-hero-fallback">
+#SR7_1_1 {
+  position: relative;
+  display: block;
+  min-height: 600px;
+  overflow: hidden;
+  background: #03182d url("${localHeroImagePath}") center center / cover no-repeat;
+}
+
+#SR7_1_1::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(3,24,45,.72), rgba(3,24,45,.18)), url("${localHeroImagePath}") center center / cover no-repeat;
+}
+
+#SR7_1_1 > * {
+  position: relative;
+  z-index: 1;
+}
+</style>`;
 
 const homePersonas = [
   ["grow-or-produce", "I grow, raise, or harvest", "Farmers, ranchers, fishers, producers, and cooperative members"],
@@ -243,6 +344,15 @@ function buildHomepageRoleSection() {
   color: #08233b;
   font-size: clamp(26px, 3vw, 40px);
   line-height: 1.2;
+}
+
+.ifu-home-role-intro p {
+  max-width: 720px;
+  margin: 12px auto 0;
+  color: #667085;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .ifu-home-role-controls {
@@ -383,6 +493,7 @@ function buildHomepageRoleSection() {
   <div class="ifu-home-role-shell">
     <div class="ifu-home-role-intro">
       <h2 id="ifu-home-role-title">Search and select your IFU roles below</h2>
+      <p>Generated from the same IFU role catalog used by Discovery Center and database seeding.</p>
     </div>
     <div class="ifu-home-persona-grid" aria-label="Choose your IFU role path">
       ${personaMarkup}
@@ -407,6 +518,36 @@ function updateHomepageRoleSection(html) {
   }
 
   return html.replace(homepageRoleSectionPattern, buildHomepageRoleSection());
+}
+
+function insertBeforeClosingTag(html, closingTag, snippet) {
+  if (html.includes(snippet)) {
+    return html;
+  }
+
+  const closingIndex = html.lastIndexOf(closingTag);
+
+  if (closingIndex === -1) {
+    return html;
+  }
+
+  return `${html.slice(0, closingIndex)}${snippet}\n${html.slice(closingIndex)}`;
+}
+
+function ensureCountUpAnimation(html) {
+  if (!html.includes('class="count-text"') || html.includes('id="ifu-count-up-script"')) {
+    return html;
+  }
+
+  return insertBeforeClosingTag(html, "</body>", countUpScript);
+}
+
+function ensureHomeHeroFallback(html) {
+  if (!html.includes("SR7_1_1") || html.includes('id="ifu-home-hero-fallback"')) {
+    return html;
+  }
+
+  return insertBeforeClosingTag(html, "</head>", homeHeroFallbackHead);
 }
 
 function commentOutRegulatoryPopups(html) {
@@ -471,6 +612,8 @@ function updateStaticText(filePath) {
     updatedHtml = updatedHtml.replace(pattern, replacement);
   }
 
+  updatedHtml = ensureCountUpAnimation(updatedHtml);
+  updatedHtml = ensureHomeHeroFallback(updatedHtml);
   updatedHtml = addAgriFinancePlatformLinks(updatedHtml);
 
   if (filePath === publicHomePath) {

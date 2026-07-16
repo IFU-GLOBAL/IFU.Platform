@@ -71,6 +71,7 @@ Verification commands:
 node scripts/review-audit.mjs
 DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run db:deploy
 DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run db:seed
+DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run roles:audit
 DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run build
 ```
 
@@ -113,6 +114,9 @@ The sync script patches:
 
 - Discovery navigation and registration links
 - Header login target
+- Homepage role catalog section from `src/lib/role-catalog.ts`
+- Homepage metric count-up behavior
+- Homepage hero image fallback and local hero image references
 - Legacy map country links
 - Known editorial issues
 - Placeholder metric labels

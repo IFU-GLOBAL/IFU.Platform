@@ -103,8 +103,8 @@ export function getCognitoConfig(origin?: string): CognitoConfig {
       ? buildAppUrl("/api/auth/callback", origin)
       : readEnv("COGNITO_REDIRECT_URI") ?? buildAppUrl("/api/auth/callback"),
     logoutUri: origin
-      ? buildAppUrl("/login?signedOut=1", origin)
-      : readEnv("COGNITO_LOGOUT_URI") ?? buildAppUrl("/login?signedOut=1"),
+      ? buildAppUrl("/", origin)
+      : readEnv("COGNITO_LOGOUT_URI") ?? buildAppUrl("/"),
     scopes: readEnv("COGNITO_SCOPES") ?? DEFAULT_SCOPES,
     userPoolDomain,
     authorizationEndpoint: oauthBase ? `${oauthBase}/authorize` : null,

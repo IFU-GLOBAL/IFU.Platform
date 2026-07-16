@@ -37,12 +37,14 @@ Only run migrations against the intended environment.
 ```bash
 DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run db:deploy
 DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run db:seed
+DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run roles:audit
 ```
 
 Confirm:
 
 - Migrations applied successfully.
 - Role catalog seed exists before registration/profile role selection tests.
+- Homepage/Discovery role catalog matches live database rows.
 - RDS backup or restore point exists before production migration.
 
 ## 3. Amplify Environment Variables
@@ -76,14 +78,14 @@ npm run auth:audit
 For the active Amplify URL and any custom domain, confirm the app client has:
 
 - Callback URL: `<APP_BASE_URL>/api/auth/callback`
-- Sign-out URL: `<APP_BASE_URL>/login?signedOut=1`
+- Sign-out URL: `<APP_BASE_URL>/`
 - OAuth flow enabled for authorization code grant
 - Scopes aligned with `COGNITO_SCOPES`
 
 For the current review URL, that means:
 
 - Callback URL: `https://dev.d34plke7xvuysn.amplifyapp.com/api/auth/callback`
-- Sign-out URL: `https://dev.d34plke7xvuysn.amplifyapp.com/login?signedOut=1`
+- Sign-out URL: `https://dev.d34plke7xvuysn.amplifyapp.com/`
 
 ## 5. Deploy
 
@@ -127,6 +129,9 @@ Expected unauthenticated behavior:
 Test manually on desktop and mobile:
 
 - Homepage loads and key CTAs stay on IFU-owned routes.
+- Homepage metric counters animate from zero to the displayed values.
+- Homepage hero image loads consistently.
+- Homepage roles match the Discovery/database role catalog.
 - Discovery Center search, filters, role count, role selection, and registration handoff work.
 - Registration uses IFU registration language and records selected Discovery roles.
 - Public homepage header login goes to dashboard after Cognito login.
@@ -134,6 +139,7 @@ Test manually on desktop and mobile:
 - Dashboard loads after login and saved items/actions persist.
 - Dashboard profile completion links to `/profile` without Cognito interruption when already signed in.
 - Profile completion reaches `100%` when all required fields are supplied.
+- Logout through Cognito returns to the home page.
 - Country map links resolve to `/country/[slug]`; seed/fallback country data is acceptable for this checkpoint unless pilot-country data is required by the client.
 
 ## 8. Evidence To Save

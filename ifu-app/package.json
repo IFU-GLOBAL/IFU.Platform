@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "auth:audit": "node scripts/audit-auth-config.mjs",
+    "roles:audit": "tsx scripts/audit-role-catalog.ts",
     "review:audit": "node scripts/review-audit.mjs",
     "review:smoke": "node scripts/review-smoke.mjs",
     "db:generate": "prisma generate",

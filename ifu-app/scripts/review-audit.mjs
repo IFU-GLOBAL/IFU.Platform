@@ -108,6 +108,7 @@ assertFile("docs/release-evidence-package.md", "Release evidence package");
 assertFile("docs/api-inventory.md", "API inventory document");
 assertFile("docs/amplify-release-checklist.md", "Amplify release checklist");
 assertFile("docs/aws-evidence-screenshot-checklist.md", "AWS evidence screenshot checklist");
+assertFile("scripts/audit-role-catalog.ts", "Role catalog database audit script");
 
 const packageJson = JSON.parse(read("package.json"));
 addCheck(
@@ -119,6 +120,11 @@ addCheck(
   packageJson.scripts?.["review:smoke"] ? "pass" : "fail",
   "script:review-smoke",
   "package.json exposes npm run review:smoke.",
+);
+addCheck(
+  packageJson.scripts?.["roles:audit"] ? "pass" : "fail",
+  "script:roles-audit",
+  "package.json exposes npm run roles:audit.",
 );
 
 const publicHtmlFiles = walkFiles("public", (file) => file.endsWith(".html"));
@@ -143,6 +149,30 @@ assertContains({
   id: "sync:dashboard-login",
   label: "Static sync source uses dashboard as the regular login return target.",
   expected: "/api/auth/login?returnTo=%2Fdashboard",
+});
+assertContains({
+  file: "scripts/sync-static-site.mjs",
+  id: "sync:role-catalog-homepage",
+  label: "Homepage role section is generated from the same role catalog used by seeding.",
+  expected: "readRoleCatalog()",
+});
+assertContains({
+  file: "public/index.html",
+  id: "homepage:role-catalog-copy",
+  label: "Generated homepage role section states it comes from the IFU role catalog.",
+  expected: "Generated from the same IFU role catalog used by Discovery Center and database seeding.",
+});
+assertContains({
+  file: "public/index.html",
+  id: "homepage:count-up-script",
+  label: "Generated homepage includes IFU count-up animation script.",
+  expected: 'id="ifu-count-up-script"',
+});
+assertContains({
+  file: "public/index.html",
+  id: "homepage:hero-fallback",
+  label: "Generated homepage includes local hero-image fallback styling.",
+  expected: 'id="ifu-home-hero-fallback"',
 });
 assertContains({
   file: "scripts/sync-static-site.mjs",
@@ -256,6 +286,17 @@ addCheck(
   "static:known-editorial-regressions",
   "Synced public HTML does not contain known review/editorial regressions.",
   staticRegressionMatches.length > 0 ? { matches: staticRegressionMatches.slice(0, 20) } : {},
+);
+
+const remoteHeroMatches = findMatches(publicHtmlFiles, [
+  /internationalfarmunion\.com\/wp-content\/uploads\/2026\/04\/hero-home-use\.jpg/i,
+]);
+
+addCheck(
+  remoteHeroMatches.length === 0 ? "pass" : "fail",
+  "homepage:local-hero-image",
+  "Generated public HTML uses the local hero image instead of the remote WordPress URL.",
+  remoteHeroMatches.length > 0 ? { matches: remoteHeroMatches.slice(0, 20) } : {},
 );
 
 const statusCounts = checks.reduce(

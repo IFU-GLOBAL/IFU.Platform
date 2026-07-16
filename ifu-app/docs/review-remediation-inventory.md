@@ -44,8 +44,8 @@ This inventory tracks the owner review items that can be evidenced from the repo
 
 | ID | Review area | Current repository status | Remaining owner/operator work |
 | --- | --- | --- | --- |
-| IFU-001 | Data credibility | Static sync patches homepage counters and labels them as official placeholders / 2030 vision where implemented. | Owner must confirm which metrics are current verified results versus targets before final production language. |
-| IFU-002 | Authentication | App supports environment-driven Cognito callback/logout URLs and `npm run auth:audit`. Current review URLs are `https://dev.d34plke7xvuysn.amplifyapp.com/api/auth/callback` and `https://dev.d34plke7xvuysn.amplifyapp.com/login?signedOut=1`. | Operator must confirm Cognito console callback/sign-out lists for the review URL and later for `ifuplatform.com`. |
+| IFU-001 | Data credibility | Static sync patches homepage counters, keeps metric spans starting at `0`, and injects an IFU count-up script so Countries/Farmers/Partners/Projects animate where the bar appears. Metrics remain labeled as official placeholders / 2030 vision where implemented. | Owner must confirm which metrics are current verified results versus targets before final production language. |
+| IFU-002 | Authentication | App supports environment-driven Cognito callback/logout URLs and `npm run auth:audit`. Current review URLs are `https://dev.d34plke7xvuysn.amplifyapp.com/api/auth/callback` and `https://dev.d34plke7xvuysn.amplifyapp.com/`. | Operator must confirm Cognito console callback/sign-out lists for the review URL and later for `ifuplatform.com`. |
 | IFU-003 | Map external link | Static sync rewrites the country popup click target to IFU-owned `/country/[slug]` routes and removes disruptive WPMapPlugins credit link markup where matched. | Browser acceptance test on deployed homepage. |
 | IFU-004 | Legacy URLs | `next.config.ts` redirects known `index.html?p=...` post IDs and known sitemap legacy paths to clean IFU-owned routes. | Deployed smoke test and final canonical domain decision. |
 | IFU-005 | Ecosystem consistency | Static sync adds AgriFinance beside AgriFunds where matched and Discovery uses 10 ecosystem pathways. | Owner-approved final ecosystem copy across every static legacy page. |
@@ -54,7 +54,7 @@ This inventory tracks the owner review items that can be evidenced from the repo
 | IFU-008 | Security evidence | README documents required env vars and auth audit; `next.config.ts` adds conservative security headers; `docs/release-evidence-package.md` and `docs/amplify-release-checklist.md` list AWS evidence still required. | AWS console/IaC evidence for WAF, CloudTrail, CloudWatch, IAM, backups, secrets, and deployed header verification. |
 | IFU-009 | Editorial quality | Static sync fixes repeated known issues: duplicate `roles roles`, `ai powered`, `Quantum Sphere`, `scalable.How`, ecosystem count wording, and public login target regressions. `npm run review:audit` checks known stale wording and generated static HTML regressions. | Full editorial pass on remaining static public pages. |
 | IFU-010 | Role matrix UX | Discovery role matrix is searchable, category-filtered, persona-filtered, table-based, and paged in 40-role increments. | Browser UX acceptance on desktop/mobile. |
-| IFU-011 | Role personalization | Role catalog and preview values are seeded and wired to registration selections. | Priority-role copywriting for deeper benefits/tools/training/pathways. |
+| IFU-011 | Role personalization | Role catalog and preview values are seeded and wired to registration selections. Homepage roles are generated from the same catalog used by Discovery and database seeding; `npm run roles:audit` compares that catalog to live database rows when `DATABASE_URL` is available. | Priority-role copywriting for deeper benefits/tools/training/pathways. |
 | IFU-012 | Information architecture | Discovery and auth flows have moved into native Next.js routes; static homepage remains broad. | Larger homepage content strategy and final public IA decision. |
 | IFU-013 | Accessibility | Forms use semantic labels, buttons, links, focusable controls, live status regions, accessible progress bars, and named Discovery search/filter/table controls; map/profile controls are reachable. | WCAG test report, keyboard walkthrough, contrast audit, mobile screenshots. |
 | IFU-014 | SEO/routes | Clean redirects are configured for known WordPress post IDs and known sitemap legacy paths. App metadata, country canonical metadata, `sitemap.xml`, and `robots.txt` are generated from app config. The IFU logo is the selected OpenGraph/social image. `npm run review:smoke` verifies deployed public routes and auth guards. | Custom-domain DNS/SSL evidence for `internationalfarmunion.com` and `ifuplatform.com`, plus deployed redirect smoke tests. |
@@ -63,6 +63,7 @@ This inventory tracks the owner review items that can be evidenced from the repo
 
 ```bash
 npm run auth:audit
+npm run roles:audit
 npm run review:audit
 DATABASE_URL='postgresql://user:pass@localhost:5432/ifu_platform?schema=public' npm run build
 npm run review:smoke

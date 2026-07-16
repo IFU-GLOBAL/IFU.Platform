@@ -151,7 +151,7 @@ const publicAppUrl = readEnv("NEXT_PUBLIC_APP_URL");
 const baseUrl = appBaseUrl ?? publicAppUrl;
 const normalizedBaseUrl = baseUrl ? trimTrailingSlash(baseUrl) : null;
 const expectedCallbackUrl = normalizedBaseUrl ? buildAppUrl(normalizedBaseUrl, "/api/auth/callback") : null;
-const expectedLogoutUrl = normalizedBaseUrl ? buildAppUrl(normalizedBaseUrl, "/login?signedOut=1") : null;
+const expectedLogoutUrl = normalizedBaseUrl ? buildAppUrl(normalizedBaseUrl, "/") : null;
 const redirectUri = readEnv("COGNITO_REDIRECT_URI") ?? expectedCallbackUrl;
 const logoutUri = readEnv("COGNITO_LOGOUT_URI") ?? expectedLogoutUrl;
 
