@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, LoaderCircle, ShieldCheck } from "lucide-react";
+import { CheckCircle2, LoaderCircle, LogIn, ShieldCheck } from "lucide-react";
 import { FormEvent, useState } from "react";
 import {
   IFUActionButton,
@@ -36,7 +36,7 @@ export function ConfirmRegistrationForm({ initialEmail }: { initialEmail: string
     }
 
     setStatus("success");
-    setStatusMessage("Account confirmed. You can now sign in.");
+    setStatusMessage("Account confirmed. Continue to sign in.");
   }
 
   return (
@@ -80,6 +80,12 @@ export function ConfirmRegistrationForm({ initialEmail }: { initialEmail: string
               Confirm account
             </IFUActionButton>
           )}
+        </div>
+
+        <div className="mt-4">
+          <IFUActionLink href="/login?returnTo=%2Fprofile" variant="outline" icon={LogIn}>
+            Sign in to your account
+          </IFUActionLink>
         </div>
 
         {statusMessage ? (

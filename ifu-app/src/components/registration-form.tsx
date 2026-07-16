@@ -235,6 +235,7 @@ export function RegistrationForm({ initialInvitationCode = "", initialUtm }: Reg
         ok?: boolean;
         error?: string;
         email?: string;
+        redirectTo?: string;
       };
 
       if (!response.ok || !result.ok) {
@@ -244,7 +245,7 @@ export function RegistrationForm({ initialInvitationCode = "", initialUtm }: Reg
       }
 
       setStatus("success");
-      router.push(`/register/confirm?email=${encodeURIComponent(result.email ?? formState.email)}`);
+      router.push(result.redirectTo ?? "/dashboard");
     } catch (error) {
       setStatus("error");
       setStatusMessage(

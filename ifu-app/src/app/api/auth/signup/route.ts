@@ -7,6 +7,7 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 import { NextResponse } from "next/server";
 import { signUpCognitoUser } from "@/lib/auth/cognito-user-pool";
+import { createAuthSession, setAuthSessionCookie } from "@/lib/auth/session";
 import { finalizeUserAcquisition } from "@/lib/invitations";
 import { getPrisma } from "@/lib/prisma";
 import { parseRegistrationPayload } from "@/lib/registration";
@@ -126,11 +127,18 @@ export async function POST(request: Request) {
       });
     });
 
-    return NextResponse.json(
+    const session = createAuthSession({
+      sub: cognitoResult.userSub,
+      email: payload.email,
+      name: fullName,
+      username: payload.email,
+    });
+    const response = NextResponse.json(
       {
         ok: true,
         email: payload.email,
         confirmed: cognitoResult.confirmed,
+        redirectTo: "/dashboard",
         delivery: cognitoResult.delivery
           ? {
               destination: cognitoResult.delivery.Destination,
@@ -141,6 +149,10 @@ export async function POST(request: Request) {
       },
       { status: 201 },
     );
+
+    setAuthSessionCookie(response, session);
+
+    return response;
   } catch (error) {
     console.error("Cognito signup failed:", error);
     const mapped = cognitoErrorMessage(error);
