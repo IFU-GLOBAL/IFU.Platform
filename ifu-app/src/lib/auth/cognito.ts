@@ -41,10 +41,15 @@ function requiredEnv(name: string, fallback?: string) {
 }
 
 function normalizeBaseUrl(origin?: string) {
-  const baseUrl = readEnv("APP_BASE_URL") ?? readEnv("NEXT_PUBLIC_APP_URL") ?? origin;
+  const baseUrl = origin ?? readEnv("APP_BASE_URL") ?? readEnv("NEXT_PUBLIC_APP_URL");
 
   if (baseUrl) {
-    return baseUrl.replace(/\/$/, "");
+    const url = new URL(baseUrl);
+    url.protocol = url.protocol.toLowerCase();
+    url.hostname = url.hostname.toLowerCase();
+    url.pathname = url.pathname.replace(/\/$/, "");
+
+    return url.toString().replace(/\/$/, "");
   }
 
   if (process.env.NODE_ENV === "production") {
@@ -94,8 +99,12 @@ export function getCognitoConfig(origin?: string): CognitoConfig {
     issuerUrl,
     clientId,
     clientSecret: readEnv("COGNITO_CLIENT_SECRET"),
-    redirectUri: readEnv("COGNITO_REDIRECT_URI") ?? buildAppUrl("/api/auth/callback", origin),
-    logoutUri: readEnv("COGNITO_LOGOUT_URI") ?? buildAppUrl("/login?signedOut=1", origin),
+    redirectUri: origin
+      ? buildAppUrl("/api/auth/callback", origin)
+      : readEnv("COGNITO_REDIRECT_URI") ?? buildAppUrl("/api/auth/callback"),
+    logoutUri: origin
+      ? buildAppUrl("/login?signedOut=1", origin)
+      : readEnv("COGNITO_LOGOUT_URI") ?? buildAppUrl("/login?signedOut=1"),
     scopes: readEnv("COGNITO_SCOPES") ?? DEFAULT_SCOPES,
     userPoolDomain,
     authorizationEndpoint: oauthBase ? `${oauthBase}/authorize` : null,
