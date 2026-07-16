@@ -9,6 +9,7 @@ import {
 import { ProfileCompletionForm } from "@/components/profile-completion-form";
 import { getAuthSession } from "@/lib/auth/session";
 import { syncAuthenticatedUser } from "@/lib/dashboardData";
+import { getDiscoveryCategories } from "@/lib/discovery-data";
 import { getPrisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -27,12 +28,25 @@ export default async function ProfilePage() {
 
   const prisma = getPrisma();
   const syncedUser = await syncAuthenticatedUser(session);
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { id: syncedUser.id },
-    include: {
-      profile: true,
-    },
-  });
+  const [user, roleCategories] = await Promise.all([
+    prisma.user.findUniqueOrThrow({
+      where: { id: syncedUser.id },
+      include: {
+        profile: true,
+        selectedRoles: {
+          orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
+          include: {
+            role: {
+              select: {
+                slug: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+    getDiscoveryCategories(),
+  ]);
   const profileCompletion = user.profile?.profileCompletion ?? 0;
   const profileIsComplete = profileCompletion >= 100;
   const cleanPendingValue = (value: string | null | undefined) =>
@@ -55,15 +69,20 @@ export default async function ProfilePage() {
             />
             <ProfileCompletionForm
               profileCompletion={profileCompletion}
+              roleCategories={roleCategories}
               initial={{
                 country: cleanPendingValue(user.profile?.country),
                 stateProvince: cleanPendingValue(user.profile?.stateProvince),
                 city: cleanPendingValue(user.profile?.city),
                 organization: user.profile?.organization ?? "",
+                phone: user.profile?.phone ?? "",
+                preferredLanguage: user.profile?.preferredLanguage ?? "",
+                interests: user.profile?.interests ?? [],
                 timezone: user.profile?.timezone ?? "America/New_York",
                 primaryCropsLivestock: user.profile?.primaryCropsLivestock ?? [],
                 farmSizeBand: user.profile?.farmSizeBand ?? "",
                 goals: user.profile?.goals ?? "",
+                selectedRoleSlugs: user.selectedRoles.map(({ role }) => role.slug),
               }}
             />
           </div>

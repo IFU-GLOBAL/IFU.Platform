@@ -9,21 +9,27 @@ import {
   IFUCard,
   cn,
 } from "@/components/ifu-ui";
+import type { DiscoveryCategory } from "@/lib/role-catalog";
 
 type ProfileFormInitial = {
   country: string;
   stateProvince: string;
   city: string;
   organization: string;
+  phone: string;
+  preferredLanguage: string;
+  interests: string[];
   timezone: string;
   primaryCropsLivestock: string[];
   farmSizeBand: string;
   goals: string;
+  selectedRoleSlugs: string[];
 };
 
 type ProfileCompletionFormProps = {
   initial: ProfileFormInitial;
   profileCompletion: number;
+  roleCategories: DiscoveryCategory[];
 };
 
 const cropLivestockOptions = [
@@ -51,22 +57,49 @@ const farmSizeOptions = [
   { label: "20+ ha", value: "20+ ha" },
 ];
 
+const preferredLanguageOptions = [
+  { label: "Select a language", value: "" },
+  { label: "English", value: "English" },
+  { label: "French", value: "French" },
+  { label: "Spanish", value: "Spanish" },
+  { label: "Portuguese", value: "Portuguese" },
+  { label: "Arabic", value: "Arabic" },
+  { label: "Other", value: "Other" },
+];
+
+const interestOptions = [
+  "Market access",
+  "Funding",
+  "Training",
+  "Data intelligence",
+  "Trade or export",
+  "Insurance or risk",
+  "Sustainability",
+  "Cooperative leadership",
+  "Technology",
+  "Food security",
+  "Partnerships",
+  "Volunteering",
+];
+
 function TextInput({
   label,
   value,
   onChange,
   helper,
+  type = "text",
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   helper: string;
+  type?: string;
 }) {
   return (
     <label className="ifu-field-label">
       {label}
       <input
-        type="text"
+        type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className="ifu-field-control ifu-input mt-2"
@@ -76,7 +109,11 @@ function TextInput({
   );
 }
 
-export function ProfileCompletionForm({ initial, profileCompletion }: ProfileCompletionFormProps) {
+export function ProfileCompletionForm({
+  initial,
+  profileCompletion,
+  roleCategories,
+}: ProfileCompletionFormProps) {
   const router = useRouter();
   const [formState, setFormState] = useState(initial);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -99,21 +136,30 @@ export function ProfileCompletionForm({ initial, profileCompletion }: ProfileCom
     setFormState((current) => ({ ...current, [field]: value }));
   }
 
-  function toggleCropLivestock(value: string) {
+  function toggleArrayField(
+    field: "interests" | "primaryCropsLivestock",
+    value: string,
+    maxItems: number,
+  ) {
     setFormState((current) => {
-      const isSelected = current.primaryCropsLivestock.includes(value);
+      const currentValues = current[field];
+      const isSelected = currentValues.includes(value);
 
-      if (!isSelected && current.primaryCropsLivestock.length >= 5) {
+      if (!isSelected && currentValues.length >= maxItems) {
         return current;
       }
 
       return {
         ...current,
-        primaryCropsLivestock: isSelected
-          ? current.primaryCropsLivestock.filter((item) => item !== value)
-          : [...current.primaryCropsLivestock, value],
+        [field]: isSelected
+          ? currentValues.filter((item) => item !== value)
+          : [...currentValues, value],
       };
     });
+  }
+
+  function updatePrimaryRole(slug: string) {
+    updateField("selectedRoleSlugs", slug ? [slug] : []);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -167,6 +213,28 @@ export function ProfileCompletionForm({ initial, profileCompletion }: ProfileCom
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
+          <label className="ifu-field-label sm:col-span-2">
+            Primary IFU role
+            <select
+              value={formState.selectedRoleSlugs[0] ?? ""}
+              onChange={(event) => updatePrimaryRole(event.target.value)}
+              className="ifu-field-control ifu-select mt-2"
+            >
+              <option value="">Select your primary IFU role</option>
+              {roleCategories.map((category) => (
+                <optgroup key={category.slug} label={category.name}>
+                  {category.roles.map((role) => (
+                    <option key={role.slug} value={role.slug}>
+                      {role.title}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+            <span className="mt-1 block text-xs text-[var(--ifu-muted)]">
+              This controls the role shown in the dashboard and helps IFU match your pathway.
+            </span>
+          </label>
           <TextInput
             label="Country"
             value={formState.country}
@@ -191,6 +259,30 @@ export function ProfileCompletionForm({ initial, profileCompletion }: ProfileCom
             onChange={(value) => updateField("organization", value)}
             helper="Tell us your organization to improve partner matching."
           />
+          <TextInput
+            label="Contact phone"
+            value={formState.phone}
+            onChange={(value) => updateField("phone", value)}
+            helper="Optional. This is not used for login."
+            type="tel"
+          />
+          <label className="ifu-field-label">
+            Preferred language
+            <select
+              value={formState.preferredLanguage}
+              onChange={(event) => updateField("preferredLanguage", event.target.value)}
+              className="ifu-field-control ifu-select mt-2"
+            >
+              {preferredLanguageOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <span className="mt-1 block text-xs text-[var(--ifu-muted)]">
+              Used for future communications and localized onboarding.
+            </span>
+          </label>
           <label className="ifu-field-label">
             Farm size band
             <select
@@ -209,6 +301,38 @@ export function ProfileCompletionForm({ initial, profileCompletion }: ProfileCom
             </span>
           </label>
         </div>
+
+        <fieldset className="ifu-fieldset mt-6 p-4">
+          <legend className="px-2">Interests</legend>
+          <p className="ifu-copy mb-3 text-sm">
+            Choose the IFU areas you want surfaced in your dashboard. Choose up to 6.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {interestOptions.map((option) => {
+              const checked = formState.interests.includes(option);
+              const disabled = !checked && formState.interests.length >= 6;
+
+              return (
+                <label
+                  key={option}
+                  className={cn(
+                    "flex items-center gap-3 rounded-[var(--ifu-radius)] border border-[var(--ifu-border-soft)] bg-white px-3 py-3 text-sm font-medium text-[var(--ifu-muted-strong)]",
+                    disabled ? "opacity-50" : "",
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    disabled={disabled}
+                    onChange={() => toggleArrayField("interests", option, 6)}
+                    className="ifu-checkbox"
+                  />
+                  {option}
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
 
         <fieldset className="ifu-fieldset mt-6 p-4">
           <legend className="px-2">Primary crops or livestock</legend>
@@ -232,7 +356,7 @@ export function ProfileCompletionForm({ initial, profileCompletion }: ProfileCom
                     type="checkbox"
                     checked={checked}
                     disabled={disabled}
-                    onChange={() => toggleCropLivestock(option)}
+                    onChange={() => toggleArrayField("primaryCropsLivestock", option, 5)}
                     className="ifu-checkbox"
                   />
                   {option}

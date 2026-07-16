@@ -29,6 +29,9 @@ function computeProfileCompletion(input: {
   stateProvince: string;
   city: string;
   organization: string;
+  phone: string;
+  preferredLanguage: string;
+  interestCount: number;
   timezone: string;
   cropLivestockCount: number;
   farmSizeBand: string;
@@ -39,6 +42,9 @@ function computeProfileCompletion(input: {
     input.stateProvince,
     input.city,
     input.organization,
+    input.phone,
+    input.preferredLanguage,
+    input.interestCount > 0 ? "interests" : "",
     input.timezone,
     input.cropLivestockCount > 0 ? "crops" : "",
     input.farmSizeBand,
@@ -66,6 +72,8 @@ export async function POST(request: NextRequest) {
   const stateProvince = cleanString(body.stateProvince);
   const city = cleanString(body.city);
   const organization = cleanString(body.organization);
+  const phone = cleanString(body.phone, 40);
+  const preferredLanguage = cleanString(body.preferredLanguage, 80);
   const timezone = cleanString(body.timezone, 80);
   const primaryCropsLivestock = cleanStringArray(body.primaryCropsLivestock, 5);
   const farmSizeBand = cleanString(body.farmSizeBand, 40);
@@ -95,9 +103,10 @@ export async function POST(request: NextRequest) {
   const orderedRoles = selectedRoleSlugs
     .map((slug) => rolesBySlug.get(slug))
     .filter((role): role is SelectedRole => Boolean(role));
+  const unmatchedRoleSlugs = selectedRoleSlugs.filter((slug) => !rolesBySlug.has(slug));
 
-  if (selectedRoleSlugs.length > 0 && orderedRoles.length === 0) {
-    return NextResponse.json({ ok: false, error: "Selected roles were not found" }, { status: 400 });
+  if (unmatchedRoleSlugs.length > 0) {
+    console.warn("Profile update received role slugs that are not seeded in the database:", unmatchedRoleSlugs);
   }
 
   const primaryRole = orderedRoles[0];
@@ -108,6 +117,9 @@ export async function POST(request: NextRequest) {
       stateProvince,
       city,
       organization,
+      phone,
+      preferredLanguage,
+      interestCount: interests.length,
       timezone,
       cropLivestockCount: primaryCropsLivestock.length,
       farmSizeBand,
@@ -125,6 +137,8 @@ export async function POST(request: NextRequest) {
         region: country || undefined,
         timezone: timezone || undefined,
         organization: organization || null,
+        phone: phone || null,
+        preferredLanguage: preferredLanguage || null,
         interests: hasInterests ? interests : undefined,
         primaryCropsLivestock,
         farmSizeBand: farmSizeBand || null,
@@ -141,6 +155,8 @@ export async function POST(request: NextRequest) {
         region: country || "Global IFU Network",
         timezone: timezone || "America/New_York",
         organization: organization || null,
+        phone: phone || null,
+        preferredLanguage: preferredLanguage || null,
         interests,
         primaryCropsLivestock,
         farmSizeBand: farmSizeBand || null,
