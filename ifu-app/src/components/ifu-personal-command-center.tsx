@@ -63,22 +63,10 @@ type IFUPersonalCommandCenterProps = {
   view: DashboardViewModel;
 };
 
-type SamplePage = {
+type SectionPageConfig = {
   eyebrow: string;
   title: string;
   description: string;
-  metrics: Array<{
-    label: string;
-    value: string;
-    helper: string;
-    iconKey: DashboardIconKey;
-  }>;
-  panels: Array<{
-    title: string;
-    summary: string;
-    items: string[];
-    iconKey: DashboardIconKey;
-  }>;
   steps: string[];
 };
 
@@ -127,133 +115,67 @@ function getRelatedItems(
   return (matches.length > 0 ? matches : items).slice(0, limit);
 }
 
-const samplePages: Record<string, SamplePage> = {
+const sectionPages: Record<string, SectionPageConfig> = {
   [WORKSPACE_SECTION_ID]: {
-    eyebrow: "Sample workspace page",
+    eyebrow: "Workspace",
     title: "My IFU Workspace",
     description:
-      "A placeholder operating page for tasks, drafts, saved resources, and profile follow-up. This is wired to the left navigation and replaces the right panel.",
-    metrics: [
-      {
-        label: "Active items",
-        value: "6",
-        helper: "Tasks waiting for review",
-        iconKey: "checkSquare",
-      },
-      {
-        label: "Saved drafts",
-        value: "3",
-        helper: "Applications and notes",
-        iconKey: "fileText",
-      },
-      {
-        label: "Profile tasks",
-        value: "2",
-        helper: "Items to improve matching",
-        iconKey: "settings",
-      },
-    ],
-    panels: [
-      {
-        title: "Applications in progress",
-        summary: "Draft funding, training, and marketplace submissions stay grouped here.",
-        iconKey: "briefcaseBusiness",
-        items: ["Complete eligibility answers", "Attach organization profile", "Review submission checklist"],
-      },
-      {
-        title: "Saved resources",
-        summary: "Bookmarks and role-specific tools that the member wants to revisit.",
-        iconKey: "archive",
-        items: ["Buyer request template", "Country onboarding guide", "Certification checklist"],
-      },
-    ],
+      "Review active profile, funding, marketplace, and training tasks in one operating queue.",
     steps: ["Confirm profile details", "Pick one active opportunity", "Move ready items to submission"],
   },
   "daily-journey": {
-    eyebrow: "Sample journey page",
+    eyebrow: "Daily journey",
     title: "My Daily Journey",
     description:
-      "A lightweight daily plan page that can later become the member's guided sequence of recommended actions.",
-    metrics: [
-      {
-        label: "Today",
-        value: "4",
-        helper: "Recommended actions",
-        iconKey: "route",
-      },
-      {
-        label: "Quick win",
-        value: "15m",
-        helper: "Estimated time",
-        iconKey: "star",
-      },
-      {
-        label: "Priority",
-        value: "1",
-        helper: "Opportunity to review",
-        iconKey: "searchCheck",
-      },
-    ],
-    panels: [
-      {
-        title: "Morning check-in",
-        summary: "A short scan of profile status, local updates, and new matches.",
-        iconKey: "layoutDashboard",
-        items: ["Review welcome bar", "Check regional opportunities", "Save one useful resource"],
-      },
-      {
-        title: "Recommended next step",
-        summary: "A single focused action based on the member role and profile completion.",
-        iconKey: "route",
-        items: ["Open matched buyer request", "Confirm crops or services", "Add to workspace"],
-      },
-    ],
+      "Work through a short sequence of priority actions based on profile status, role, and current IFU opportunities.",
     steps: ["Review today's match", "Save or dismiss", "Complete one profile improvement"],
   },
   "recommended-pathway": {
-    eyebrow: "Sample pathway page",
+    eyebrow: "Recommended pathway",
     title: "Recommended Pathway",
     description:
-      "A placeholder pathway page showing how IFU can guide members from onboarding into training, opportunities, funding, and network actions.",
-    metrics: [
-      {
-        label: "Pathway steps",
-        value: "5",
-        helper: "Draft sequence",
-        iconKey: "route",
-      },
-      {
-        label: "Training match",
-        value: "2",
-        helper: "Recommended modules",
-        iconKey: "graduationCap",
-      },
-      {
-        label: "Opportunity match",
-        value: "4",
-        helper: "Role-based matches",
-        iconKey: "star",
-      },
-    ],
-    panels: [
-      {
-        title: "Role-based sequence",
-        summary: "Suggested order for setup, learning, and opportunity review.",
-        iconKey: "searchCheck",
-        items: ["Confirm primary role", "Complete matching details", "Review pathway recommendations"],
-      },
-      {
-        title: "Next unlocks",
-        summary: "Future real content can unlock as the user completes setup.",
-        iconKey: "shieldCheck",
-        items: ["Training modules", "Funding readiness", "Expert introductions"],
-      },
-    ],
+      "Follow a role-based route from onboarding into training, opportunities, funding, and network actions.",
     steps: ["Set primary role", "Complete profile", "Start training", "Review opportunities", "Connect with IFU network"],
   },
 };
 
-function SampleDashboardPage({ page }: { page: SamplePage }) {
+function DashboardSectionPage({
+  page,
+  cards,
+  ecosystemItems,
+  workspaceItems,
+  onSelectItem,
+}: {
+  page: SectionPageConfig;
+  cards: DashboardDrawerItem[];
+  ecosystemItems: DashboardDrawerItem[];
+  workspaceItems: DashboardDrawerItem[];
+  onSelectItem: (item: DashboardDrawerItem) => void;
+}) {
+  const metrics = [
+    {
+      label: "Next actions",
+      value: String(workspaceItems.length),
+      helper: "Workspace items ready for follow-up",
+      iconKey: "checkSquare" as const,
+    },
+    {
+      label: "Recommendations",
+      value: String(cards.length),
+      helper: "Role-based opportunities and resources",
+      iconKey: "star" as const,
+    },
+    {
+      label: "Ecosystems",
+      value: String(ecosystemItems.length),
+      helper: "Connected IFU operating pathways",
+      iconKey: "sprout" as const,
+    },
+  ];
+  const primaryWorkspaceItems = workspaceItems.slice(0, 5);
+  const primaryCards = cards.slice(0, 4);
+  const primaryEcosystemItems = ecosystemItems.slice(0, 6);
+
   return (
     <section className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
       <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
@@ -267,12 +189,12 @@ function SampleDashboardPage({ page }: { page: SamplePage }) {
           </p>
         </div>
         <span className="rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] px-3 py-2 text-xs font-bold uppercase leading-tight text-[var(--ifu-primary-deep)]">
-          Right panel page
+          Personalized
         </span>
       </div>
 
       <div className="mt-4 grid gap-3 md:grid-cols-3">
-        {page.metrics.map((metric) => {
+        {metrics.map((metric) => {
           const Icon = getIcon(metric.iconKey);
 
           return (
@@ -300,45 +222,93 @@ function SampleDashboardPage({ page }: { page: SamplePage }) {
       </div>
 
       <div className="mt-4 grid gap-3 lg:grid-cols-2">
-        {page.panels.map((panel) => {
-          const Icon = getIcon(panel.iconKey);
+        <article className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
+              <BriefcaseBusiness className="h-4 w-4" />
+            </span>
+            <div>
+              <h3 className="text-lg font-bold leading-tight text-[var(--ifu-heading)]">
+                Active Workspace
+              </h3>
+              <p className="mt-1 text-sm leading-5 text-[var(--ifu-muted)]">
+                Open tasks, profile actions, and saved next steps stay grouped here.
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 grid gap-2">
+            {primaryWorkspaceItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSelectItem(item)}
+                className="flex items-center gap-2 rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] px-3 py-2 text-left text-sm font-semibold leading-tight text-[var(--ifu-muted-strong)] transition hover:bg-white"
+              >
+                <CheckSquare className="h-4 w-4 shrink-0 text-[var(--ifu-primary)]" />
+                <span>{item.title}</span>
+              </button>
+            ))}
+          </div>
+        </article>
 
-          return (
-            <article
-              key={panel.title}
-              className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]"
-            >
-              <div className="flex items-start gap-3">
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
-                  <Icon className="h-4 w-4" />
+        <article className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white p-4 shadow-[var(--ifu-shadow)]">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--ifu-radius)] bg-[var(--ifu-chip)] text-[var(--ifu-primary-deep)]">
+              <Star className="h-4 w-4" />
+            </span>
+            <div>
+              <h3 className="text-lg font-bold leading-tight text-[var(--ifu-heading)]">
+                Recommended Resources
+              </h3>
+              <p className="mt-1 text-sm leading-5 text-[var(--ifu-muted)]">
+                Role-based cards connect this page to opportunities, training, funding, and market actions.
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 grid gap-2">
+            {primaryCards.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSelectItem(item)}
+                className="rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] px-3 py-2 text-left text-sm font-semibold leading-tight text-[var(--ifu-muted-strong)] transition hover:bg-white"
+              >
+                <span className="block text-[var(--ifu-heading)]">{item.title}</span>
+                <span className="mt-1 block text-xs font-medium text-[var(--ifu-muted)]">
+                  {item.summary}
                 </span>
-                <div>
-                  <h3 className="text-lg font-bold leading-tight text-[var(--ifu-heading)]">
-                    {panel.title}
-                  </h3>
-                  <p className="mt-1 text-sm leading-5 text-[var(--ifu-muted)]">
-                    {panel.summary}
-                  </p>
-                </div>
-              </div>
-              <ul className="mt-3 grid gap-2">
-                {panel.items.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-2 rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] px-3 py-2 text-sm font-semibold leading-tight text-[var(--ifu-muted-strong)]"
-                  >
-                    <CheckSquare className="h-4 w-4 shrink-0 text-[var(--ifu-primary)]" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </article>
-          );
-        })}
+              </button>
+            ))}
+          </div>
+        </article>
+      </div>
+
+      <div className="mt-4 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[var(--ifu-surface-muted)] p-4">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+          <div>
+            <p className="ifu-eyebrow text-[var(--ifu-primary)]">Connected ecosystems</p>
+            <h3 className="mt-1 text-lg font-bold leading-tight text-[var(--ifu-heading)]">
+              IFU operating pathways
+            </h3>
+          </div>
+          <Sprout className="hidden h-8 w-8 text-[var(--ifu-primary)] sm:block" />
+        </div>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {primaryEcosystemItems.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onSelectItem(item)}
+              className="rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-white px-3 py-2 text-left text-sm font-bold leading-tight text-[var(--ifu-heading)] transition hover:border-[var(--ifu-primary)]"
+            >
+              {item.title}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="mt-4 rounded-[var(--ifu-radius)] border border-[var(--ifu-border)] bg-[#03182d] p-4 text-white">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/60">Sample flow</p>
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/60">Action flow</p>
         <div className="mt-3 grid gap-2 md:grid-cols-3">
           {page.steps.map((step, index) => (
             <div key={step} className="rounded-[var(--ifu-radius)] bg-white/8 p-3">
@@ -361,7 +331,7 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
   const { profile } = view;
   const activeSection =
     view.menu.find((item) => item.id === activeSectionId) ?? view.menu[0];
-  const activeSamplePage = activeSection ? samplePages[activeSection.id] : undefined;
+  const activeSectionPage = activeSection ? sectionPages[activeSection.id] : undefined;
   const activeCards = activeSection
     ? getRelatedItems(
         view.cards,
@@ -569,8 +539,14 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
               </div>
             </section>
 
-            {activeSamplePage ? (
-              <SampleDashboardPage page={activeSamplePage} />
+            {activeSectionPage ? (
+              <DashboardSectionPage
+                page={activeSectionPage}
+                cards={activeCards}
+                ecosystemItems={activeEcosystemItems}
+                workspaceItems={activeWorkspaceItems}
+                onSelectItem={setDrawerItem}
+              />
             ) : (
               <>
                 {activeSection.id === HOME_SECTION_ID || activeSection.id === GLOBAL_MAP_SECTION_ID ? (

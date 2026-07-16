@@ -13,7 +13,7 @@ This inventory tracks the owner review items that can be evidenced from the repo
 | `/register` | Complete for current milestone | Custom IFU registration page backed by Cognito signup and app session creation. |
 | `/login` | Complete for current milestone | Starts Cognito hosted login and exposes helpful local/dev states. |
 | `/profile` | Complete for current milestone | Authenticated profile completion/edit page linked from the dashboard completion indicator. |
-| `/dashboard` | Partial | Authenticated Personal Command Center shell with persisted dashboard actions, workspace items, profile/location panel, and drawer interactions. Several workspaces remain sample pages. |
+| `/dashboard` | MVP partial | Authenticated Personal Command Center with persisted dashboard actions, workspace items, profile/location panel, drawer interactions, and data-driven workspace/journey/pathway pages. Deeper full-product workspaces remain future enhancements. |
 | `/country/[slug]` | MVP partial | IFU-owned Country Intelligence route with Overview, Production, Markets, and Opportunities views, seed status, source notes, and fallbacks. Needs approved country datasets. |
 | `/invitation` | Complete for current milestone | Public invitation letter with sharing and copy-link support. |
 | `/privacy` | Complete for current milestone | Short-form privacy notice and referral deletion instructions. |
@@ -36,7 +36,7 @@ This inventory tracks the owner review items that can be evidenced from the repo
 | IFU-003 | Map external link | Static sync rewrites the country popup click target to IFU-owned `/country/[slug]` routes and removes disruptive WPMapPlugins credit link markup where matched. | Browser acceptance test on deployed homepage. |
 | IFU-004 | Legacy URLs | `next.config.ts` redirects known `index.html?p=...` post IDs and known sitemap legacy paths to clean IFU-owned routes. | Deployed smoke test and final canonical domain decision. |
 | IFU-005 | Ecosystem consistency | Static sync adds AgriFinance beside AgriFunds where matched and Discovery uses 10 ecosystem pathways. | Owner-approved final ecosystem copy across every static legacy page. |
-| IFU-006 | Scope completion | This inventory identifies Complete, Partial, MVP partial, Deferred, and descriptive static routes. | Owner/developer acceptance on what counts as production workspace completeness. |
+| IFU-006 | Scope completion | This inventory identifies Complete, Partial, MVP partial, Deferred, and descriptive static routes. Dashboard sample pages have been replaced with MVP data-driven workspace surfaces. | Owner/developer acceptance on what counts as production workspace completeness. |
 | IFU-007 | Country Intelligence | `/country/[slug]` exists with four core views and fallback states. | Approved country data, source licenses, refresh cadence, and priority-country completeness. |
 | IFU-008 | Security evidence | README documents required env vars, auth audit, and known AWS tasks. | AWS console/IaC evidence for WAF, CloudTrail, CloudWatch, IAM, backups, headers, and secrets. |
 | IFU-009 | Editorial quality | Static sync fixes repeated known issues: duplicate `roles roles`, `ai powered`, `Quantum Sphere`, `scalable.How`, and ecosystem count wording. | Full editorial pass on remaining static public pages. |
