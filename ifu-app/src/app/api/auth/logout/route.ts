@@ -6,15 +6,17 @@ import {
   getCognitoConfig,
 } from "@/lib/auth/cognito";
 import { clearAuthCookies } from "@/lib/auth/session";
+import { getRequestOrigin } from "@/lib/request-origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const status = getAuthConfigurationStatus(request.nextUrl.origin);
+  const requestOrigin = getRequestOrigin(request);
+  const status = getAuthConfigurationStatus(requestOrigin);
   const logoutUrl = status.configured
-    ? buildCognitoLogoutUrl(getCognitoConfig(request.nextUrl.origin))
-    : buildAppUrl("/login?signedOut=1", request.nextUrl.origin);
+    ? buildCognitoLogoutUrl(getCognitoConfig(requestOrigin))
+    : buildAppUrl("/login?signedOut=1", requestOrigin);
   const response = NextResponse.redirect(logoutUrl);
 
   clearAuthCookies(response);

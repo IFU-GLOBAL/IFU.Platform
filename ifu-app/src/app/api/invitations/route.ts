@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildInvitationLink, createInvitation } from "@/lib/invitations";
+import { getRequestOrigin } from "@/lib/request-origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
       ok: true,
       invitation: {
         code: invitation.code,
-        link: buildInvitationLink(invitation.code, request.nextUrl.origin),
+        link: buildInvitationLink(invitation.code, getRequestOrigin(request)),
         expiresAt: invitation.expiresAt.toISOString(),
         channel: invitation.channel,
       },

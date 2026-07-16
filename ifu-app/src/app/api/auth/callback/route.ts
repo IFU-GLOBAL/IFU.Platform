@@ -7,12 +7,13 @@ import {
   setAuthSessionCookie,
 } from "@/lib/auth/session";
 import { syncAuthenticatedUser } from "@/lib/dashboardData";
+import { getRequestOrigin } from "@/lib/request-origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function redirectToLogin(request: NextRequest, error: string) {
-  const loginUrl = new URL(buildAppUrl("/login", request.nextUrl.origin));
+  const loginUrl = new URL(buildAppUrl("/login", getRequestOrigin(request)));
   loginUrl.searchParams.set("error", error);
   const response = NextResponse.redirect(loginUrl);
 
@@ -22,6 +23,7 @@ function redirectToLogin(request: NextRequest, error: string) {
 }
 
 export async function GET(request: NextRequest) {
+  const requestOrigin = getRequestOrigin(request);
   const challenge = getOidcChallenge(request);
 
   if (!challenge) {
@@ -36,7 +38,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const config = getCognitoConfig(request.nextUrl.origin);
+    const config = getCognitoConfig(requestOrigin);
     const client = await getCognitoClient(config);
     const params = client.callbackParams(request.url);
     const tokenSet = await client.callback(config.redirectUri, params, {
@@ -47,7 +49,7 @@ export async function GET(request: NextRequest) {
     const session = createAuthSession(userInfo);
     await syncAuthenticatedUser(session);
     const response = NextResponse.redirect(
-      new URL(challenge.returnTo, buildAppUrl("/", request.nextUrl.origin)),
+      new URL(challenge.returnTo, buildAppUrl("/", requestOrigin)),
     );
 
     clearAuthCookies(response);

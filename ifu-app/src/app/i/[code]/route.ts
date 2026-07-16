@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getRequestOrigin } from "@/lib/request-origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,7 +12,7 @@ type RouteContext = {
 
 export async function GET(request: NextRequest, context: RouteContext) {
   const { code } = await context.params;
-  const registerUrl = new URL("/register", request.nextUrl.origin);
+  const registerUrl = new URL("/register", getRequestOrigin(request));
 
   registerUrl.searchParams.set("inv", code);
 

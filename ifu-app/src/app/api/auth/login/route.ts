@@ -7,15 +7,17 @@ import {
   getCognitoConfig,
 } from "@/lib/auth/cognito";
 import { getSafeReturnTo, setOidcChallengeCookies } from "@/lib/auth/session";
+import { getRequestOrigin } from "@/lib/request-origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const status = getAuthConfigurationStatus(request.nextUrl.origin);
+  const requestOrigin = getRequestOrigin(request);
+  const status = getAuthConfigurationStatus(requestOrigin);
 
   if (!status.configured) {
-    const loginUrl = new URL(buildAppUrl("/login", request.nextUrl.origin));
+    const loginUrl = new URL(buildAppUrl("/login", requestOrigin));
     loginUrl.searchParams.set("error", "missing_config");
     loginUrl.searchParams.set("missing", status.missing.join(","));
 
@@ -23,7 +25,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const config = getCognitoConfig(request.nextUrl.origin);
+    const config = getCognitoConfig(requestOrigin);
     const client = await getCognitoClient(config);
     const state = generators.state();
     const nonce = generators.nonce();
@@ -46,7 +48,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Cognito login initialization failed:", error);
 
-    const loginUrl = new URL(buildAppUrl("/login", request.nextUrl.origin));
+    const loginUrl = new URL(buildAppUrl("/login", requestOrigin));
     loginUrl.searchParams.set("error", "auth_init_failed");
 
     return NextResponse.redirect(loginUrl);
