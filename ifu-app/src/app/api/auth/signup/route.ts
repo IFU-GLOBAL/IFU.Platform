@@ -102,13 +102,12 @@ export async function POST(request: Request) {
     const orderedRoles = payload.selectedRoleSlugs
       .map((slug) => rolesBySlug.get(slug))
       .filter((role): role is SelectedRole => Boolean(role));
+    const matchedRoleSlugs = orderedRoles.map((role) => role.slug);
+    const unmatchedRoleSlugs = payload.selectedRoleSlugs.filter((slug) => !rolesBySlug.has(slug));
     const primaryRole = orderedRoles[0];
 
-    if (payload.selectedRoleSlugs.length > 0 && orderedRoles.length === 0) {
-      return NextResponse.json(
-        { ok: false, error: "Selected IFU roles were not found. Refresh Discovery and try again." },
-        { status: 400 },
-      );
+    if (unmatchedRoleSlugs.length > 0) {
+      console.warn("Signup received role slugs that are not seeded in the database:", unmatchedRoleSlugs);
     }
 
     const cognitoResult = await signUpCognitoUser({
@@ -165,6 +164,11 @@ export async function POST(request: Request) {
         utmCampaign: payload.utmCampaign,
         utmMedium: payload.utmMedium,
         firstTouchUrl: payload.firstTouchUrl,
+        metadata: {
+          selectedRoleSlugs: payload.selectedRoleSlugs,
+          matchedRoleSlugs,
+          unmatchedRoleSlugs,
+        },
       });
     });
 

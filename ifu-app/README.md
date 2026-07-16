@@ -35,6 +35,10 @@ The country route currently ships as a Tier 2 MVP:
 
 Before final acceptance, replace seed records with owner-approved country data, source citations, data licenses, and refresh cadence.
 
+## Review Remediation Inventory
+
+The owner review remediation inventory lives in `docs/review-remediation-inventory.md`. It maps the July 12, 2026 review issues to current route status, implemented evidence, and remaining owner/operator work.
+
 ## Required Environment Variables
 
 ```bash

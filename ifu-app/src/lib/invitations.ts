@@ -33,6 +33,7 @@ export type AcquisitionAttributionInput = {
   utmCampaign?: string;
   utmMedium?: string;
   firstTouchUrl?: string;
+  metadata?: Prisma.InputJsonValue;
 };
 
 function addDays(date: Date, days: number) {
@@ -311,6 +312,7 @@ export async function finalizeUserAcquisition(
         utmCampaign: cleanString(input.utmCampaign, 120) || undefined,
         utmMedium: cleanString(input.utmMedium, 120) || undefined,
         firstTouchUrl: cleanString(input.firstTouchUrl, 300) || undefined,
+        metadata: input.metadata ?? undefined,
       },
       create: {
         userId: input.userId,
@@ -324,6 +326,7 @@ export async function finalizeUserAcquisition(
         utmCampaign: cleanString(input.utmCampaign, 120) || null,
         utmMedium: cleanString(input.utmMedium, 120) || null,
         firstTouchUrl: cleanString(input.firstTouchUrl, 300) || null,
+        metadata: input.metadata,
       },
     });
   }
@@ -342,6 +345,7 @@ export async function finalizeUserAcquisition(
       utmCampaign: cleanString(input.utmCampaign, 120) || undefined,
       utmMedium: cleanString(input.utmMedium, 120) || undefined,
       firstTouchUrl: cleanString(input.firstTouchUrl, 300) || undefined,
+      metadata: input.metadata ?? undefined,
     },
     create: {
       userId: input.userId,
@@ -352,6 +356,7 @@ export async function finalizeUserAcquisition(
       utmCampaign: cleanString(input.utmCampaign, 120) || null,
       utmMedium: cleanString(input.utmMedium, 120) || null,
       firstTouchUrl: cleanString(input.firstTouchUrl, 300) || null,
+      metadata: input.metadata,
     },
   });
 }

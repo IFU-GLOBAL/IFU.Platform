@@ -93,6 +93,62 @@ const legacyPostRedirects: Record<string, string> = {
   "9734": "/quality-assurance-testing",
 };
 
+const legacyPathRedirects: Record<string, string> = {
+  "/about-us/advisory-council": "/about-us",
+  "/about-us/foundation": "/foundation",
+  "/about-us/governance": "/about-us",
+  "/about-us/leadership": "/about-us",
+  "/about-us/our-mission": "/about-us",
+  "/author/villaonthepotomac": "/about-us",
+  "/author/villaonthepotomac/feed": "/about-us",
+  "/comments/feed": "/home",
+  "/event/10-simple-practices": "/events",
+  "/event_category/treatment": "/events",
+  "/event_category/treatment/feed": "/events",
+  "/feed": "/home",
+  "/foundation/donation": "/foundation",
+  "/foundation/get-involved": "/foundation",
+  "/foundation/impact-results": "/foundation",
+  "/foundation/mission-vision": "/foundation",
+  "/foundation/our-programs": "/foundation",
+  "/foundation/partners-supporters": "/foundation",
+  "/foundation/partnerships-events": "/foundation",
+  "/foundation/stories-gallery": "/gallery",
+  "/foundation/transparency-governance": "/foundation",
+  "/gallery/cooperatives": "/gallery",
+  "/gallery/fields-farmer-activities": "/gallery",
+  "/gallery/global-engagement": "/gallery",
+  "/gallery/impact-community": "/gallery",
+  "/gallery/impact-highlights": "/gallery",
+  "/gallery/partnerships-events": "/gallery",
+  "/gallery/platform-technology": "/gallery",
+  "/gallery/training-programs": "/gallery",
+  "/insights/data-analytics": "/insights",
+  "/insights/reports": "/insights",
+  "/partners-institutions/partner-with-us": "/partners-institutions",
+  "/platforms/agriacademie": "/platforms",
+  "/platforms/agricapital": "/platforms",
+  "/platforms/agricentral": "/platforms",
+  "/platforms/agriexchange": "/platforms",
+  "/platforms/agrifinance": "/discovery",
+  "/platforms/agrifunds": "/platforms",
+  "/platforms/agrinexus": "/platforms",
+  "/platforms/agrishield": "/platforms",
+  "/platforms/agrisphere": "/platforms",
+  "/platforms/agrisphere/agrisphere-login": "/login",
+  "/platforms/agrisphere/agrisphere-registration": "/register",
+  "/platforms/agrisphere/password-reset": "/forgot-password",
+  "/platforms/data-engine": "/data-engine",
+  "/privacy-policy/feed": "/privacy-policy",
+  "/programs/nutrition": "/programs",
+  "/programs/rural-development": "/programs",
+  "/programs/training": "/programs",
+  "/quality-assurance-testing/tester-login": "/login",
+  "/team/jean-d-tchatchoua": "/about-us",
+  "/terms-of-use/feed": "/terms-of-use",
+  "/wp-json": "/home",
+};
+
 function collectLegacyDirectoryRoutes(directory = legacyStaticRoot, route = ""): Rewrite[] {
   if (!existsSync(directory)) {
     return [];
@@ -129,12 +185,26 @@ function collectLegacyDirectoryRoutes(directory = legacyStaticRoot, route = ""):
 }
 
 function collectLegacyPostRedirects(): Redirect[] {
-  const redirects: Redirect[] = Object.entries(legacyPostRedirects).map(([postId, destination]) => ({
-    source: "/index.html",
-    has: [{ type: "query" as const, key: "p", value: postId }],
-    destination,
-    permanent: true,
-  }));
+  const redirects: Redirect[] = [
+    ...Object.entries(legacyPostRedirects).map(([postId, destination]) => ({
+      source: "/index.html",
+      has: [{ type: "query" as const, key: "p", value: postId }],
+      destination,
+      permanent: true,
+    })),
+    ...Object.entries(legacyPathRedirects).flatMap(([source, destination]) => [
+      {
+        source,
+        destination,
+        permanent: true,
+      },
+      {
+        source: `${source}/`,
+        destination,
+        permanent: true,
+      },
+    ]),
+  ];
 
   redirects.push({
     source: "/index.html",
