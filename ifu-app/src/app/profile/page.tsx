@@ -22,7 +22,7 @@ export default async function ProfilePage() {
   const session = await getAuthSession();
 
   if (!session) {
-    redirect("/api/auth/login?returnTo=%2Fprofile");
+    redirect("/login?returnTo=%2Fprofile");
   }
 
   const prisma = getPrisma();

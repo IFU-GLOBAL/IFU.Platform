@@ -317,6 +317,7 @@ export function MiniGeoGlobalMap({ profile, onSelect }: MiniGeoGlobalMapProps) {
           </div>
           <Link
             href="/profile"
+            prefetch={false}
             aria-label={`${profileActionLabel}: profile is ${displayedProfile.profileCompletion}% complete`}
             className="rounded-[var(--ifu-radius)] bg-[var(--ifu-surface-muted)] p-3 transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ifu-primary)]"
           >

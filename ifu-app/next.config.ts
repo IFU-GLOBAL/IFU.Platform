@@ -26,7 +26,11 @@ const nextOwnedSegments = new Set([
   "dashboard",
   "discovery",
   "forgot-password",
+  "i",
+  "invitation",
   "login",
+  "privacy",
+  "profile",
   "register",
 ]);
 
