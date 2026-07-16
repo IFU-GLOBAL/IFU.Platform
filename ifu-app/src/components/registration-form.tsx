@@ -67,6 +67,7 @@ type InvitationLookupResult =
 
 type RegistrationFormProps = {
   initialInvitationCode?: string;
+  selectedRoleSlugs?: string[];
   initialUtm?: {
     utmSource?: string;
     utmCampaign?: string;
@@ -136,7 +137,11 @@ function ConsentCheckbox({
   );
 }
 
-export function RegistrationForm({ initialInvitationCode = "", initialUtm }: RegistrationFormProps) {
+export function RegistrationForm({
+  initialInvitationCode = "",
+  initialUtm,
+  selectedRoleSlugs = [],
+}: RegistrationFormProps) {
   const router = useRouter();
   const [formState, setFormState] = useState<RegistrationFormState>({
     ...initialFormState,
@@ -151,6 +156,15 @@ export function RegistrationForm({ initialInvitationCode = "", initialUtm }: Reg
   const [invitation, setInvitation] = useState<InvitationPreview | null>(null);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
+
+  useEffect(() => {
+    setFormState((current) => ({
+      ...current,
+      utmSource: initialUtm?.utmSource ?? "",
+      utmCampaign: initialUtm?.utmCampaign ?? "",
+      utmMedium: initialUtm?.utmMedium ?? "",
+    }));
+  }, [initialUtm?.utmCampaign, initialUtm?.utmMedium, initialUtm?.utmSource]);
 
   useEffect(() => {
     if (!initialInvitationCode) {
@@ -228,6 +242,7 @@ export function RegistrationForm({ initialInvitationCode = "", initialUtm }: Reg
         signal: controller.signal,
         body: JSON.stringify({
           ...formState,
+          selectedRoleSlugs,
           firstTouchUrl: window.location.href,
         }),
       });

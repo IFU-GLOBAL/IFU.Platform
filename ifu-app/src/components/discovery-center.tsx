@@ -3,14 +3,11 @@
 import {
   ArrowRight,
   BadgeCheck,
-  CheckCircle2,
   Globe2,
   Handshake,
-  LoaderCircle,
   Mail,
   MessageCircle,
   Search,
-  Send,
   Share2,
   Sprout,
   UserRound,
@@ -20,7 +17,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   IFUActionButton,
   IFUActionLink,
@@ -33,6 +30,7 @@ import {
   cn,
 } from "@/components/ifu-ui";
 import { GTranslateWidget } from "@/components/gtranslate-widget";
+import { RegistrationForm } from "@/components/registration-form";
 import {
   discoveryPersonas,
   type DiscoveryCategory,
@@ -54,68 +52,6 @@ type DiscoveryCenterProps = {
   initialRoleSlugs?: string[];
 };
 
-type FormState = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  country: string;
-  organization: string;
-  roleOrTitle: string;
-  leadershipInterest: string;
-  contributionInterests: string[];
-  referralSource: string;
-  referralDetail: string;
-  recommendedContactName: string;
-  recommendedContactEmail: string;
-  recommendedContactRelationship: string;
-  message: string;
-  privacyConsent: boolean;
-  referralConsent: boolean;
-  website: string;
-};
-
-const initialFormState: FormState = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  country: "",
-  organization: "",
-  roleOrTitle: "",
-  leadershipInterest: "",
-  contributionInterests: [],
-  referralSource: "",
-  referralDetail: "",
-  recommendedContactName: "",
-  recommendedContactEmail: "",
-  recommendedContactRelationship: "",
-  message: "",
-  privacyConsent: false,
-  referralConsent: false,
-  website: "",
-};
-
-const contributionOptions = [
-  "Advisory council",
-  "Training or mentoring",
-  "Country or regional coordination",
-  "Data and research support",
-  "Funding or sponsorship",
-  "Pilot program participation",
-];
-
-const referralOptions = [
-  "IFU team member",
-  "Friend or colleague",
-  "Partner organization",
-  "Conference or event",
-  "Social media",
-  "Search engine",
-  "News or media",
-  "Other",
-];
-
 const navItems = [
   { label: "About Us", href: "/about-us/" },
   { label: "Platforms", href: "/platforms/" },
@@ -126,7 +62,6 @@ const navItems = [
 ];
 
 const cognitoLoginHref = "/api/auth/login?returnTo=%2Fprofile";
-const cognitoRegisterHref = "/register";
 const discoveryShareUrl = "https://ifuplatform.com/discovery";
 const invitationShareText =
   "You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you.";
@@ -202,9 +137,6 @@ export function DiscoveryCenter({
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [visibleRoleCount, setVisibleRoleCount] = useState(rolePageSize);
   const [selectedRoleSlugs, setSelectedRoleSlugs] = useState<string[]>(initialRoleSlugs);
-  const [formState, setFormState] = useState<FormState>(initialFormState);
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-  const [statusMessage, setStatusMessage] = useState("");
 
   const roles = useMemo(() => categories.flatMap((category) => category.roles), [categories]);
   const rolesBySlug = useMemo(() => new Map(roles.map((role) => [role.slug, role])), [roles]);
@@ -216,11 +148,6 @@ export function DiscoveryCenter({
     .map((slug) => rolesBySlug.get(slug))
     .filter((role): role is DiscoveryRole => Boolean(role));
   const primarySelectedRole = selectedRoles[0];
-  const referralHasData = Boolean(
-    formState.recommendedContactName ||
-      formState.recommendedContactEmail ||
-      formState.recommendedContactRelationship,
-  );
   const roleShareUrl = selectedRoleSlugs.length > 0
     ? `${discoveryShareUrl}?role=${encodeURIComponent(selectedRoleSlugs.join(","))}#role-matrix`
     : discoveryShareUrl;
@@ -259,19 +186,6 @@ export function DiscoveryCenter({
     setVisibleRoleCount(rolePageSize);
   }, [categoryFilter, query, selectedPersonaSlug]);
 
-  function updateField<K extends keyof FormState>(field: K, value: FormState[K]) {
-    setFormState((current) => ({ ...current, [field]: value }));
-  }
-
-  function toggleContribution(value: string) {
-    setFormState((current) => ({
-      ...current,
-      contributionInterests: current.contributionInterests.includes(value)
-        ? current.contributionInterests.filter((item) => item !== value)
-        : [...current.contributionInterests, value],
-    }));
-  }
-
   function toggleRole(slug: string) {
     setSelectedRoleSlugs((current) =>
       current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug],
@@ -281,62 +195,6 @@ export function DiscoveryCenter({
   function selectPersona(slug: string) {
     setSelectedPersonaSlug(slug);
     setCategoryFilter("all");
-  }
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setStatus("submitting");
-    setStatusMessage("");
-
-    if (formState.website) {
-      setStatus("success");
-      setStatusMessage("Application submitted.");
-      return;
-    }
-
-    if (!formState.privacyConsent) {
-      setStatus("error");
-      setStatusMessage("Privacy consent is required before IFU can review your preview application.");
-      return;
-    }
-
-    if (referralHasData && !formState.referralConsent) {
-      setStatus("error");
-      setStatusMessage("Referral consent is required when recommending another contact.");
-      return;
-    }
-
-    const response = await fetch("/api/preview-applications", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...formState,
-        selectedRoleSlugs,
-      }),
-    });
-
-    const result = (await response.json()) as {
-      ok?: boolean;
-      error?: string;
-      emailStatus?: string;
-    };
-
-    if (!response.ok || !result.ok) {
-      setStatus("error");
-      setStatusMessage(result.error ?? "Unable to submit the preview application");
-      return;
-    }
-
-    setStatus("success");
-    setStatusMessage(
-      result.emailStatus === "sent"
-        ? "Application submitted and confirmation email sent."
-        : "Application submitted. Email confirmation is pending SES configuration.",
-    );
-    setFormState(initialFormState);
-    setSelectedRoleSlugs([]);
   }
 
   return (
@@ -385,7 +243,7 @@ export function DiscoveryCenter({
             <UserRound className="h-5 w-5" aria-hidden="true" />
             <Link href={cognitoLoginHref}>Login</Link>
             <span aria-hidden="true">|</span>
-            <Link href={cognitoRegisterHref} className="ifu-static-join">
+            <Link href="#ifu-registration" className="ifu-static-join">
               Join IFU
             </Link>
           </div>
@@ -708,7 +566,7 @@ export function DiscoveryCenter({
                       ))}
                     </div>
                     <div className="mt-5 grid gap-3">
-                      <IFUActionLink href={cognitoRegisterHref} icon={UserPlus}>
+                      <IFUActionLink href="#ifu-registration" icon={UserPlus}>
                         Register
                       </IFUActionLink>
                       <div className="grid gap-2 sm:grid-cols-3">
@@ -727,8 +585,8 @@ export function DiscoveryCenter({
                           </IFUActionLink>
                         ))}
                       </div>
-                      <IFUActionLink href="#preview-application" variant="outline" icon={Send}>
-                        Share contact interests
+                      <IFUActionLink href="#ifu-registration" variant="outline" icon={UserPlus}>
+                        Create IFU account
                       </IFUActionLink>
                     </div>
                   </div>
@@ -752,205 +610,46 @@ export function DiscoveryCenter({
         </IFUContainer>
       </IFUSection>
 
-      <IFUSection id="preview-application">
+      <IFUSection id="ifu-registration">
         <IFUContainer size="wide" className="py-12">
           <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
-            <IFUSectionHeader
-              eyebrow="Preview application"
-              title="Share your contact and contribution interests"
-              description="IFU will reach out to coordinate preview invitations, leadership pathways, referrals, and recommended follow-up."
-              className="md:block"
+            <div className="grid content-start gap-4">
+              <IFUSectionHeader
+                eyebrow="IFU registration"
+                title="Create your IFU account"
+                description="Create your account to enter the IFU dashboard. Profile details and role matching continue after login."
+                className="md:block"
+                action={
+                  <IFUActionLink href="/login?returnTo=%2Fprofile" variant="outline">
+                    Already have an account?
+                  </IFUActionLink>
+                }
+              />
+              <IFUInset className="px-4 py-3 text-sm text-[var(--ifu-muted)]">
+                {selectedRoles.length > 0 ? (
+                  <>
+                    <span className="font-semibold text-[var(--ifu-heading)]">
+                      {selectedRoles.length} selected role{selectedRoles.length === 1 ? "" : "s"}
+                    </span>{" "}
+                    will be attached to this account: {selectedRoles.map((role) => role.title).join(", ")}.
+                  </>
+                ) : (
+                  "Select one or more Discovery roles above before registering to attach them to your account."
+                )}
+              </IFUInset>
+            </div>
+
+            <RegistrationForm
+              selectedRoleSlugs={selectedRoleSlugs}
+              initialUtm={{
+                utmSource: "discovery",
+                utmCampaign: selectedRoleSlugs.join(","),
+                utmMedium: "role-matrix",
+              }}
             />
-
-            <form onSubmit={handleSubmit} className="ifu-card ifu-card-muted p-5">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <TextInput label="First name" value={formState.firstName} onChange={(value) => updateField("firstName", value)} required />
-                <TextInput label="Last name" value={formState.lastName} onChange={(value) => updateField("lastName", value)} required />
-                <TextInput label="Email" type="email" value={formState.email} onChange={(value) => updateField("email", value)} required />
-                <TextInput label="Phone" value={formState.phone} onChange={(value) => updateField("phone", value)} />
-                <TextInput label="Country" value={formState.country} onChange={(value) => updateField("country", value)} required />
-                <TextInput label="Organization" value={formState.organization} onChange={(value) => updateField("organization", value)} />
-                <TextInput label="Current role or title" value={formState.roleOrTitle} onChange={(value) => updateField("roleOrTitle", value)} className="sm:col-span-2" />
-              </div>
-
-              <fieldset className="ifu-fieldset mt-6 p-4">
-                <legend className="px-2">Leadership and contribution interest</legend>
-                <label className="ifu-field-label mt-2">
-                  Leadership interest
-                  <select
-                    value={formState.leadershipInterest}
-                    onChange={(event) => updateField("leadershipInterest", event.target.value)}
-                    className="ifu-field-control ifu-select mt-2"
-                  >
-                    <option value="">Select one</option>
-                    <option value="Interested in leadership">Interested in leadership</option>
-                    <option value="Interested later">Interested later</option>
-                    <option value="Contributor only">Contributor only</option>
-                    <option value="Not sure yet">Not sure yet</option>
-                  </select>
-                </label>
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {contributionOptions.map((option) => (
-                    <label key={option} className="flex items-center gap-3 rounded-[var(--ifu-radius)] border border-[var(--ifu-border-soft)] bg-white px-3 py-3 text-sm font-medium text-[var(--ifu-muted-strong)]">
-                      <input
-                        type="checkbox"
-                        checked={formState.contributionInterests.includes(option)}
-                        onChange={() => toggleContribution(option)}
-                        className="ifu-checkbox"
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-
-              <fieldset className="ifu-fieldset mt-6 p-4">
-                <legend className="px-2">Referral tracking</legend>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="ifu-field-label">
-                    How did you hear about IFU?
-                    <select
-                      value={formState.referralSource}
-                      onChange={(event) => updateField("referralSource", event.target.value)}
-                      className="ifu-field-control ifu-select mt-2"
-                    >
-                      <option value="">Select one</option>
-                      {referralOptions.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <TextInput label="Referral detail" value={formState.referralDetail} onChange={(value) => updateField("referralDetail", value)} />
-                </div>
-              </fieldset>
-
-              <fieldset className="ifu-fieldset mt-6 p-4">
-                <legend className="px-2">Recommended contact or friend</legend>
-                <p className="ifu-copy mt-2 text-sm">
-                  Know someone who belongs in the IFU community? Please share their details only if they have agreed to be contacted by IFU. We will send them a single invitation mentioning that you recommended them, and nothing more unless they respond.
-                </p>
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <TextInput label="Name" value={formState.recommendedContactName} onChange={(value) => updateField("recommendedContactName", value)} />
-                  <TextInput label="Email" type="email" value={formState.recommendedContactEmail} onChange={(value) => updateField("recommendedContactEmail", value)} />
-                  <TextInput label="Relationship" value={formState.recommendedContactRelationship} onChange={(value) => updateField("recommendedContactRelationship", value)} />
-                </div>
-                <label className="ifu-consent-row mt-4">
-                  <input
-                    type="checkbox"
-                    checked={formState.referralConsent}
-                    onChange={(event) => updateField("referralConsent", event.target.checked)}
-                    required={referralHasData}
-                    className="ifu-checkbox"
-                  />
-                  <span>
-                    I confirm this person has agreed to receive a one-time invitation from IFU, and I understand they can decline or ask for their details to be deleted.
-                  </span>
-                </label>
-              </fieldset>
-
-              <label className="ifu-field-label mt-6">
-                Message
-                <textarea
-                  value={formState.message}
-                  onChange={(event) => updateField("message", event.target.value)}
-                  rows={5}
-                  className="ifu-field-control ifu-textarea mt-2"
-                />
-              </label>
-
-              <label className="ifu-honeypot" aria-hidden="true">
-                Website
-                <input
-                  value={formState.website}
-                  onChange={(event) => updateField("website", event.target.value)}
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
-              </label>
-
-              <label className="ifu-consent-row mt-6">
-                <input
-                  type="checkbox"
-                  checked={formState.privacyConsent}
-                  onChange={(event) => updateField("privacyConsent", event.target.checked)}
-                  required
-                  className="ifu-checkbox"
-                />
-                <span>
-                  I agree that the International Farm Union (IFU) may store and process the information I have provided in order to review my application, contact me about my selected role, and send me updates about the IFU Platform launch. I understand my data will never be sold, I may withdraw consent at any time, and I can request deletion of my data by emailing privacy@ifuplatform.com. I have read the{" "}
-                  <Link href="/privacy" className="font-bold text-[var(--ifu-primary-deep)] underline">
-                    IFU Privacy Notice
-                  </Link>
-                  .
-                </span>
-              </label>
-
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="ifu-copy text-sm">
-                  {selectedRoles.length} role{selectedRoles.length === 1 ? "" : "s"} attached to this application.
-                </p>
-                <IFUActionButton
-                  type="submit"
-                  disabled={status === "submitting"}
-                >
-                  {status === "submitting" ? (
-                    <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  ) : (
-                    <Send className="h-4 w-4" aria-hidden="true" />
-                  )}
-                  Submit preview application
-                </IFUActionButton>
-              </div>
-
-              {statusMessage ? (
-                <div
-                  className={cn(
-                    "ifu-status mt-4",
-                    status === "success"
-                      ? "ifu-status-success"
-                      : "ifu-status-error",
-                  )}
-                >
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-                  <p>{statusMessage}</p>
-                </div>
-              ) : null}
-            </form>
           </div>
         </IFUContainer>
       </IFUSection>
     </IFUPage>
-  );
-}
-
-function TextInput({
-  label,
-  value,
-  onChange,
-  type = "text",
-  required = false,
-  className = "",
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  type?: string;
-  required?: boolean;
-  className?: string;
-}) {
-  return (
-    <label className={`ifu-field-label ${className}`}>
-      {label}
-      <input
-        type={type}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        required={required}
-        className="ifu-field-control ifu-input mt-2"
-      />
-    </label>
   );
 }

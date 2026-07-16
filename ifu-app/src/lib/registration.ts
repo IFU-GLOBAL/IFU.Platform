@@ -15,6 +15,7 @@ export type RegistrationPayload = {
   utmCampaign?: string;
   utmMedium?: string;
   firstTouchUrl?: string;
+  selectedRoleSlugs: string[];
 };
 
 function cleanString(value: unknown, maxLength = 160) {
@@ -23,6 +24,20 @@ function cleanString(value: unknown, maxLength = 160) {
 
 function cleanBoolean(value: unknown) {
   return value === true || value === "true";
+}
+
+function cleanStringArray(value: unknown, maxItems = 12, maxLength = 120) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return Array.from(
+    new Set(
+      value
+        .map((item) => cleanString(item, maxLength))
+        .filter(Boolean),
+    ),
+  ).slice(0, maxItems);
 }
 
 export function parseRegistrationPayload(value: unknown) {
@@ -47,6 +62,7 @@ export function parseRegistrationPayload(value: unknown) {
     utmCampaign: cleanString(body.utmCampaign, 120),
     utmMedium: cleanString(body.utmMedium, 120),
     firstTouchUrl: cleanString(body.firstTouchUrl, 300),
+    selectedRoleSlugs: cleanStringArray(body.selectedRoleSlugs),
   };
 
   if (!payload.firstName || !payload.lastName) {

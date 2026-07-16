@@ -83,6 +83,34 @@ export async function POST(request: Request) {
       );
     }
 
+    const roles = payload.selectedRoleSlugs.length
+      ? await prisma.role.findMany({
+          where: {
+            slug: {
+              in: payload.selectedRoleSlugs,
+            },
+          },
+          select: {
+            id: true,
+            slug: true,
+            categoryId: true,
+          },
+        })
+      : [];
+    type SelectedRole = (typeof roles)[number];
+    const rolesBySlug = new Map(roles.map((role) => [role.slug, role]));
+    const orderedRoles = payload.selectedRoleSlugs
+      .map((slug) => rolesBySlug.get(slug))
+      .filter((role): role is SelectedRole => Boolean(role));
+    const primaryRole = orderedRoles[0];
+
+    if (payload.selectedRoleSlugs.length > 0 && orderedRoles.length === 0) {
+      return NextResponse.json(
+        { ok: false, error: "Selected IFU roles were not found. Refresh Discovery and try again." },
+        { status: 400 },
+      );
+    }
+
     const cognitoResult = await signUpCognitoUser({
       email: payload.email,
       password: payload.password,
@@ -107,11 +135,24 @@ export async function POST(request: Request) {
           ageConfirmedAt: now,
           profile: {
             create: {
-              profileCompletion: 20,
+              primaryRoleId: primaryRole?.id,
+              primaryCategoryId: primaryRole?.categoryId,
+              profileCompletion: primaryRole ? 40 : 20,
             },
           },
         },
       });
+
+      if (orderedRoles.length > 0) {
+        await transaction.userSelectedRole.createMany({
+          data: orderedRoles.map((role, index) => ({
+            userId: user.id,
+            roleId: role.id,
+            isPrimary: index === 0,
+          })),
+          skipDuplicates: true,
+        });
+      }
 
       await finalizeUserAcquisition(transaction, {
         userId: user.id,
