@@ -74,6 +74,8 @@ type RegistrationFormProps = {
   };
 };
 
+const signupTimeoutMs = 30000;
+
 function TextInput({
   label,
   value,
@@ -214,26 +216,45 @@ export function RegistrationForm({ initialInvitationCode = "", initialUtm }: Reg
       return;
     }
 
-    const response = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...formState,
-        firstTouchUrl: window.location.href,
-      }),
-    });
-    const result = (await response.json()) as { ok?: boolean; error?: string; email?: string };
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), signupTimeoutMs);
 
-    if (!response.ok || !result.ok) {
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          ...formState,
+          firstTouchUrl: window.location.href,
+        }),
+      });
+      const result = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+        email?: string;
+      };
+
+      if (!response.ok || !result.ok) {
+        setStatus("error");
+        setStatusMessage(result.error ?? "Unable to create account.");
+        return;
+      }
+
+      setStatus("success");
+      router.push(`/register/confirm?email=${encodeURIComponent(result.email ?? formState.email)}`);
+    } catch (error) {
       setStatus("error");
-      setStatusMessage(result.error ?? "Unable to create account.");
-      return;
+      setStatusMessage(
+        error instanceof DOMException && error.name === "AbortError"
+          ? "Account creation timed out. Check the registration logs and try again."
+          : "Unable to create account. Check the registration logs and try again.",
+      );
+    } finally {
+      window.clearTimeout(timeout);
     }
-
-    setStatus("success");
-    router.push(`/register/confirm?email=${encodeURIComponent(result.email ?? formState.email)}`);
   }
 
   return (

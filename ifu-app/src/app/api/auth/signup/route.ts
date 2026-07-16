@@ -15,6 +15,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function cognitoErrorMessage(error: unknown) {
+  const errorCode = typeof error === "object" && error && "code" in error
+    ? String((error as { code?: unknown }).code)
+    : null;
+
   if (error instanceof UsernameExistsException) {
     return { status: 409, message: "An account already exists for this email address" };
   }
@@ -35,9 +39,16 @@ function cognitoErrorMessage(error: unknown) {
     return { status: 500, message: "Cognito app client is not authorized for signup" };
   }
 
+  if (errorCode === "P1000" || errorCode === "P1001") {
+    return {
+      status: 503,
+      message: "The registration database is not reachable with the configured credentials.",
+    };
+  }
+
   return {
     status: 500,
-    message: error instanceof Error ? error.message : "Unable to create Cognito account",
+    message: "Unable to create account.",
   };
 }
 
@@ -56,21 +67,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: parsed.error }, { status: 400 });
   }
 
-  const payload = parsed.payload;
-  const prisma = getPrisma();
-  const existingUser = await prisma.user.findUnique({
-    where: { email: payload.email },
-    select: { id: true },
-  });
-
-  if (existingUser) {
-    return NextResponse.json(
-      { ok: false, error: "An account already exists for this email address" },
-      { status: 409 },
-    );
-  }
-
   try {
+    const payload = parsed.payload;
+    const prisma = getPrisma();
+    const existingUser = await prisma.user.findUnique({
+      where: { email: payload.email },
+      select: { id: true },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { ok: false, error: "An account already exists for this email address" },
+        { status: 409 },
+      );
+    }
+
     const cognitoResult = await signUpCognitoUser({
       email: payload.email,
       password: payload.password,
@@ -131,6 +142,7 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error) {
+    console.error("Cognito signup failed:", error);
     const mapped = cognitoErrorMessage(error);
 
     return NextResponse.json({ ok: false, error: mapped.message }, { status: mapped.status });
