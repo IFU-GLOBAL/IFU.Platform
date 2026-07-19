@@ -541,6 +541,28 @@ html {
   color: var(--ifu-heading);
 }
 
+.ifu-home-role-launch {
+  margin-top: 1.5rem;
+  border: 1px solid rgba(43, 126, 55, 0.18);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding: 1.35rem;
+  box-shadow: var(--ifu-shadow);
+}
+
+.ifu-home-role-launch p {
+  margin-top: 0.5rem;
+}
+
+.ifu-home-role-launch p:first-child {
+  margin-top: 0;
+}
+
+.ifu-home-role-start {
+  color: var(--ifu-primary);
+  font-weight: 800;
+}
+
 .ifu-home-persona-grid,
 .ifu-home-role-categories {
   display: grid;

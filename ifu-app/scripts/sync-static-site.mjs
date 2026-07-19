@@ -346,13 +346,44 @@ function buildHomepageRoleSection() {
   line-height: 1.2;
 }
 
+.ifu-home-role-intro h3 {
+  margin: 22px 0 0;
+  color: #08233b;
+  font-size: clamp(18px, 1.8vw, 24px);
+  line-height: 1.35;
+}
+
 .ifu-home-role-intro p {
-  max-width: 720px;
-  margin: 12px auto 0;
-  color: #667085;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
+  margin: 16px 0 0;
+  color: #475467;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.ifu-home-role-intro strong {
+  color: #08233b;
+}
+
+.ifu-home-role-launch {
+  margin-top: 24px;
+  border: 1px solid rgba(11, 125, 53, .18);
+  border-radius: 18px;
+  background: #fff;
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(8, 35, 59, .06);
+}
+
+.ifu-home-role-launch p {
+  margin-top: 8px;
+}
+
+.ifu-home-role-launch p:first-child {
+  margin-top: 0;
+}
+
+.ifu-home-role-start {
+  color: #0b7d35 !important;
+  font-weight: 800;
 }
 
 .ifu-home-role-controls {
@@ -488,12 +519,22 @@ function buildHomepageRoleSection() {
   }
 }
 </style>
-<!--
 <section class="ifu-home-role-catalog" aria-labelledby="ifu-home-role-title">
   <div class="ifu-home-role-shell">
     <div class="ifu-home-role-intro">
-      <h2 id="ifu-home-role-title">Search and select your IFU roles below</h2>
-      <p>Generated from the same IFU role catalog used by Discovery Center and database seeding.</p>
+      <h2 id="ifu-home-role-title">&#127757; Discover Your Place in the Global Agriculture Ecosystem</h2>
+      <p>The International Farm Union (IFU) Platform is built for everyone in the global food and agriculture value chain. Whether you&#39;re a farmer, buyer, investor, researcher, student, government official, nonprofit leader, or simply exploring agriculture, IFU brings together people, organizations, and agricultural communities worldwide across the entire food and agriculture value chain in one platform.</p>
+      <p>IFU helps you discover the right people, programs, funding, markets, training, and opportunities across 190+ countries, 2M+ farmers, and 500+ partners worldwide, all from one AI-powered intelligent global platform.</p>
+      <h3>Who are you in agriculture?</h3>
+      <p>Simply choose your role from 20+ categories and 260+ real agricultural roles below, and in less than one minute we&#39;ll personalize your IFU experience and instantly show you the opportunities, tools, training, funding, intelligence, networking, and global connections created specifically for you in your own Private Personalized Command Center Dashboard.</p>
+      <div class="ifu-home-role-launch" aria-label="IFU launch status">
+        <p><strong>WELCOME TO THE INTERNATIONAL FARM UNION (IFU) PLATFORM ROLES BASED DISCOVERY CENTER</strong></p>
+        <p><strong>&#127757; IFU Is Live. &#127758; IFU Is Global. &#128205; Yet IFU Is Local.</strong></p>
+        <p><strong>Powered by 10 AI Unified Ecosystems. One Platform. Endless Opportunities.</strong></p>
+        <p>Real-Time Intelligence &bull; Global Connections &bull; Local Opportunities</p>
+        <p class="ifu-home-role-start">&#10145;&#65039; Choose your role to get started.</p>
+      </div>
+      <h3>Search and select your IFU roles below</h3>
     </div>
     <div class="ifu-home-persona-grid" aria-label="Choose your IFU role path">
       ${personaMarkup}
@@ -510,7 +551,7 @@ function buildHomepageRoleSection() {
     </div>
   </div>
 </section>
--->`;
+`;
 }
 
 function updateHomepageRoleSection(html) {

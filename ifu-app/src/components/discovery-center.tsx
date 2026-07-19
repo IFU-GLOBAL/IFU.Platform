@@ -425,6 +425,52 @@ export function DiscoveryCenter({
         </IFUContainer>
       </IFUSection>
 
+      <IFUSection
+        id="role-discovery-intro"
+        tone="muted"
+        className="ifu-home-role-catalog"
+      >
+        <IFUContainer size="wide" className="py-12 lg:py-16">
+          <div className="ifu-home-role-shell">
+            <div className="ifu-home-role-intro">
+              <h2 id="ifu-role-discovery-intro-title">
+                &#127757; Discover Your Place in the Global Agriculture Ecosystem
+              </h2>
+              <p>
+                The International Farm Union (IFU) Platform is built for everyone in the global food and agriculture value chain. Whether you&apos;re a farmer, buyer, investor, researcher, student, government official, nonprofit leader, or simply exploring agriculture, IFU brings together people, organizations, and agricultural communities worldwide across the entire food and agriculture value chain in one platform.
+              </p>
+              <p>
+                IFU helps you discover the right people, programs, funding, markets, training, and opportunities across 190+ countries, 2M+ farmers, and 500+ partners worldwide, all from one AI-powered intelligent global platform.
+              </p>
+              <h3>Who are you in agriculture?</h3>
+              <p>
+                Simply choose your role from 20+ categories and 260+ real agricultural roles below, and in less than one minute we&apos;ll personalize your IFU experience and instantly show you the opportunities, tools, training, funding, intelligence, networking, and global connections created specifically for you in your own Private Personalized Command Center Dashboard.
+              </p>
+              <div className="ifu-home-role-launch" aria-label="IFU launch status">
+                <p>
+                  <strong>
+                    WELCOME TO THE INTERNATIONAL FARM UNION (IFU) PLATFORM ROLES BASED DISCOVERY CENTER
+                  </strong>
+                </p>
+                <p>
+                  <strong>
+                    &#127757; IFU Is Live. &#127758; IFU Is Global. &#128205; Yet IFU Is Local.
+                  </strong>
+                </p>
+                <p>
+                  <strong>
+                    Powered by 10 AI Unified Ecosystems. One Platform. Endless Opportunities.
+                  </strong>
+                </p>
+                <p>Real-Time Intelligence &bull; Global Connections &bull; Local Opportunities</p>
+                <p className="ifu-home-role-start">&#10145;&#65039; Choose your role to get started.</p>
+              </div>
+              <h3>Search and select your IFU roles below</h3>
+            </div>
+          </div>
+        </IFUContainer>
+      </IFUSection>
+
       <IFUSection>
         <IFUContainer size="wide" className="py-12 lg:py-16">
           <IFUSectionHeader
