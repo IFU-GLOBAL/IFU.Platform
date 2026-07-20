@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth/session";
-import {
-  activityTierMeta,
-  agrisphereCountries,
-  agrisphereContinents,
-  agrisphereSource,
-} from "@/lib/agrisphere-data";
+import { getAgriSphereMapData } from "@/lib/agrisphere-repository";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,11 +12,10 @@ export async function GET() {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
+  const map = await getAgriSphereMapData();
+
   return NextResponse.json({
     ok: true,
-    source: agrisphereSource,
-    tiers: activityTierMeta,
-    continents: agrisphereContinents,
-    countries: agrisphereCountries,
+    ...map,
   });
 }

@@ -52,6 +52,32 @@ enum AcquisitionSource {
   INVITATION
 }
 
+enum AgriSphereActivityLevel {
+  HIGH
+  MEDIUM
+  EMERGING
+  LOW
+  NO_DATA
+}
+
+enum AgriSphereOpportunityStatus {
+  ACTIVE
+  CLOSED
+  DRAFT
+}
+
+enum AgriSphereEventFormat {
+  VIRTUAL
+  IN_PERSON
+  HYBRID
+}
+
+enum AgriSpherePartnerTier {
+  INSTITUTIONAL
+  STRATEGIC
+  COMMUNITY
+}
+
 model Organization {
   id        String   @id @default(cuid())
   name      String
@@ -95,33 +121,35 @@ model Role {
 }
 
 model User {
-  id                    String             @id @default(cuid())
-  cognitoId             String?            @unique
-  email                 String             @unique
-  fullName              String
-  firstName             String?
-  lastName              String?
-  preferredDisplayName  String?
-  termsAccepted         Boolean            @default(false)
-  termsAcceptedAt       DateTime?
-  marketingOptIn        Boolean            @default(false)
-  marketingOptInAt      DateTime?
-  ageConfirmedAt        DateTime?
-  accessStatus          AccessStatus       @default(PENDING)
-  profile               UserProfile?
-  selectedRoles         UserSelectedRole[]
-  workspaceItems        WorkspaceItem[]
-  bookmarks             Bookmark[]
-  applications          Application[]
-  documents             Document[]
-  messagesSent          Message[]          @relation("sentMessages")
-  messagesReceived      Message[]          @relation("receivedMessages")
-  activityLogs          ActivityLog[]
-  geoEvents             GeoEvent[]
-  acquisition           UserAcquisition?
-  registeredInvitations Invitation[]
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  id                             String                  @id @default(cuid())
+  cognitoId                      String?                 @unique
+  email                          String                  @unique
+  fullName                       String
+  firstName                      String?
+  lastName                       String?
+  preferredDisplayName           String?
+  termsAccepted                  Boolean                 @default(false)
+  termsAcceptedAt                DateTime?
+  marketingOptIn                 Boolean                 @default(false)
+  marketingOptInAt               DateTime?
+  ageConfirmedAt                 DateTime?
+  accessStatus                   AccessStatus            @default(PENDING)
+  profile                        UserProfile?
+  selectedRoles                  UserSelectedRole[]
+  workspaceItems                 WorkspaceItem[]
+  bookmarks                      Bookmark[]
+  applications                   Application[]
+  documents                      Document[]
+  messagesSent                   Message[]               @relation("sentMessages")
+  messagesReceived               Message[]               @relation("receivedMessages")
+  activityLogs                   ActivityLog[]
+  geoEvents                      GeoEvent[]
+  acquisition                    UserAcquisition?
+  registeredInvitations          Invitation[]
+  agriSphereOpportunitiesCreated AgriSphereOpportunity[] @relation("AgriSphereOpportunityCreatedBy")
+  agriSphereSavedItems           AgriSphereSavedItem[]
+  createdAt                      DateTime                @default(now())
+  updatedAt                      DateTime                @updatedAt
 }
 
 model Invitation {
@@ -485,4 +513,215 @@ model GeoEvent {
   @@index([userId])
   @@index([previewSubmissionId])
   @@index([previewApplicationId])
+}
+
+model AgriSphereContinent {
+  id            String              @id @default(uuid()) @db.Uuid
+  code          String              @unique
+  name          String
+  summary       String?
+  priorityCrops String[]            @default([])
+  countryCount  Int                 @default(0)
+  countries     AgriSphereCountry[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model AgriSphereCountry {
+  id               String                    @id @default(uuid()) @db.Uuid
+  code             String                    @unique
+  slug             String                    @unique
+  name             String
+  continentCode    String
+  latitude         Float?
+  longitude        Float?
+  activityLevel    AgriSphereActivityLevel   @default(NO_DATA)
+  primaryCrops     String[]                  @default([])
+  opportunityCount Int                       @default(0)
+  producerRank     Int?
+  farmerCount      Int                       @default(0)
+  partnerCount     Int                       @default(0)
+  summary          String?
+  continent        AgriSphereContinent       @relation(fields: [continentCode], references: [code], onDelete: Restrict)
+  opportunities    AgriSphereOpportunity[]
+  organizations    AgriSphereOrganization[]
+  producers        AgriSphereProducer[]
+  treatyLinks      AgriSphereTreatyCountry[]
+  events           AgriSphereEvent[]
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+
+  @@index([continentCode])
+  @@index([activityLevel])
+}
+
+model AgriSphereOpportunity {
+  id          String                      @id @default(uuid()) @db.Uuid
+  slug        String                      @unique
+  title       String
+  description String
+  category    String
+  countryCode String?
+  region      String?
+  crops       String[]                    @default([])
+  status      AgriSphereOpportunityStatus @default(ACTIVE)
+  href        String?
+  metadata    String[]                    @default([])
+  createdById String?
+  country     AgriSphereCountry?          @relation(fields: [countryCode], references: [code], onDelete: SetNull)
+  createdBy   User?                       @relation("AgriSphereOpportunityCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  savedBy     AgriSphereSavedItem[]
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime                    @updatedAt
+
+  @@index([countryCode])
+  @@index([createdById])
+  @@index([status, countryCode, createdAt])
+}
+
+model AgriSphereSavedItem {
+  userId        String
+  opportunityId String                @db.Uuid
+  savedAt       DateTime              @default(now())
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity   AgriSphereOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@id([userId, opportunityId])
+  @@index([opportunityId])
+}
+
+model AgriSpherePersonaCluster {
+  clusterId       Int      @id
+  centroidVector  Json
+  lastRefreshedAt DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AgriSphereOrganization {
+  id          String             @id @default(uuid()) @db.Uuid
+  slug        String             @unique
+  name        String
+  type        String
+  description String?
+  countryCode String?
+  verified    Boolean            @default(false)
+  href        String?
+  metadata    String[]           @default([])
+  country     AgriSphereCountry? @relation(fields: [countryCode], references: [code], onDelete: SetNull)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([countryCode])
+  @@index([type])
+}
+
+model AgriSphereTreaty {
+  id          String                    @id @default(uuid()) @db.Uuid
+  slug        String                    @unique
+  name        String
+  type        String
+  description String?
+  href        String?
+  metadata    String[]                  @default([])
+  countries   AgriSphereTreatyCountry[]
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+}
+
+model AgriSphereTreatyCountry {
+  treatyId    String             @db.Uuid
+  countryCode String
+  treaty      AgriSphereTreaty  @relation(fields: [treatyId], references: [id], onDelete: Cascade)
+  country     AgriSphereCountry @relation(fields: [countryCode], references: [code], onDelete: Cascade)
+
+  @@id([treatyId, countryCode])
+  @@index([countryCode])
+}
+
+model AgriSphereSector {
+  id          String               @id @default(uuid()) @db.Uuid
+  slug        String               @unique
+  name        String
+  description String?
+  href        String?
+  metadata    String[]             @default([])
+  producers   AgriSphereProducer[]
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+}
+
+model AgriSphereProducer {
+  id            String                   @id @default(uuid()) @db.Uuid
+  slug          String                   @unique
+  name          String
+  countryCode   String?
+  sectorId      String?                  @db.Uuid
+  isTopProducer Boolean                  @default(false)
+  producerRank  Int?
+  commodities   String[]                 @default([])
+  signal        String?
+  activityLevel AgriSphereActivityLevel?
+  country       AgriSphereCountry?       @relation(fields: [countryCode], references: [code], onDelete: SetNull)
+  sector        AgriSphereSector?        @relation(fields: [sectorId], references: [id], onDelete: SetNull)
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+
+  @@index([countryCode])
+  @@index([sectorId])
+  @@index([isTopProducer, producerRank])
+}
+
+model AgriSphereEvent {
+  id          String                @id @default(uuid()) @db.Uuid
+  slug        String                @unique
+  title       String
+  eventType   String
+  startsAt    DateTime
+  endsAt      DateTime?
+  format      AgriSphereEventFormat
+  url         String?
+  countryCode String?
+  metadata    String[]              @default([])
+  country     AgriSphereCountry?    @relation(fields: [countryCode], references: [code], onDelete: SetNull)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@index([countryCode])
+  @@index([startsAt])
+}
+
+model AgriSpherePartner {
+  id        String                @id @default(uuid()) @db.Uuid
+  slug      String                @unique
+  name      String
+  logoUrl   String?
+  tier      AgriSpherePartnerTier
+  url       String?
+  sortOrder Int                   @default(0)
+  metadata  String[]              @default([])
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  @@index([tier, sortOrder])
+}
+
+model AgriSpherePlatformStatsSnapshot {
+  id                 BigInt   @id @default(autoincrement())
+  countryCount       Int
+  farmerCount        Int
+  partnerCount       Int
+  activeProjectCount Int
+  recordedAt         DateTime @default(now())
+
+  @@index([recordedAt])
+}
+
+model AgriSphereMapPinClusterReading {
+  id         BigInt   @id @default(autoincrement())
+  clusterId  String
+  rawCount   Int
+  recordedAt DateTime @default(now())
+
+  @@index([clusterId, recordedAt])
 }

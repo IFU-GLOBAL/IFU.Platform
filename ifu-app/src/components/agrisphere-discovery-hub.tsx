@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AgriSphereMap } from "@/components/agrisphere-map";
 import {
   IFUActionLink,
@@ -50,25 +50,81 @@ export function AgriSphereDiscoveryHub({
   variant = "page",
 }: AgriSphereDiscoveryHubProps) {
   const embedded = variant === "dashboard";
+  const [activeSnapshot, setActiveSnapshot] = useState(snapshot);
+  const [dataState, setDataState] = useState<"loading" | "ready" | "fallback">("loading");
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<AgriSphereSearchCategory | "all">("all");
   const [selectedCountryCode, setSelectedCountryCode] = useState(snapshot.countries[0]?.code ?? "");
   const [selectedContinentCode, setSelectedContinentCode] = useState("all");
+  const [remoteSearch, setRemoteSearch] = useState<ReturnType<typeof searchAgriSphere> | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadDiscoveryData() {
+      try {
+        const responses = await Promise.all([
+          fetch("/v1/agrisphere/map", { signal: controller.signal }),
+          fetch("/v1/stats/live", { signal: controller.signal }),
+          fetch("/v1/producers/top", { signal: controller.signal }),
+        ]);
+
+        if (responses.some((response) => !response.ok)) {
+          throw new Error("One or more discovery services are unavailable");
+        }
+
+        const [map, stats, producers] = (await Promise.all(
+          responses.map((response) => response.json()),
+        )) as [
+          {
+            tiers: AgriSphereSnapshot["activityTiers"];
+            countries: AgriSphereSnapshot["countries"];
+            continents: AgriSphereSnapshot["continents"];
+          },
+          { stats: AgriSphereSnapshot["stats"] },
+          { producers: AgriSphereSnapshot["topProducers"] },
+        ];
+
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setActiveSnapshot((current) => ({
+          ...current,
+          activityTiers: map.tiers,
+          countries: map.countries,
+          continents: map.continents,
+          stats: stats.stats,
+          topProducers: producers.producers,
+        }));
+        setDataState("ready");
+      } catch {
+        if (!controller.signal.aborted) {
+          setDataState("fallback");
+        }
+      }
+    }
+
+    loadDiscoveryData();
+
+    return () => controller.abort();
+  }, []);
 
   const selectedCountry =
-    snapshot.countries.find((country) => country.code === selectedCountryCode) ?? snapshot.countries[0];
+    activeSnapshot.countries.find((country) => country.code === selectedCountryCode) ??
+    activeSnapshot.countries[0];
   const selectedContinent =
-    snapshot.continents.find((continent) => continent.code === selectedContinentCode) ?? null;
+    activeSnapshot.continents.find((continent) => continent.code === selectedContinentCode) ?? null;
   const visibleCountries = selectedContinent
-    ? snapshot.countries.filter((country) => country.continentCode === selectedContinent.code)
-    : snapshot.countries;
+    ? activeSnapshot.countries.filter((country) => country.continentCode === selectedContinent.code)
+    : activeSnapshot.countries;
 
-  const totalOpportunitySignals = snapshot.countries.reduce(
+  const totalOpportunitySignals = activeSnapshot.countries.reduce(
     (total, country) => total + country.opportunityCount,
     0,
   );
 
-  const search = useMemo(
+  const fallbackSearch = useMemo(
     () =>
       searchAgriSphere({
         query,
@@ -77,17 +133,62 @@ export function AgriSphereDiscoveryHub({
       }),
     [query, selectedCategory],
   );
+  const search = remoteSearch ?? fallbackSearch;
   const groupedResults = useMemo(() => groupSearchResults(search.results), [search.results]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setRemoteSearch(null);
+    const timeout = window.setTimeout(async () => {
+      const params = new URLSearchParams({
+        q: query,
+        category: selectedCategory,
+        limit: query ? "30" : "18",
+      });
+
+      try {
+        const response = await fetch(`/v1/agrisphere/search?${params}`, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error("Search service unavailable");
+        }
+
+        const result = (await response.json()) as ReturnType<typeof searchAgriSphere> & {
+          ok: boolean;
+        };
+
+        if (!controller.signal.aborted) {
+          setRemoteSearch({
+            query: result.query,
+            category: result.category,
+            count: result.count,
+            results: result.results,
+          });
+        }
+      } catch {
+        if (!controller.signal.aborted) {
+          setRemoteSearch(null);
+        }
+      }
+    }, 180);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
+  }, [query, selectedCategory]);
 
   const handleCountrySelect = useCallback((countryCode: string) => {
     setSelectedCountryCode(countryCode);
 
-    const country = snapshot.countries.find((item) => item.code === countryCode);
+    const country = activeSnapshot.countries.find((item) => item.code === countryCode);
 
     if (country) {
       setSelectedContinentCode(country.continentCode);
     }
-  }, [snapshot.countries]);
+  }, [activeSnapshot.countries]);
 
   function handleContinentSelect(continentCode: string) {
     setSelectedContinentCode(continentCode);
@@ -96,7 +197,9 @@ export function AgriSphereDiscoveryHub({
       return;
     }
 
-    const firstCountry = snapshot.countries.find((country) => country.continentCode === continentCode);
+    const firstCountry = activeSnapshot.countries.find(
+      (country) => country.continentCode === continentCode,
+    );
 
     if (firstCountry) {
       setSelectedCountryCode(firstCountry.code);
@@ -149,6 +252,14 @@ export function AgriSphereDiscoveryHub({
             </p>
           </div>
 
+          <div className="agrisphere-data-status" role="status">
+            {dataState === "loading"
+              ? "Refreshing discovery data…"
+              : dataState === "ready"
+                ? "Discovery data is connected."
+                : "Live discovery services are unavailable; representative data remains available."}
+          </div>
+
           <div className="agrisphere-map-grid">
             <div className="agrisphere-map-panel">
               <div className="agrisphere-panel-toolbar">
@@ -167,7 +278,7 @@ export function AgriSphereDiscoveryHub({
               <AgriSphereMap
                 countries={visibleCountries}
                 selectedCountryCode={selectedCountry?.code}
-                tierMeta={snapshot.activityTiers}
+                tierMeta={activeSnapshot.activityTiers}
                 onCountrySelect={handleCountrySelect}
               />
               <div className="agrisphere-tier-legend" aria-label="Country activity tiers">
@@ -192,7 +303,7 @@ export function AgriSphereDiscoveryHub({
                   <dl className="agrisphere-country-metrics">
                     <div>
                       <dt>Activity</dt>
-                      <dd>{snapshot.activityTiers[selectedCountry.activityTier].label}</dd>
+                      <dd>{activeSnapshot.activityTiers[selectedCountry.activityTier].label}</dd>
                     </div>
                     <div>
                       <dt>Signals</dt>
@@ -223,7 +334,7 @@ export function AgriSphereDiscoveryHub({
 
       <section className="agrisphere-stats-band" aria-label="Live platform statistics">
         <IFUContainer size="wide" className="agrisphere-stats-grid">
-          {snapshot.stats.map((stat, index) => {
+          {activeSnapshot.stats.map((stat, index) => {
             const Icon = statIcons[index] ?? BarChart3;
 
             return (
@@ -270,7 +381,7 @@ export function AgriSphereDiscoveryHub({
               >
                 All
               </button>
-              {snapshot.searchCategories.map((category) => (
+              {activeSnapshot.searchCategories.map((category) => (
                 <button
                   key={category.id}
                   type="button"
@@ -327,7 +438,7 @@ export function AgriSphereDiscoveryHub({
               </div>
             </div>
             <div className="agrisphere-continent-grid">
-              {snapshot.continents.map((continent) => (
+              {activeSnapshot.continents.map((continent) => (
                 <button
                   key={continent.code}
                   type="button"
@@ -354,14 +465,18 @@ export function AgriSphereDiscoveryHub({
               </div>
             </div>
             <ol>
-              {snapshot.topProducers.map((producer) => (
+              {activeSnapshot.topProducers.map((producer) => (
                 <li key={producer.countryCode}>
                   <span>{producer.rank}</span>
                   <div>
                     <strong>{producer.countryName}</strong>
                     <small>{producer.commodities.join(", ")}</small>
                   </div>
-                  <i style={{ backgroundColor: snapshot.activityTiers[producer.activityTier].color }} />
+                  <i
+                    style={{
+                      backgroundColor: activeSnapshot.activityTiers[producer.activityTier].color,
+                    }}
+                  />
                 </li>
               ))}
             </ol>
@@ -372,7 +487,7 @@ export function AgriSphereDiscoveryHub({
       <section id="ecosystems" className="agrisphere-section">
         <IFUContainer size="wide">
           <div className="agrisphere-shortcut-grid">
-            {snapshot.shortcuts.map((shortcut) => (
+            {activeSnapshot.shortcuts.map((shortcut) => (
               <Link href={shortcut.href} key={shortcut.id} className="agrisphere-shortcut">
                 <ShieldCheck className="h-5 w-5" aria-hidden="true" />
                 <strong>{shortcut.title}</strong>
@@ -387,7 +502,7 @@ export function AgriSphereDiscoveryHub({
               <h2>One platform destination map.</h2>
             </div>
             <div className="agrisphere-ecosystem-list">
-              {snapshot.ecosystems.map((ecosystem) => (
+              {activeSnapshot.ecosystems.map((ecosystem) => (
                 <Link
                   key={ecosystem}
                   href={ecosystem === "AgriSphere" ? AGRISPHERE_DASHBOARD_HREF : "/platforms"}

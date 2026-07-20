@@ -48,15 +48,23 @@ This inventory reflects the API routes currently implemented under `src/app/api`
 
 | Route | Methods | Auth required | Purpose | Main dependencies |
 | --- | --- | --- | --- | --- |
-| `/v1/health` | `GET` | No | Public AgriSphere health check and corpus status. | Static Sprint 1 corpus |
-| `/v1/agrisphere/map` | `GET` | Yes | Returns country activity tiers, continent metadata, and map country signals. | Signed app session, static Sprint 1 corpus |
-| `/v1/agrisphere/search` | `GET` | Yes | Searches countries, crops, organizations, treaties, sectors, top producers, and continents. Supports `q`, `category`, and `limit`. | Signed app session, static Sprint 1 corpus |
-| `/v1/stats/live` | `GET` | Yes | Returns the six AgriSphere statistics used by the dashboard discovery surface. | Signed app session, static Sprint 1 corpus |
-| `/v1/countries` | `GET` | Yes | Returns the AgriSphere country list. | Signed app session, static Sprint 1 corpus |
-| `/v1/countries/[code]` | `GET` | Yes | Returns one country by ISO code, slug, or name. | Signed app session, static Sprint 1 corpus |
-| `/v1/continents` | `GET` | Yes | Returns continent summaries and priority crop signals. | Signed app session, static Sprint 1 corpus |
-| `/v1/continents/[code]/countries` | `GET` | Yes | Returns countries for one continent code or name. | Signed app session, static Sprint 1 corpus |
-| `/v1/producers/top` | `GET` | Yes | Returns the Sprint 1 top farming country list. | Signed app session, static Sprint 1 corpus |
+| `/v1/health` | `GET` | No | Public AgriSphere health check and corpus status. | Prisma AgriSphere tables when seeded; static Sprint 1.5 fallback |
+| `/v1/agrisphere/map` | `GET` | Yes | Returns country activity tiers, continent metadata, and map country signals. | Signed app session, Prisma AgriSphere tables, static fallback, Redis with process TTL fallback |
+| `/v1/agrisphere/search` | `GET` | Yes | Searches countries, crops, organizations, treaties, sectors, top producers, and continents. Supports `q`, `category`, and `limit`. | Signed app session, OpenSearch, ranked Prisma/static fallback, Redis with process TTL fallback |
+| `/v1/stats/live` | `GET` | Yes | Returns the six AgriSphere statistics used by the dashboard discovery surface. | Signed app session, latest platform stats snapshot, static fallback, Redis with process TTL fallback |
+| `/v1/dashboard/feed` | `GET` | Yes | Returns the top-20 ranked AgriSphere opportunity feed for the signed-in member. | Signed app session, Prisma user profile, AgriSphere opportunities |
+| `/v1/countries` | `GET` | Yes | Returns the AgriSphere country list. | Signed app session, Prisma AgriSphere tables, static fallback |
+| `/v1/countries/[code]` | `GET` | Yes | Returns one country by ISO code, slug, or name. | Signed app session, Prisma AgriSphere tables, static fallback |
+| `/v1/continents` | `GET` | Yes | Returns continent summaries and priority crop signals. | Signed app session, Prisma AgriSphere tables, static fallback |
+| `/v1/continents/[code]/countries` | `GET` | Yes | Returns countries for one continent code or name. | Signed app session, Prisma AgriSphere tables, static fallback |
+| `/v1/opportunities/[id]` | `GET` | Yes | Returns one active opportunity by database id or slug. | Signed app session, Prisma AgriSphere opportunities, static fallback |
+| `/v1/opportunities/[id]/save` | `POST`, `DELETE` | Yes | Adds or removes a persistent saved opportunity signal for the signed-in member. | Signed app session, Prisma saved items |
+| `/v1/organizations` | `GET` | Yes | Returns the AgriSphere organization directory. | Signed app session, Prisma AgriSphere organizations, static fallback |
+| `/v1/treaties` | `GET` | Yes | Returns the AgriSphere treaty and trade-framework directory. | Signed app session, Prisma AgriSphere treaties, static fallback |
+| `/v1/sectors` | `GET` | Yes | Returns the AgriSphere sector directory. | Signed app session, Prisma AgriSphere sectors, static fallback |
+| `/v1/producers/top` | `GET` | Yes | Returns the Sprint 1.5 top farming country list. | Signed app session, Prisma AgriSphere producers, static fallback |
+| `/v1/events` | `GET` | Yes | Returns AgriSphere events and webinars. | Signed app session, Prisma AgriSphere events, static fallback |
+| `/v1/partners` | `GET` | Yes | Returns the AgriSphere partner directory. | Signed app session, Prisma AgriSphere partners, static fallback |
 
 ## Review Notes
 
@@ -65,5 +73,8 @@ This inventory reflects the API routes currently implemented under `src/app/api`
 - `/api/auth/dev-login` is intentionally unavailable in production.
 - `/agrisphere` is an authenticated entry point that redirects into the dashboard hub AgriSphere tab.
 - `/api/preview-applications` remains for this sprint because existing static or referral flows may still call it; renaming it later should be a compatibility decision.
-- AgriSphere `/v1` routes intentionally use a static source module for Sprint 1; Sprint 1.5 should migrate these contracts behind Aurora PostgreSQL, OpenSearch, and Redis without breaking clients.
+- AgriSphere `/v1` routes now read through `src/lib/agrisphere-repository.ts`, which prefers Prisma-managed Sprint 1.5 tables and falls back to the static corpus for read endpoints when local data services are unavailable or unseeded.
+- The Sprint 1.5 implementation uses Redis when configured, with a process-level TTL fallback. Search prefers OpenSearch, then ranked PostgreSQL search, then the representative corpus.
+- Aurora, OpenSearch, and Redis still require environment provisioning. Agreed database and search performance thresholds still require production-like measurement before sign-off.
+- Data ownership, validation, refresh, and recovery procedures are defined in `docs/agrisphere-data-operations.md`.
 - Run `npm run review:audit` before deploy and `npm run review:smoke -- --base-url=<deployed-url>` after deploy.

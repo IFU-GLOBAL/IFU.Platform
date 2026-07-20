@@ -15,3 +15,7 @@ The IFU ecosystems belong in the authenticated `/dashboard` hub as left-panel ta
 `AgriSphere` is the implemented ecosystem surface and renders its content in the dashboard center pane through `src/components/agrisphere-discovery-hub.tsx`. The other ecosystem tabs are intentional placeholders in `src/components/ifu-personal-command-center.tsx`; keep them as center-pane dashboard sections until their real workflows are built. `/agrisphere` is only an authenticated entry point that redirects into `/dashboard?section=agrisphere-dashboard`, so do not add public Join IFU or registration CTAs to AgriSphere content.
 
 Back controls inside authenticated product surfaces should return to the previous in-app page when possible, with `/dashboard` as the hub fallback. Use `src/components/return-link.tsx` for logged-in back links instead of hard-coding a public destination or a fixed dashboard URL.
+
+## AgriSphere Data Platform
+
+Sprint 1.5 AgriSphere data contracts are modeled in Prisma and seeded from `src/lib/agrisphere-data.ts`. Read APIs should go through `src/lib/agrisphere-repository.ts`, which prefers the Prisma tables and uses the static corpus as a fallback for unseeded or unavailable local data services. Opportunity save/feed behavior requires persistence and should not be implemented by writing directly to the static corpus.

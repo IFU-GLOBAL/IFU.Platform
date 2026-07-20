@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth/session";
-import { getAgriSphereCountryData } from "@/lib/agrisphere-repository";
+import { getAgriSphereOpportunityData } from "@/lib/agrisphere-repository";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type RouteContext = {
   params: Promise<{
-    code: string;
+    id: string;
   }>;
 };
 
@@ -18,14 +18,14 @@ export async function GET(_request: Request, context: RouteContext) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  const { code } = await context.params;
-  const result = await getAgriSphereCountryData(code);
+  const { id } = await context.params;
+  const result = await getAgriSphereOpportunityData(id);
 
-  if (!result.country) {
+  if (!result.opportunity) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Country not found",
+        error: "Opportunity not found",
         source: result.source,
       },
       { status: 404 },

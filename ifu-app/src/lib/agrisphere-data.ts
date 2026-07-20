@@ -38,6 +38,22 @@ export type AgriSphereStat = {
   detail: string;
 };
 
+export type AgriSphereOpportunityStatus = "active" | "closed" | "draft";
+
+export type AgriSphereOpportunity = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  countryCode?: string;
+  region?: string;
+  crops: string[];
+  status: AgriSphereOpportunityStatus;
+  href: string;
+  metadata: string[];
+};
+
 export type AgriSphereProducer = {
   rank: number;
   countryCode: string;
@@ -45,6 +61,34 @@ export type AgriSphereProducer = {
   commodities: string[];
   activityTier: AgriSphereActivityTier;
   signal: string;
+};
+
+export type AgriSphereEventFormat = "virtual" | "in-person" | "hybrid";
+
+export type AgriSphereEvent = {
+  id: string;
+  slug: string;
+  title: string;
+  eventType: string;
+  startsAt: string;
+  endsAt?: string;
+  format: AgriSphereEventFormat;
+  url?: string;
+  countryCode?: string;
+  metadata: string[];
+};
+
+export type AgriSpherePartnerTier = "institutional" | "strategic" | "community";
+
+export type AgriSpherePartner = {
+  id: string;
+  slug: string;
+  name: string;
+  logoUrl?: string;
+  tier: AgriSpherePartnerTier;
+  url?: string;
+  sortOrder: number;
+  metadata: string[];
 };
 
 export type AgriSphereSearchResult = {
@@ -58,10 +102,10 @@ export type AgriSphereSearchResult = {
 
 export const agrisphereSource = {
   module: "AgriSphere",
-  version: "sprint-1",
+  version: "sprint-1.5",
   lastUpdated: "2026-07-20",
-  status: "Sprint 1 representative discovery corpus",
-  refreshCadence: "Static until Sprint 1.5 data platform migration",
+  status: "Sprint 1.5 seed corpus with database-backed migration path",
+  refreshCadence: "Database-backed when seeded, static fallback when unavailable",
   localeReadyPath: "/{locale}/dashboard?section=agrisphere-dashboard",
 };
 
@@ -584,6 +628,26 @@ export const agrisphereSectors = [
   },
 ];
 
+export const agrisphereOpportunities: AgriSphereOpportunity[] = agrisphereCountries.map((country) => ({
+  id: `opportunity:${country.code.toLowerCase()}-discovery`,
+  slug: `${country.slug}-agriculture-discovery`,
+  title: `${country.name} agriculture discovery signal`,
+  description: `${country.summary} Priority crops include ${country.primaryCrops.join(", ")}.`,
+  category: country.activityTier === "high" ? "Trade" : country.activityTier === "medium" ? "Partnership" : "Training",
+  countryCode: country.code,
+  region: country.continentCode,
+  crops: country.primaryCrops.slice(0, 3),
+  status: "active",
+  href: countryHref(country),
+  metadata: [
+    country.name,
+    country.code,
+    country.continentCode,
+    activityTierMeta[country.activityTier].label,
+    ...country.primaryCrops,
+  ],
+}));
+
 export const agrisphereTopProducers: AgriSphereProducer[] = agrisphereCountries
   .filter((country) => country.producerRank)
   .map((country) => ({
@@ -595,6 +659,52 @@ export const agrisphereTopProducers: AgriSphereProducer[] = agrisphereCountries
     signal: country.summary,
   }))
   .sort((a, b) => a.rank - b.rank);
+
+export const agrisphereEvents: AgriSphereEvent[] = [
+  {
+    id: "event:country-representative-briefing",
+    slug: "country-representative-briefing",
+    title: "Country Representative Intelligence Briefing",
+    eventType: "Briefing",
+    startsAt: "2027-02-18T15:00:00.000Z",
+    endsAt: "2027-02-18T16:30:00.000Z",
+    format: "virtual",
+    url: `${AGRISPHERE_DASHBOARD_HREF}#search`,
+    metadata: ["country representatives", "AgriSphere", "country intelligence"],
+  },
+  {
+    id: "event:cooperative-data-readiness",
+    slug: "cooperative-data-readiness",
+    title: "Cooperative Data Readiness Session",
+    eventType: "Webinar",
+    startsAt: "2027-03-11T14:00:00.000Z",
+    endsAt: "2027-03-11T15:00:00.000Z",
+    format: "virtual",
+    url: "/discovery?persona=lead-or-represent",
+    metadata: ["cooperatives", "data readiness", "producer organizations"],
+  },
+  {
+    id: "event:market-access-roundtable",
+    slug: "market-access-roundtable",
+    title: "Market Access Roundtable",
+    eventType: "Forum",
+    startsAt: "2027-04-08T13:00:00.000Z",
+    endsAt: "2027-04-08T16:00:00.000Z",
+    format: "hybrid",
+    url: "/discovery?persona=buy-sell-or-trade",
+    metadata: ["market access", "AgriExchange", "buyers", "exports"],
+  },
+];
+
+export const agrispherePartners: AgriSpherePartner[] = agrisphereOrganizations.map((organization, index) => ({
+  id: `partner:${organization.id}`,
+  slug: organization.id,
+  name: organization.title,
+  tier: index === 0 ? "institutional" : index === 1 ? "strategic" : "community",
+  url: organization.href,
+  sortOrder: index + 1,
+  metadata: organization.metadata,
+}));
 
 export const agrisphereShortcuts = [
   {
@@ -714,7 +824,10 @@ export function getAgriSphereSnapshot() {
     stats: agrisphereStats,
     countries: agrisphereCountries,
     continents: agrisphereContinents,
+    opportunities: agrisphereOpportunities,
     topProducers: agrisphereTopProducers,
+    events: agrisphereEvents,
+    partners: agrispherePartners,
     searchCategories,
     shortcuts: agrisphereShortcuts,
     ecosystems: agrisphereEcosystems,

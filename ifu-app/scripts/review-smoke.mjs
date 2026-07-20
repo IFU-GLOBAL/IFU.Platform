@@ -67,9 +67,34 @@ routes.push(
   { path: "/v1/agrisphere/map", expect: "unauthorized", label: "AgriSphere map API auth guard" },
   { path: "/v1/agrisphere/search?q=coffee", expect: "unauthorized", label: "AgriSphere search API auth guard" },
   { path: "/v1/stats/live", expect: "unauthorized", label: "AgriSphere live stats API auth guard" },
+  { path: "/v1/dashboard/feed", expect: "unauthorized", label: "AgriSphere dashboard feed API auth guard" },
+  { path: "/v1/countries", expect: "unauthorized", label: "AgriSphere countries API auth guard" },
   { path: "/v1/countries/US", expect: "unauthorized", label: "AgriSphere country API auth guard" },
+  { path: "/v1/continents", expect: "unauthorized", label: "AgriSphere continents API auth guard" },
   { path: "/v1/continents/africa/countries", expect: "unauthorized", label: "AgriSphere continent countries API auth guard" },
+  {
+    path: "/v1/opportunities/united-states-agriculture-discovery",
+    expect: "unauthorized",
+    label: "AgriSphere opportunity API auth guard",
+  },
+  {
+    method: "POST",
+    path: "/v1/opportunities/united-states-agriculture-discovery/save",
+    expect: "unauthorized",
+    label: "AgriSphere opportunity save API auth guard",
+  },
+  {
+    method: "DELETE",
+    path: "/v1/opportunities/united-states-agriculture-discovery/save",
+    expect: "unauthorized",
+    label: "AgriSphere opportunity unsave API auth guard",
+  },
+  { path: "/v1/organizations", expect: "unauthorized", label: "AgriSphere organizations API auth guard" },
+  { path: "/v1/treaties", expect: "unauthorized", label: "AgriSphere treaties API auth guard" },
+  { path: "/v1/sectors", expect: "unauthorized", label: "AgriSphere sectors API auth guard" },
   { path: "/v1/producers/top", expect: "unauthorized", label: "AgriSphere top producers API auth guard" },
+  { path: "/v1/events", expect: "unauthorized", label: "AgriSphere events API auth guard" },
+  { path: "/v1/partners", expect: "unauthorized", label: "AgriSphere partners API auth guard" },
 );
 
 if (includeDb) {
@@ -80,12 +105,13 @@ function routeUrl(path) {
   return new URL(path, baseUrl).toString();
 }
 
-async function fetchWithTimeout(url) {
+async function fetchWithTimeout(url, method = "GET") {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
 
   try {
     return await fetch(url, {
+      method,
       redirect: "manual",
       signal: controller.signal,
       headers: {
@@ -140,7 +166,7 @@ for (const route of routes) {
   const url = routeUrl(route.path);
 
   try {
-    const response = await fetchWithTimeout(url);
+    const response = await fetchWithTimeout(url, route.method);
     const result = evaluate(route, response);
     results.push({ ...route, url, ...result });
   } catch (error) {
@@ -164,7 +190,8 @@ if (json) {
     const status = result.ok ? "PASS" : "FAIL";
     const httpStatus = result.status ?? "ERR";
     const suffix = result.location ? ` -> ${result.location}` : result.error ? ` (${result.error})` : "";
-    console.log(`${status} ${httpStatus} ${result.path} - ${result.label}${suffix}`);
+    const method = result.method ? `${result.method} ` : "";
+    console.log(`${status} ${httpStatus} ${method}${result.path} - ${result.label}${suffix}`);
   }
 
   console.log(`\nSmoke test: ${results.length - failed.length} passed, ${failed.length} failed.`);

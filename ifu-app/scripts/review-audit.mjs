@@ -108,7 +108,10 @@ assertFile("docs/release-evidence-package.md", "Release evidence package");
 assertFile("docs/api-inventory.md", "API inventory document");
 assertFile("docs/amplify-release-checklist.md", "Amplify release checklist");
 assertFile("docs/aws-evidence-screenshot-checklist.md", "AWS evidence screenshot checklist");
+assertFile("docs/agrisphere-data-operations.md", "AgriSphere data operations guide");
 assertFile("scripts/audit-role-catalog.ts", "Role catalog database audit script");
+assertFile("scripts/audit-agrisphere-data.ts", "AgriSphere corpus audit script");
+assertFile("scripts/index-agrisphere-search.ts", "AgriSphere OpenSearch indexing script");
 
 const packageJson = JSON.parse(read("package.json"));
 addCheck(
@@ -125,6 +128,21 @@ addCheck(
   packageJson.scripts?.["roles:audit"] ? "pass" : "fail",
   "script:roles-audit",
   "package.json exposes npm run roles:audit.",
+);
+addCheck(
+  packageJson.scripts?.["agrisphere:audit"] ? "pass" : "fail",
+  "script:agrisphere-audit",
+  "package.json exposes npm run agrisphere:audit.",
+);
+addCheck(
+  packageJson.scripts?.["agrisphere:index"] ? "pass" : "fail",
+  "script:agrisphere-index",
+  "package.json exposes npm run agrisphere:index.",
+);
+addCheck(
+  packageJson.scripts?.["test:agrisphere"] ? "pass" : "fail",
+  "script:agrisphere-test",
+  "package.json exposes npm run test:agrisphere.",
 );
 
 const publicHtmlFiles = walkFiles("public", (file) => file.endsWith(".html"));

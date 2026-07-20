@@ -20,6 +20,8 @@ Current client-review focus:
 
 ```bash
 npm run review:audit
+npm run agrisphere:audit
+npm run test:agrisphere
 npx eslint
 DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run build
 ```
@@ -38,6 +40,7 @@ Only run migrations against the intended environment.
 DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run db:deploy
 DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run db:seed
 DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run roles:audit
+DATABASE_URL='postgresql://user:pass@host:5432/ifu_platform?schema=public&sslmode=require' npm run agrisphere:index
 ```
 
 Confirm:
@@ -63,6 +66,11 @@ Required runtime values:
 - `COGNITO_LOGOUT_URI`
 - `COGNITO_SCOPES`
 - `DATABASE_URL`
+- `OPENSEARCH_ENDPOINT`
+- `OPENSEARCH_INDEX`
+- `OPENSEARCH_REGION`
+- `OPENSEARCH_SERVICE`
+- `REDIS_URL`
 - `SES_FROM_EMAIL`
 - `SES_REGION`
 - `SES_REPLY_TO_EMAIL`
@@ -102,6 +110,8 @@ Confirm in build logs:
 - Prisma Client generated.
 - Next build completed.
 - Routes include `/dashboard`, `/discovery`, `/register`, `/profile`, `/country/[slug]`, `/robots.txt`, and `/sitemap.xml`.
+- Routes include the complete authenticated AgriSphere `/v1` API inventory.
+- `/v1/health` reports PostgreSQL, OpenSearch, and Redis as available before Sprint 1.5 sign-off.
 
 ## 6. Post-Deploy Smoke Test
 

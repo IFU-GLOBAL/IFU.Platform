@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth/session";
-import { getAgriSphereTopProducersData } from "@/lib/agrisphere-repository";
+import { getAgriSphereOrganizationsData } from "@/lib/agrisphere-repository";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,10 +12,10 @@ export async function GET() {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  const producers = await getAgriSphereTopProducersData();
+  const organizations = await getAgriSphereOrganizationsData();
 
   return NextResponse.json({
     ok: true,
-    ...producers,
+    ...organizations,
   });
 }
