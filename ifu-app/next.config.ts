@@ -45,6 +45,7 @@ const legacyStaticRoot = resolve(process.cwd(), "..", "ifu-static-site", "dist")
 const nextOwnedSegments = new Set([
   "_next",
   "api",
+  "agrisphere",
   "country",
   "dashboard",
   "discovery",
@@ -55,6 +56,7 @@ const nextOwnedSegments = new Set([
   "privacy",
   "profile",
   "register",
+  "v1",
 ]);
 
 const legacyPostRedirects: Record<string, string> = {
@@ -161,7 +163,7 @@ const legacyPathRedirects: Record<string, string> = {
   "/platforms/agrifunds": "/platforms",
   "/platforms/agrinexus": "/platforms",
   "/platforms/agrishield": "/platforms",
-  "/platforms/agrisphere": "/platforms",
+  "/platforms/agrisphere": "/agrisphere",
   "/platforms/agrisphere/agrisphere-login": "/login",
   "/platforms/agrisphere/agrisphere-registration": "/register",
   "/platforms/agrisphere/password-reset": "/forgot-password",

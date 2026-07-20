@@ -1,6 +1,6 @@
 # IFU API Inventory
 
-This inventory reflects the API routes currently implemented under `src/app/api`.
+This inventory reflects the API routes currently implemented under `src/app/api` and the public AgriSphere `/v1` contract.
 
 ## Public Auth Routes
 
@@ -44,10 +44,25 @@ This inventory reflects the API routes currently implemented under `src/app/api`
 | --- | --- | --- | --- | --- |
 | `/api/health/db` | `GET` | No | Checks database connectivity for deployment diagnostics. | Prisma, `DATABASE_URL` |
 
+## AgriSphere Public Discovery Routes
+
+| Route | Methods | Auth required | Purpose | Main dependencies |
+| --- | --- | --- | --- | --- |
+| `/v1/health` | `GET` | No | Public AgriSphere health check and corpus status. | Static Sprint 1 corpus |
+| `/v1/agrisphere/map` | `GET` | No | Returns country activity tiers, continent metadata, and map country signals. | Static Sprint 1 corpus |
+| `/v1/agrisphere/search` | `GET` | No | Searches countries, crops, organizations, treaties, sectors, top producers, and continents. Supports `q`, `category`, and `limit`. | Static Sprint 1 corpus |
+| `/v1/stats/live` | `GET` | No | Returns the six public AgriSphere statistics used by the discovery surface. | Static Sprint 1 corpus |
+| `/v1/countries` | `GET` | No | Returns the public AgriSphere country list. | Static Sprint 1 corpus |
+| `/v1/countries/[code]` | `GET` | No | Returns one country by ISO code, slug, or name. | Static Sprint 1 corpus |
+| `/v1/continents` | `GET` | No | Returns continent summaries and priority crop signals. | Static Sprint 1 corpus |
+| `/v1/continents/[code]/countries` | `GET` | No | Returns countries for one continent code or name. | Static Sprint 1 corpus |
+| `/v1/producers/top` | `GET` | No | Returns the Sprint 1 top farming country list. | Static Sprint 1 corpus |
+
 ## Review Notes
 
 - Public routes that write to the database still depend on a valid `DATABASE_URL` at runtime.
 - Authenticated routes rely on the signed app session cookie, not direct Cognito tokens in the browser.
 - `/api/auth/dev-login` is intentionally unavailable in production.
 - `/api/preview-applications` remains for this sprint because existing static or referral flows may still call it; renaming it later should be a compatibility decision.
+- AgriSphere `/v1` routes intentionally use a static source module for Sprint 1; Sprint 1.5 should migrate these contracts behind Aurora PostgreSQL, OpenSearch, and Redis without breaking clients.
 - Run `npm run review:audit` before deploy and `npm run review:smoke -- --base-url=<deployed-url>` after deploy.

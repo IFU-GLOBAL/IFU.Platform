@@ -196,6 +196,781 @@ html {
   }
 }
 
+.agrisphere-page {
+  background: #f8faf6;
+}
+
+.agrisphere-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid rgba(8, 41, 71, 0.12);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+}
+
+.agrisphere-header-inner {
+  display: grid;
+  min-height: 76px;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.agrisphere-brand {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--ifu-heading);
+}
+
+.agrisphere-brand-mark {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ifu-radius);
+  background: var(--ifu-navy);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 900;
+}
+
+.agrisphere-brand strong,
+.agrisphere-brand small {
+  display: block;
+}
+
+.agrisphere-brand strong {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.agrisphere-brand small {
+  margin-top: 0.125rem;
+  color: var(--ifu-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.agrisphere-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 2rem);
+}
+
+.agrisphere-nav a {
+  color: var(--ifu-muted-strong);
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+.agrisphere-nav a:hover {
+  color: var(--ifu-primary);
+}
+
+.agrisphere-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.agrisphere-header-actions .ifu-gtranslate {
+  color: var(--ifu-heading);
+}
+
+.agrisphere-workbench {
+  background: linear-gradient(180deg, #ffffff 0%, #f8faf6 100%);
+}
+
+.agrisphere-workbench-heading,
+.agrisphere-section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.agrisphere-workbench-heading h1,
+.agrisphere-section-heading h2 {
+  margin-top: 0.45rem;
+  max-width: 780px;
+  color: var(--ifu-heading);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 850;
+  line-height: 1.03;
+}
+
+.agrisphere-section-heading h2 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.agrisphere-workbench-heading p,
+.agrisphere-section-heading > p {
+  max-width: 360px;
+  color: var(--ifu-muted);
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.agrisphere-map-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.38fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.agrisphere-map-panel,
+.agrisphere-country-panel,
+.agrisphere-search-shell,
+.agrisphere-top-producers {
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  box-shadow: var(--ifu-shadow);
+}
+
+.agrisphere-map-panel {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.agrisphere-panel-toolbar {
+  display: flex;
+  min-height: 66px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--ifu-border-soft);
+  padding: 0.95rem 1rem;
+}
+
+.agrisphere-panel-toolbar strong {
+  display: block;
+  color: var(--ifu-heading);
+  font-size: 0.95rem;
+}
+
+.agrisphere-panel-toolbar span {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--ifu-muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.agrisphere-compact-button {
+  min-height: 2.25rem;
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding-inline: 0.85rem;
+  color: var(--ifu-heading);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.agrisphere-compact-button:hover {
+  border-color: var(--ifu-primary);
+  color: var(--ifu-primary);
+}
+
+.agrisphere-map-shell {
+  position: relative;
+  min-height: 460px;
+  background: #e8efec;
+}
+
+.agrisphere-leaflet-map {
+  height: 460px;
+  min-height: 460px;
+  width: 100%;
+  z-index: 1;
+}
+
+.agrisphere-map-state {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ifu-heading);
+  font-weight: 800;
+}
+
+.agrisphere-map-state-error {
+  color: var(--ifu-error-text);
+}
+
+.agrisphere-tier-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  border-top: 1px solid var(--ifu-border-soft);
+  padding: 0.8rem 1rem;
+}
+
+.agrisphere-tier-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ifu-muted-strong);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.agrisphere-tier-legend i {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+}
+
+.agrisphere-country-panel {
+  align-self: stretch;
+  padding: 1.15rem;
+}
+
+.agrisphere-selected-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--ifu-primary);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.agrisphere-country-panel h2 {
+  margin-top: 0.8rem;
+  color: var(--ifu-heading);
+  font-size: clamp(1.75rem, 2.5vw, 2.35rem);
+  font-weight: 850;
+  line-height: 1.05;
+}
+
+.agrisphere-country-panel p {
+  margin-top: 0.8rem;
+  color: var(--ifu-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.agrisphere-country-metrics {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
+}
+
+.agrisphere-country-metrics div {
+  border: 1px solid var(--ifu-border-soft);
+  border-radius: var(--ifu-radius);
+  background: var(--ifu-surface-muted);
+  padding: 0.8rem;
+}
+
+.agrisphere-country-metrics dt {
+  color: var(--ifu-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.agrisphere-country-metrics dd {
+  margin-top: 0.25rem;
+  color: var(--ifu-heading);
+  font-size: 0.95rem;
+  font-weight: 850;
+}
+
+.agrisphere-country-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
+
+.agrisphere-stats-band {
+  border-block: 1px solid var(--ifu-border);
+  background: var(--ifu-navy);
+  color: #ffffff;
+}
+
+.agrisphere-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+}
+
+.agrisphere-stat {
+  display: grid;
+  min-height: 128px;
+  align-content: center;
+  gap: 0.35rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 1rem;
+}
+
+.agrisphere-stat:first-child {
+  border-left: 0;
+}
+
+.agrisphere-stat svg {
+  color: var(--ifu-accent-hover);
+}
+
+.agrisphere-stat strong {
+  color: #ffffff;
+  font-size: clamp(1.65rem, 2.5vw, 2.2rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.agrisphere-stat span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.agrisphere-section {
+  padding-block: clamp(2.5rem, 5vw, 4.5rem);
+  background: #ffffff;
+}
+
+.agrisphere-section-muted {
+  background: var(--ifu-surface-muted);
+}
+
+.agrisphere-search-shell {
+  margin-top: 1.2rem;
+  padding: 1rem;
+}
+
+.agrisphere-search-input {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.6rem;
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding-inline: 1rem;
+  color: var(--ifu-muted);
+}
+
+.agrisphere-search-input input {
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: var(--ifu-heading);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.agrisphere-search-input button {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ifu-radius);
+  color: var(--ifu-muted);
+}
+
+.agrisphere-search-input button:hover {
+  background: var(--ifu-surface-muted);
+  color: var(--ifu-heading);
+}
+
+.agrisphere-category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.agrisphere-category-tabs button {
+  min-height: 2.35rem;
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding-inline: 0.8rem;
+  color: var(--ifu-muted-strong);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.agrisphere-category-tabs button:hover,
+.agrisphere-category-tabs .agrisphere-category-active {
+  border-color: var(--ifu-primary);
+  background: var(--ifu-selected);
+  color: var(--ifu-primary);
+}
+
+.agrisphere-results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.agrisphere-result-group {
+  min-width: 0;
+}
+
+.agrisphere-result-group h3 {
+  color: var(--ifu-heading);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.agrisphere-result-list {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.55rem;
+}
+
+.agrisphere-result {
+  display: grid;
+  gap: 0.25rem;
+  min-height: 6.2rem;
+  border: 1px solid var(--ifu-border-soft);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding: 0.85rem;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.agrisphere-result:hover {
+  border-color: var(--ifu-primary);
+  box-shadow: 0 14px 32px rgba(20, 94, 20, 0.1);
+  transform: translateY(-1px);
+}
+
+.agrisphere-result span {
+  color: var(--ifu-primary);
+  font-size: 0.67rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.agrisphere-result strong {
+  color: var(--ifu-heading);
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.agrisphere-result small {
+  color: var(--ifu-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.agrisphere-empty-state,
+.agrisphere-route-state {
+  display: grid;
+  justify-items: start;
+  gap: 0.55rem;
+  border: 1px dashed var(--ifu-border-strong);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding: 1.25rem;
+  color: var(--ifu-muted);
+}
+
+.agrisphere-empty-state h2,
+.agrisphere-empty-state h3,
+.agrisphere-route-state strong {
+  color: var(--ifu-heading);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.agrisphere-route-state {
+  min-height: 260px;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.agrisphere-route-state-error {
+  border-color: var(--ifu-error-border);
+  background: var(--ifu-error-bg);
+  color: var(--ifu-error-text);
+}
+
+.agrisphere-lower-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.36fr);
+  gap: 1.25rem;
+}
+
+.agrisphere-continent-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1.1rem;
+}
+
+.agrisphere-continent-card {
+  display: grid;
+  min-height: 10rem;
+  gap: 0.45rem;
+  align-content: start;
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding: 1rem;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.agrisphere-continent-card:hover,
+.agrisphere-continent-card-active {
+  border-color: var(--ifu-primary);
+  box-shadow: 0 14px 32px rgba(20, 94, 20, 0.1);
+  transform: translateY(-1px);
+}
+
+.agrisphere-continent-card span {
+  color: var(--ifu-primary);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.agrisphere-continent-card strong {
+  color: var(--ifu-heading);
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.agrisphere-continent-card small {
+  color: var(--ifu-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.agrisphere-top-producers {
+  align-self: start;
+  overflow: hidden;
+}
+
+.agrisphere-top-producers ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agrisphere-top-producers li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.85rem;
+  border-top: 1px solid var(--ifu-border-soft);
+  padding: 0.8rem 1rem;
+}
+
+.agrisphere-top-producers li:first-child {
+  border-top: 0;
+}
+
+.agrisphere-top-producers li > span {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ifu-radius);
+  background: var(--ifu-navy);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.agrisphere-top-producers strong,
+.agrisphere-top-producers small {
+  display: block;
+}
+
+.agrisphere-top-producers strong {
+  color: var(--ifu-heading);
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.agrisphere-top-producers small {
+  margin-top: 0.2rem;
+  color: var(--ifu-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.agrisphere-top-producers i {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+}
+
+.agrisphere-shortcut-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.agrisphere-shortcut {
+  display: grid;
+  min-height: 9rem;
+  align-content: start;
+  gap: 0.55rem;
+  border: 1px solid var(--ifu-border);
+  border-radius: var(--ifu-radius);
+  background: #ffffff;
+  padding: 1rem;
+}
+
+.agrisphere-shortcut svg {
+  color: var(--ifu-primary);
+}
+
+.agrisphere-shortcut strong {
+  color: var(--ifu-heading);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.agrisphere-shortcut span {
+  color: var(--ifu-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.agrisphere-ecosystem-band {
+  display: grid;
+  grid-template-columns: minmax(0, 0.34fr) minmax(0, 1fr);
+  gap: 1.2rem;
+  margin-top: 1rem;
+  border-radius: var(--ifu-radius);
+  background: var(--ifu-navy);
+  padding: 1.25rem;
+  color: #ffffff;
+}
+
+.agrisphere-ecosystem-band h2 {
+  margin-top: 0.45rem;
+  color: #ffffff;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.agrisphere-ecosystem-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-content: start;
+}
+
+.agrisphere-ecosystem-list a {
+  display: inline-flex;
+  min-height: 2.35rem;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--ifu-radius);
+  background: rgba(255, 255, 255, 0.08);
+  padding-inline: 0.75rem;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.agrisphere-ecosystem-list a:hover {
+  border-color: rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+@media (max-width: 1080px) {
+  .agrisphere-header-inner,
+  .agrisphere-map-grid,
+  .agrisphere-lower-grid,
+  .agrisphere-ecosystem-band {
+    grid-template-columns: 1fr;
+  }
+
+  .agrisphere-nav {
+    justify-content: start;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+  }
+
+  .agrisphere-header-actions {
+    justify-content: start;
+  }
+
+  .agrisphere-stats-grid,
+  .agrisphere-results-grid,
+  .agrisphere-continent-grid,
+  .agrisphere-shortcut-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .agrisphere-header {
+    position: static;
+  }
+
+  .agrisphere-header-inner {
+    min-height: auto;
+    padding-block: 0.9rem;
+  }
+
+  .agrisphere-header-actions,
+  .agrisphere-workbench-heading,
+  .agrisphere-section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .agrisphere-header-actions .ifu-button {
+    width: 100%;
+  }
+
+  .agrisphere-header-actions .ifu-gtranslate {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .agrisphere-map-shell,
+  .agrisphere-leaflet-map {
+    min-height: 360px;
+    height: 360px;
+  }
+
+  .agrisphere-stats-grid,
+  .agrisphere-results-grid,
+  .agrisphere-continent-grid,
+  .agrisphere-shortcut-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .ifu-static-header {
   position: relative;
   z-index: 20;

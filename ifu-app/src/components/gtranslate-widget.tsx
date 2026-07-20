@@ -159,9 +159,10 @@ export function GTranslateWidget({
   const pathname = usePathname();
   const widgetId = `ifu-${id}`;
   const wrapperId = `gt-wrapper-${widgetId}`;
+  const hiddenForPage = hideOnDiscovery && (pathname === "/discovery" || pathname === "/agrisphere");
 
   useEffect(() => {
-    if (hideOnDiscovery && pathname === "/discovery") {
+    if (hiddenForPage) {
       return;
     }
 
@@ -190,9 +191,9 @@ export function GTranslateWidget({
     return () => {
       document.getElementById(scriptId)?.remove();
     };
-  }, [hideOnDiscovery, pathname, variant, widgetId, wrapperId]);
+  }, [hiddenForPage, variant, widgetId, wrapperId]);
 
-  if (hideOnDiscovery && pathname === "/discovery") {
+  if (hiddenForPage) {
     return null;
   }
 

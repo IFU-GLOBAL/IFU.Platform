@@ -29,6 +29,7 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "dotenv": "^17.4.2",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.23.0",
     "next": "15.5.20",
     "openid-client": "^5.7.0",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",

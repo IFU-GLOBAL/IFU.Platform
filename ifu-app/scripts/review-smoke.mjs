@@ -33,6 +33,7 @@ try {
 
 const routes = [
   { path: "/", expect: "ok", label: "Public homepage" },
+  { path: "/agrisphere", expect: "ok", label: "AgriSphere public discovery" },
   { path: "/discovery", expect: "ok", label: "Discovery Center" },
   { path: "/register", expect: "ok", label: "Registration page" },
   { path: "/login", expect: "ok", label: "Login page" },
@@ -55,6 +56,16 @@ const routes = [
     locationIncludes: "/login",
   },
 ];
+
+routes.push(
+  { path: "/v1/health", expect: "ok", label: "AgriSphere v1 health" },
+  { path: "/v1/agrisphere/map", expect: "ok", label: "AgriSphere map API" },
+  { path: "/v1/agrisphere/search?q=coffee", expect: "ok", label: "AgriSphere search API" },
+  { path: "/v1/stats/live", expect: "ok", label: "AgriSphere live stats API" },
+  { path: "/v1/countries/US", expect: "ok", label: "AgriSphere country API" },
+  { path: "/v1/continents/africa/countries", expect: "ok", label: "AgriSphere continent countries API" },
+  { path: "/v1/producers/top", expect: "ok", label: "AgriSphere top producers API" },
+);
 
 if (includeDb) {
   routes.push({ path: "/api/health/db", expect: "ok", label: "Database health check" });
