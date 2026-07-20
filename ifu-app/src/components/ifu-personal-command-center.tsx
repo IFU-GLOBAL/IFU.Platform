@@ -75,6 +75,7 @@ function getIcon(iconKey?: DashboardIconKey) {
 }
 
 const HOME_SECTION_ID = "dashboard-home";
+const AGRISPHERE_SECTION_ID = "agrisphere-dashboard";
 const WORKSPACE_SECTION_ID = "workspace";
 const GLOBAL_MAP_SECTION_ID = "global-map";
 
@@ -116,6 +117,13 @@ function getRelatedItems(
 }
 
 const sectionPages: Record<string, SectionPageConfig> = {
+  [AGRISPHERE_SECTION_ID]: {
+    eyebrow: "AgriSphere",
+    title: "AgriSphere Discovery Hub",
+    description:
+      "Move from the private dashboard into IFU's global agricultural intelligence layer for map discovery, country signals, crops, producers, and ecosystem destinations.",
+    steps: ["Open the global discovery map", "Search country and crop signals", "Save the best pathway to your workspace"],
+  },
   [WORKSPACE_SECTION_ID]: {
     eyebrow: "Workspace",
     title: "My IFU Workspace",
@@ -530,14 +538,20 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
 
                 <div className="flex shrink-0 flex-wrap gap-2">
                   {activeSection.actions?.slice(0, 2).map((action) => (
-                    <button
-                      key={action}
-                      type="button"
-                      onClick={() => persistDrawerAction(action, activeSection)}
-                      className="ifu-button ifu-button-primary"
-                    >
-                      {action}
-                    </button>
+                    activeSection.href && action === activeSection.actions?.[0] ? (
+                      <IFUActionLink key={action} href={activeSection.href} variant="primary">
+                        {action}
+                      </IFUActionLink>
+                    ) : (
+                      <button
+                        key={action}
+                        type="button"
+                        onClick={() => persistDrawerAction(action, activeSection)}
+                        className="ifu-button ifu-button-primary"
+                      >
+                        {action}
+                      </button>
+                    )
                   ))}
                 </div>
               </div>

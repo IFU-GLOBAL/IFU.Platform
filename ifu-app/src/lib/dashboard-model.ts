@@ -31,6 +31,7 @@ export type DashboardDrawerItem = {
   actions?: string[];
   iconKey?: DashboardIconKey;
   metric?: string;
+  href?: string;
 };
 
 export type DashboardProfile = {
@@ -90,6 +91,25 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     order: 1,
   },
   {
+    id: "agrisphere-dashboard",
+    title: "AgriSphere",
+    type: "Discovery Hub",
+    summary: "Global agricultural intelligence, public discovery, map search, and country signals.",
+    description:
+      "AgriSphere gives members a fast route into country activity, crop and producer discovery, live platform signals, and the wider IFU ecosystem destination map.",
+    details: [
+      "Open the global AgriSphere map and country activity tiers",
+      "Search countries, crops, organizations, treaties, sectors, producers, and continents",
+      "Move from discovery into role pathways, saved opportunities, and country intelligence",
+    ],
+    actions: ["Open AgriSphere", "Save Ecosystem", "Move to Workspace"],
+    iconKey: "globe",
+    href: "/agrisphere",
+    dashboardType: "RESOURCE",
+    group: "menu",
+    order: 2,
+  },
+  {
     id: "workspace",
     title: "My IFU Workspace",
     type: "Workspace",
@@ -101,7 +121,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "briefcaseBusiness",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 2,
+    order: 3,
   },
   {
     id: "daily-journey",
@@ -114,7 +134,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "route",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 3,
+    order: 4,
   },
   {
     id: "recommended-pathway",
@@ -127,7 +147,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "searchCheck",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 4,
+    order: 5,
   },
   {
     id: "top-opportunities",
@@ -140,7 +160,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "star",
     dashboardType: "OPPORTUNITY",
     group: "menu",
-    order: 5,
+    order: 6,
   },
   {
     id: "recommended-training",
@@ -153,7 +173,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "graduationCap",
     dashboardType: "TRAINING",
     group: "menu",
-    order: 6,
+    order: 7,
   },
   {
     id: "funding-opportunities",
@@ -166,7 +186,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "badgeDollarSign",
     dashboardType: "FUNDING",
     group: "menu",
-    order: 7,
+    order: 8,
   },
   {
     id: "marketplace-opportunities",
@@ -179,7 +199,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "shoppingBasket",
     dashboardType: "MARKETPLACE",
     group: "menu",
-    order: 8,
+    order: 9,
   },
   {
     id: "expert-network",
@@ -192,7 +212,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "network",
     dashboardType: "EXPERT",
     group: "menu",
-    order: 9,
+    order: 10,
   },
   {
     id: "agrinexus-community",
@@ -205,7 +225,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "usersRound",
     dashboardType: "COMMUNITY",
     group: "menu",
-    order: 10,
+    order: 11,
   },
   {
     id: "agritourism",
@@ -218,7 +238,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "tractor",
     dashboardType: "MARKETPLACE",
     group: "menu",
-    order: 11,
+    order: 12,
   },
   {
     id: "global-map",
@@ -231,7 +251,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "map",
     dashboardType: "MAP_COUNTRY",
     group: "menu",
-    order: 12,
+    order: 13,
   },
   {
     id: "intelligence-hub",
@@ -244,7 +264,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "panelsTopLeft",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 13,
+    order: 14,
   },
   {
     id: "bookmarks",
@@ -257,7 +277,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "archive",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 14,
+    order: 15,
   },
   {
     id: "applications",
@@ -270,7 +290,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "checkSquare",
     dashboardType: "APPLICATION",
     group: "menu",
-    order: 15,
+    order: 16,
   },
   {
     id: "messages",
@@ -283,7 +303,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "messageSquareText",
     dashboardType: "MESSAGE",
     group: "menu",
-    order: 16,
+    order: 17,
   },
   {
     id: "documents",
@@ -296,7 +316,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "fileText",
     dashboardType: "DOCUMENT",
     group: "menu",
-    order: 17,
+    order: 18,
   },
   {
     id: "settings",
@@ -309,24 +329,64 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "settings",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 18,
+    order: 19,
   },
 ];
 
+function dashboardMenuSeedById(id: string) {
+  const seed = dashboardMenuSeeds.find((item) => item.id === id);
+
+  if (!seed) {
+    throw new Error(`Missing dashboard menu seed: ${id}`);
+  }
+
+  return seed;
+}
+
 export const dashboardCardSeeds: DashboardSeedItem[] = [
-  { ...dashboardMenuSeeds[2], metric: "3 next steps", group: "card", order: 1 },
   {
-    ...dashboardMenuSeeds[4],
+    ...dashboardMenuSeedById("daily-journey"),
+    id: "daily-journey-card",
+    metric: "3 next steps",
+    group: "card",
+    order: 1,
+  },
+  {
+    ...dashboardMenuSeedById("top-opportunities"),
     id: "top-opportunities-card",
     title: "Top Opportunities For You",
     metric: "12 matches",
     group: "card",
     order: 2,
   },
-  { ...dashboardMenuSeeds[5], id: "recommended-training-card", metric: "4 courses", group: "card", order: 3 },
-  { ...dashboardMenuSeeds[6], id: "funding-opportunities-card", metric: "7 programs", group: "card", order: 4 },
-  { ...dashboardMenuSeeds[7], id: "marketplace-opportunities-card", metric: "9 listings", group: "card", order: 5 },
-  { ...dashboardMenuSeeds[8], id: "expert-network-card", metric: "18 experts", group: "card", order: 6 },
+  {
+    ...dashboardMenuSeedById("recommended-training"),
+    id: "recommended-training-card",
+    metric: "4 courses",
+    group: "card",
+    order: 3,
+  },
+  {
+    ...dashboardMenuSeedById("funding-opportunities"),
+    id: "funding-opportunities-card",
+    metric: "7 programs",
+    group: "card",
+    order: 4,
+  },
+  {
+    ...dashboardMenuSeedById("marketplace-opportunities"),
+    id: "marketplace-opportunities-card",
+    metric: "9 listings",
+    group: "card",
+    order: 5,
+  },
+  {
+    ...dashboardMenuSeedById("expert-network"),
+    id: "expert-network-card",
+    metric: "18 experts",
+    group: "card",
+    order: 6,
+  },
 ];
 
 export const ecosystemSeeds: DashboardSeedItem[] = [

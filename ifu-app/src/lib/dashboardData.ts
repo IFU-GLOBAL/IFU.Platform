@@ -18,6 +18,7 @@ type DashboardMetadata = {
   details?: string[];
   iconKey?: DashboardIconKey;
   metric?: string;
+  href?: string;
   group?: DashboardSeedItem["group"];
   order?: number;
 };
@@ -67,6 +68,7 @@ function metadataForSeed(seed: DashboardSeedItem): Prisma.InputJsonObject {
     details: seed.details ?? [],
     iconKey: seed.iconKey ?? "layoutDashboard",
     metric: seed.metric ?? "",
+    href: seed.href ?? "",
     group: seed.group,
     order: seed.order,
   };
@@ -89,6 +91,7 @@ function readMetadata(value: Prisma.JsonValue | null): DashboardMetadata {
     details: readStringArray(metadata.details),
     iconKey: iconKey as DashboardIconKey | undefined,
     metric: typeof metadata.metric === "string" ? metadata.metric : undefined,
+    href: typeof metadata.href === "string" && metadata.href ? metadata.href : undefined,
     group:
       metadata.group === "menu" || metadata.group === "card" || metadata.group === "ecosystem"
         ? metadata.group
@@ -219,6 +222,7 @@ function dashboardItemToDrawerItem(item: {
     actions: metadata.actions,
     iconKey: metadata.iconKey,
     metric: metadata.metric,
+    href: metadata.href,
   };
 }
 

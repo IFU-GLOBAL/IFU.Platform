@@ -2,7 +2,7 @@
 
 import { CalendarClock, CheckCircle2, ExternalLink, FolderPlus, X } from "lucide-react";
 import { useEffect } from "react";
-import { IFUActionButton, cn } from "@/components/ifu-ui";
+import { IFUActionButton, IFUActionLink, cn } from "@/components/ifu-ui";
 import type { DashboardDrawerItem } from "@/lib/dashboard-model";
 
 type SlideOverDrawerProps = {
@@ -113,16 +113,28 @@ export function SlideOverDrawer({ item, onClose, onAction }: SlideOverDrawerProp
 
           <section className="grid gap-2">
             {(item.actions ?? fallbackActions).map((action, index) => (
-              <IFUActionButton
-                key={action}
-                type="button"
-                variant={index === 0 ? "primary" : "outline"}
-                icon={index === 0 ? ExternalLink : FolderPlus}
-                className={cn("w-full", index > 0 && "bg-white")}
-                onClick={() => onAction?.(action, item)}
-              >
-                {action}
-              </IFUActionButton>
+              item.href && index === 0 ? (
+                <IFUActionLink
+                  key={action}
+                  href={item.href}
+                  variant="primary"
+                  icon={ExternalLink}
+                  className="w-full"
+                >
+                  {action}
+                </IFUActionLink>
+              ) : (
+                <IFUActionButton
+                  key={action}
+                  type="button"
+                  variant={index === 0 ? "primary" : "outline"}
+                  icon={index === 0 ? ExternalLink : FolderPlus}
+                  className={cn("w-full", index > 0 && "bg-white")}
+                  onClick={() => onAction?.(action, item)}
+                >
+                  {action}
+                </IFUActionButton>
+              )
             ))}
             <IFUActionButton
               type="button"
