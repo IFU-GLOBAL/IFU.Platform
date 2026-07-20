@@ -12,6 +12,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AgriSphereMap } from "@/components/agrisphere-map";
@@ -237,8 +238,15 @@ export function AgriSphereDiscoveryHub({
         <header className="agrisphere-header">
           <IFUContainer size="wide" className="agrisphere-header-inner">
             <Link href="/" className="agrisphere-brand" aria-label="IFU home">
-              <span className="agrisphere-brand-mark">IFU</span>
-              <span>
+              <Image
+                src="/images/ifu-logo-hero.png"
+                alt="International Farm Union"
+                width={610}
+                height={176}
+                className="agrisphere-brand-logo"
+                unoptimized
+              />
+              <span className="agrisphere-product-name">
                 <strong>AgriSphere</strong>
                 <small>Global Agricultural Intelligence</small>
               </span>
