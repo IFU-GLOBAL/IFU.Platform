@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowLeft, Database, MapPin, ShieldCheck } from "lucide-react";
+import { Database, MapPin, ShieldCheck } from "lucide-react";
 import { CountryIntelligenceTabs } from "@/components/country-intelligence-tabs";
 import {
   countryIntelligenceSource,
@@ -15,6 +14,7 @@ import {
   IFUPage,
   IFUSection,
 } from "@/components/ifu-ui";
+import { ReturnLink } from "@/components/return-link";
 
 type CountryPageProps = {
   params: Promise<{
@@ -70,13 +70,12 @@ export default async function CountryPage({ params }: CountryPageProps) {
           </IFUCard>
         }
       >
-        <Link
-          href="/discovery"
+        <ReturnLink
+          fallbackHref="/discovery"
           className="inline-flex items-center gap-2 text-sm font-bold text-white/78 transition hover:text-white"
         >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to Discovery
-        </Link>
+          Back
+        </ReturnLink>
       </IFUHero>
 
       <IFUSection tone="muted">

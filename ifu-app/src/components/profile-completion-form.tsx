@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import {
   IFUActionButton,
-  IFUActionLink,
   IFUCard,
   cn,
 } from "@/components/ifu-ui";
+import { ReturnLink } from "@/components/return-link";
 import type { DiscoveryCategory } from "@/lib/role-catalog";
 
 type ProfileFormInitial = {
@@ -389,9 +389,9 @@ export function ProfileCompletionForm({
         <input type="hidden" name="timezone" value={formState.timezone} />
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <IFUActionLink href="/dashboard" variant="outline">
-            {profileIsComplete ? "Back to dashboard" : "Skip for now"}
-          </IFUActionLink>
+          <ReturnLink fallbackHref="/dashboard" variant="outline">
+            {profileIsComplete ? "Back" : "Skip for now"}
+          </ReturnLink>
           <IFUActionButton type="submit" disabled={status === "submitting"}>
             {status === "submitting" ? (
               <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
