@@ -32,7 +32,7 @@ import {
 
 type AgriSphereDiscoveryHubProps = {
   snapshot: AgriSphereSnapshot;
-  variant?: "page" | "dashboard";
+  variant?: "page" | "dashboard" | "sample";
 };
 
 const statIcons = [Globe2, Users, Sprout, BarChart3, Search, Layers];
@@ -50,8 +50,11 @@ export function AgriSphereDiscoveryHub({
   variant = "page",
 }: AgriSphereDiscoveryHubProps) {
   const embedded = variant === "dashboard";
+  const isSample = variant === "sample";
   const [activeSnapshot, setActiveSnapshot] = useState(snapshot);
-  const [dataState, setDataState] = useState<"loading" | "ready" | "fallback">("loading");
+  const [dataState, setDataState] = useState<"loading" | "ready" | "fallback" | "sample">(
+    isSample ? "sample" : "loading",
+  );
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<AgriSphereSearchCategory | "all">("all");
   const [selectedCountryCode, setSelectedCountryCode] = useState(snapshot.countries[0]?.code ?? "");
@@ -59,6 +62,11 @@ export function AgriSphereDiscoveryHub({
   const [remoteSearch, setRemoteSearch] = useState<ReturnType<typeof searchAgriSphere> | null>(null);
 
   useEffect(() => {
+    if (isSample) {
+      setDataState("sample");
+      return;
+    }
+
     const controller = new AbortController();
 
     async function loadDiscoveryData() {
@@ -108,7 +116,7 @@ export function AgriSphereDiscoveryHub({
     loadDiscoveryData();
 
     return () => controller.abort();
-  }, []);
+  }, [isSample]);
 
   const selectedCountry =
     activeSnapshot.countries.find((country) => country.code === selectedCountryCode) ??
@@ -137,6 +145,11 @@ export function AgriSphereDiscoveryHub({
   const groupedResults = useMemo(() => groupSearchResults(search.results), [search.results]);
 
   useEffect(() => {
+    if (isSample) {
+      setRemoteSearch(null);
+      return;
+    }
+
     const controller = new AbortController();
     setRemoteSearch(null);
     const timeout = window.setTimeout(async () => {
@@ -178,7 +191,7 @@ export function AgriSphereDiscoveryHub({
       controller.abort();
       window.clearTimeout(timeout);
     };
-  }, [query, selectedCategory]);
+  }, [isSample, query, selectedCategory]);
 
   const handleCountrySelect = useCallback((countryCode: string) => {
     setSelectedCountryCode(countryCode);
@@ -244,7 +257,9 @@ export function AgriSphereDiscoveryHub({
         <IFUContainer size="wide" className="py-8 lg:py-10">
           <div className="agrisphere-workbench-heading">
             <div>
-              <p className="ifu-eyebrow text-[var(--ifu-primary)]">AgriSphere</p>
+              <p className="ifu-eyebrow text-[var(--ifu-primary)]">
+                {isSample ? "AgriSphere Sample" : "AgriSphere"}
+              </p>
               <h1>Find the right country, crop, organization, producer, or IFU destination.</h1>
             </div>
             <p>
@@ -252,8 +267,25 @@ export function AgriSphereDiscoveryHub({
             </p>
           </div>
 
+          {isSample ? (
+            <div className="agrisphere-sample-notice">
+              <div>
+                <strong>Public sample experience</strong>
+                <span>
+                  This preview uses representative data. Sign in to use the complete, connected
+                  AgriSphere experience inside your dashboard.
+                </span>
+              </div>
+              <IFUActionLink href={AGRISPHERE_DASHBOARD_HREF} icon={ArrowRight}>
+                Open Full AgriSphere
+              </IFUActionLink>
+            </div>
+          ) : null}
+
           <div className="agrisphere-data-status" role="status">
-            {dataState === "loading"
+            {dataState === "sample"
+              ? "Sample mode: representative discovery data only."
+              : dataState === "loading"
               ? "Refreshing discovery data…"
               : dataState === "ready"
                 ? "Discovery data is connected."
@@ -332,7 +364,10 @@ export function AgriSphereDiscoveryHub({
         </IFUContainer>
       </section>
 
-      <section className="agrisphere-stats-band" aria-label="Live platform statistics">
+      <section
+        className="agrisphere-stats-band"
+        aria-label={isSample ? "Sample platform statistics" : "Live platform statistics"}
+      >
         <IFUContainer size="wide" className="agrisphere-stats-grid">
           {activeSnapshot.stats.map((stat, index) => {
             const Icon = statIcons[index] ?? BarChart3;

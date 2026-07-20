@@ -39,6 +39,7 @@ const routes = [
     label: "AgriSphere auth guard",
     locationIncludes: "/login",
   },
+  { path: "/agrisphere/sample", expect: "ok", label: "Public AgriSphere sample" },
   { path: "/discovery", expect: "ok", label: "Discovery Center" },
   { path: "/register", expect: "ok", label: "Registration page" },
   { path: "/login", expect: "ok", label: "Login page" },

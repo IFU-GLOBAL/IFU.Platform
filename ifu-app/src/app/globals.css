@@ -376,6 +376,43 @@ html {
   font-weight: 650;
 }
 
+.agrisphere-sample-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--ifu-primary) 35%, transparent);
+  border-radius: var(--ifu-radius);
+  background: linear-gradient(135deg, #eaf8e5 0%, #f5fbf2 100%);
+  padding: 1rem 1.1rem;
+}
+
+.agrisphere-sample-notice strong,
+.agrisphere-sample-notice span {
+  display: block;
+}
+
+.agrisphere-sample-notice strong {
+  color: var(--ifu-heading);
+  font-size: 0.95rem;
+}
+
+.agrisphere-sample-notice span {
+  max-width: 48rem;
+  margin-top: 0.2rem;
+  color: var(--ifu-text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 720px) {
+  .agrisphere-sample-notice {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
 .agrisphere-map-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.38fr);

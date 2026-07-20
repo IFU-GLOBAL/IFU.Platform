@@ -363,6 +363,9 @@ export function DiscoveryCenter({
               <IFUActionLink href="/invitation" variant="ghost" icon={ArrowRight} className="ifu-static-hero-button ifu-static-hero-button-outline">
                 Read Invitation Letter
               </IFUActionLink>
+              <IFUActionLink href="/agrisphere/sample" variant="ghost" icon={Globe2} className="ifu-static-hero-button ifu-static-hero-button-outline">
+                Explore AgriSphere Sample
+              </IFUActionLink>
             </div>
           </div>
         </IFUContainer>
