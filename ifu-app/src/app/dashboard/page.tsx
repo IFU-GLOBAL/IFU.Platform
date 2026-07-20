@@ -11,11 +11,22 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+type DashboardPageProps = {
+  searchParams?: Promise<{
+    section?: string;
+  }>;
+};
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+  const params = (await searchParams) ?? {};
   const session = await getAuthSession();
 
   if (!session) {
-    redirect("/login?returnTo=%2Fdashboard");
+    const returnTo = params.section
+      ? `/dashboard?section=${encodeURIComponent(params.section)}`
+      : "/dashboard";
+
+    redirect(`/login?returnTo=${encodeURIComponent(returnTo)}`);
   }
 
   const dashboardView = await getDashboardViewModel(session);
@@ -23,6 +34,7 @@ export default async function DashboardPage() {
   return (
     <IFUPersonalCommandCenter
       view={dashboardView}
+      initialSectionId={params.section}
     />
   );
 }

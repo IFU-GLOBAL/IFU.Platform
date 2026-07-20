@@ -200,6 +200,53 @@ html {
   background: #f8faf6;
 }
 
+.agrisphere-page-embedded {
+  min-height: 0;
+  background: transparent;
+}
+
+.agrisphere-page-embedded .ifu-container {
+  max-width: none;
+  padding-inline: 0;
+}
+
+.agrisphere-page-embedded .agrisphere-workbench {
+  background: transparent;
+}
+
+.agrisphere-page-embedded .agrisphere-workbench > .ifu-container {
+  padding-block: 0;
+}
+
+.agrisphere-page-embedded .agrisphere-workbench-heading h1 {
+  font-size: clamp(1.55rem, 2.6vw, 2.35rem);
+}
+
+.agrisphere-page-embedded .agrisphere-workbench-heading p {
+  max-width: 30rem;
+}
+
+.agrisphere-page-embedded .agrisphere-map-shell,
+.agrisphere-page-embedded .agrisphere-leaflet-map {
+  min-height: 390px;
+  height: 390px;
+}
+
+.agrisphere-page-embedded .agrisphere-section {
+  padding-block: 1rem;
+  background: transparent;
+}
+
+.agrisphere-page-embedded .agrisphere-section-muted {
+  background: transparent;
+}
+
+.agrisphere-page-embedded .agrisphere-stats-band {
+  margin-top: 1rem;
+  border-radius: var(--ifu-radius);
+  overflow: hidden;
+}
+
 .agrisphere-header {
   position: sticky;
   top: 0;

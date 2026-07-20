@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
+import { getAuthSession } from "@/lib/auth/session";
 import { agrisphereSource, agrisphereStats } from "@/lib/agrisphere-data";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export function GET() {
+export async function GET() {
+  const session = await getAuthSession();
+
+  if (!session) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
   return NextResponse.json({
     ok: true,
     source: agrisphereSource,

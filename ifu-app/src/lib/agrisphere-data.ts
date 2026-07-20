@@ -62,8 +62,10 @@ export const agrisphereSource = {
   lastUpdated: "2026-07-20",
   status: "Sprint 1 representative discovery corpus",
   refreshCadence: "Static until Sprint 1.5 data platform migration",
-  localeReadyPath: "/{locale}/agrisphere",
+  localeReadyPath: "/{locale}/dashboard?section=agrisphere-dashboard",
 };
+
+const AGRISPHERE_DASHBOARD_HREF = "/dashboard?section=agrisphere-dashboard";
 
 export const activityTierMeta: Record<
   AgriSphereActivityTier,
@@ -532,21 +534,21 @@ export const agrisphereTreaties = [
     id: "afcfta",
     title: "African Continental Free Trade Area",
     description: "Regional trade framework relevant to African agriculture corridors.",
-    href: "/agrisphere#search",
+    href: `${AGRISPHERE_DASHBOARD_HREF}#search`,
     metadata: ["Africa", "trade", "markets", "AfCFTA"],
   },
   {
     id: "usmca",
     title: "USMCA Agriculture Trade Framework",
     description: "North American trade context for produce, grains, and processed foods.",
-    href: "/agrisphere#search",
+    href: `${AGRISPHERE_DASHBOARD_HREF}#search`,
     metadata: ["North America", "trade", "Mexico", "United States", "Canada"],
   },
   {
     id: "eu-green-deal",
     title: "EU Green Deal Agriculture Signals",
     description: "Sustainability and compliance signals affecting European agricultural markets.",
-    href: "/agrisphere#search",
+    href: `${AGRISPHERE_DASHBOARD_HREF}#search`,
     metadata: ["Europe", "sustainability", "compliance", "traceability"],
   },
 ];
@@ -608,15 +610,9 @@ export const agrisphereShortcuts = [
     href: "/discovery#role-matrix",
   },
   {
-    id: "join-ifu",
-    title: "Join IFU",
-    description: "Create an account and save your discovery path.",
-    href: "/register",
-  },
-  {
     id: "dashboard",
     title: "Personal Command Center",
-    description: "Return to saved opportunities after login.",
+    description: "Return to saved opportunities in the dashboard.",
     href: "/dashboard",
   },
 ];
@@ -668,7 +664,7 @@ function buildSearchIndex(): AgriSphereSearchResult[] {
         countryMatches.length > 0
           ? `Found in ${countryMatches.slice(0, 4).map((country) => country.name).join(", ")}.`
           : "Crop signal ready for indexing in Sprint 1.5.",
-      href: "/agrisphere#search",
+      href: `${AGRISPHERE_DASHBOARD_HREF}#search`,
       metadata: countryMatches.flatMap((country) => [country.name, country.code, country.continentCode]),
     };
   });
@@ -702,7 +698,7 @@ function buildSearchIndex(): AgriSphereSearchResult[] {
     category: "continents" as const,
     title: continent.name,
     description: continent.summary,
-    href: "/agrisphere#continents",
+    href: `${AGRISPHERE_DASHBOARD_HREF}#continents`,
     metadata: [continent.code, ...continent.priorityCrops],
   }));
 

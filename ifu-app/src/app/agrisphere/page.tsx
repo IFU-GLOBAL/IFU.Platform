@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { AgriSphereDiscoveryHub } from "@/components/agrisphere-discovery-hub";
-import { getAgriSphereSnapshot } from "@/lib/agrisphere-data";
+import { redirect } from "next/navigation";
+import { getAuthSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
   title: "AgriSphere Global Agricultural Intelligence",
@@ -16,8 +16,22 @@ export const metadata: Metadata = {
     url: "/agrisphere",
     type: "website",
   },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
-export default function AgriSpherePage() {
-  return <AgriSphereDiscoveryHub snapshot={getAgriSphereSnapshot()} />;
+export const dynamic = "force-dynamic";
+
+const dashboardAgriSpherePath = "/dashboard?section=agrisphere-dashboard";
+
+export default async function AgriSpherePage() {
+  const session = await getAuthSession();
+
+  if (!session) {
+    redirect(`/login?returnTo=${encodeURIComponent(dashboardAgriSpherePath)}`);
+  }
+
+  redirect(dashboardAgriSpherePath);
 }

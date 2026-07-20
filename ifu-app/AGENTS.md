@@ -7,3 +7,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Workspace Orientation
 
 The active IFU repository is `/Users/jrl/Code/IFU.Platform`, with app source in `/Users/jrl/Code/IFU.Platform/ifu-app`. Project documents and developer-package files remain in `/Users/jrl/Documents/ifu master` unless explicitly moved.
+
+## Dashboard Ecosystem Tabs
+
+The IFU ecosystems belong in the authenticated `/dashboard` hub as left-panel tabs, not as standalone public pages. `src/lib/dashboard-model.ts` is the source of truth for the tab seed order: `Dashboard Home`, then the ten ecosystem tabs (`AgriSphere`, `AgriNexus`, `AgriAcademie`, `AgriExchange`, `AgriCapital`, `AgriFunds`, `AgriFinance`, `AgriShield`, `AgriCentral`, `Data Engine`), followed by workspace and workflow tabs.
+
+`AgriSphere` is the implemented ecosystem surface and renders its content in the dashboard center pane through `src/components/agrisphere-discovery-hub.tsx`. The other ecosystem tabs are intentional placeholders in `src/components/ifu-personal-command-center.tsx`; keep them as center-pane dashboard sections until their real workflows are built. `/agrisphere` is only an authenticated entry point that redirects into `/dashboard?section=agrisphere-dashboard`, so do not add public Join IFU or registration CTAs to AgriSphere content.

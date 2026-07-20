@@ -15,7 +15,6 @@ import {
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import { AgriSphereMap } from "@/components/agrisphere-map";
-import { GTranslateWidget } from "@/components/gtranslate-widget";
 import {
   IFUActionLink,
   IFUContainer,
@@ -33,9 +32,11 @@ import {
 
 type AgriSphereDiscoveryHubProps = {
   snapshot: AgriSphereSnapshot;
+  variant?: "page" | "dashboard";
 };
 
 const statIcons = [Globe2, Users, Sprout, BarChart3, Search, Layers];
+const AGRISPHERE_DASHBOARD_HREF = "/dashboard?section=agrisphere-dashboard";
 
 function categoryLabel(category: AgriSphereSearchCategory) {
   return category
@@ -44,7 +45,11 @@ function categoryLabel(category: AgriSphereSearchCategory) {
     .join(" ");
 }
 
-export function AgriSphereDiscoveryHub({ snapshot }: AgriSphereDiscoveryHubProps) {
+export function AgriSphereDiscoveryHub({
+  snapshot,
+  variant = "page",
+}: AgriSphereDiscoveryHubProps) {
+  const embedded = variant === "dashboard";
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<AgriSphereSearchCategory | "all">("all");
   const [selectedCountryCode, setSelectedCountryCode] = useState(snapshot.countries[0]?.code ?? "");
@@ -110,34 +115,27 @@ export function AgriSphereDiscoveryHub({ snapshot }: AgriSphereDiscoveryHubProps
     }
   }
 
-  return (
-    <IFUPage className="agrisphere-page">
-      <header className="agrisphere-header">
-        <IFUContainer size="wide" className="agrisphere-header-inner">
-          <Link href="/" className="agrisphere-brand" aria-label="IFU home">
-            <span className="agrisphere-brand-mark">IFU</span>
-            <span>
-              <strong>AgriSphere</strong>
-              <small>Global Agricultural Intelligence</small>
-            </span>
-          </Link>
-          <nav className="agrisphere-nav" aria-label="AgriSphere sections">
-            <a href="#map">Map</a>
-            <a href="#search">Search</a>
-            <a href="#continents">Continents</a>
-            <a href="#ecosystems">Ecosystems</a>
-          </nav>
-          <div className="agrisphere-header-actions">
-            <GTranslateWidget id="agrisphere" />
-            <IFUActionLink href="/register" variant="primary">
-              Join IFU
-            </IFUActionLink>
-            <IFUActionLink href="/login?returnTo=%2Fdashboard" variant="ghost">
-              Login
-            </IFUActionLink>
-          </div>
-        </IFUContainer>
-      </header>
+  const content = (
+    <>
+      {!embedded ? (
+        <header className="agrisphere-header">
+          <IFUContainer size="wide" className="agrisphere-header-inner">
+            <Link href="/" className="agrisphere-brand" aria-label="IFU home">
+              <span className="agrisphere-brand-mark">IFU</span>
+              <span>
+                <strong>AgriSphere</strong>
+                <small>Global Agricultural Intelligence</small>
+              </span>
+            </Link>
+            <nav className="agrisphere-nav" aria-label="AgriSphere sections">
+              <a href="#map">Map</a>
+              <a href="#search">Search</a>
+              <a href="#continents">Continents</a>
+              <a href="#ecosystems">Ecosystems</a>
+            </nav>
+          </IFUContainer>
+        </header>
+      ) : null}
 
       <section id="map" className="agrisphere-workbench">
         <IFUContainer size="wide" className="py-8 lg:py-10">
@@ -147,7 +145,7 @@ export function AgriSphereDiscoveryHub({ snapshot }: AgriSphereDiscoveryHubProps
               <h1>Find the right country, crop, organization, producer, or IFU destination.</h1>
             </div>
             <p>
-              Search the public IFU discovery layer by map, category, country, crop, and ecosystem path.
+              Search the IFU discovery layer by map, category, country, crop, and ecosystem path.
             </p>
           </div>
 
@@ -208,9 +206,6 @@ export function AgriSphereDiscoveryHub({ snapshot }: AgriSphereDiscoveryHubProps
                   <div className="agrisphere-country-actions">
                     <IFUActionLink href={`/country/${selectedCountry.slug}`} icon={ArrowRight}>
                       Open Country
-                    </IFUActionLink>
-                    <IFUActionLink href="/register" variant="outline">
-                      Save after joining
                     </IFUActionLink>
                   </div>
                 </>
@@ -395,7 +390,7 @@ export function AgriSphereDiscoveryHub({ snapshot }: AgriSphereDiscoveryHubProps
               {snapshot.ecosystems.map((ecosystem) => (
                 <Link
                   key={ecosystem}
-                  href={ecosystem === "AgriSphere" ? "/agrisphere" : "/platforms"}
+                  href={ecosystem === "AgriSphere" ? AGRISPHERE_DASHBOARD_HREF : "/platforms"}
                 >
                   {ecosystem}
                 </Link>
@@ -404,6 +399,16 @@ export function AgriSphereDiscoveryHub({ snapshot }: AgriSphereDiscoveryHubProps
           </div>
         </IFUContainer>
       </section>
+    </>
+  );
+
+  if (embedded) {
+    return <div className="agrisphere-page agrisphere-page-embedded">{content}</div>;
+  }
+
+  return (
+    <IFUPage className="agrisphere-page">
+      {content}
     </IFUPage>
   );
 }

@@ -94,7 +94,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     id: "agrisphere-dashboard",
     title: "AgriSphere",
     type: "Discovery Hub",
-    summary: "Global agricultural intelligence, public discovery, map search, and country signals.",
+    summary: "Global agricultural intelligence, map search, and country signals.",
     description:
       "AgriSphere gives members a fast route into country activity, crop and producer discovery, live platform signals, and the wider IFU ecosystem destination map.",
     details: [
@@ -102,12 +102,155 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
       "Search countries, crops, organizations, treaties, sectors, producers, and continents",
       "Move from discovery into role pathways, saved opportunities, and country intelligence",
     ],
-    actions: ["Open AgriSphere", "Save Ecosystem", "Move to Workspace"],
+    actions: ["Save Ecosystem", "Move to Workspace"],
     iconKey: "globe",
-    href: "/agrisphere",
     dashboardType: "RESOURCE",
     group: "menu",
     order: 2,
+  },
+  {
+    id: "agriacademie-dashboard",
+    title: "AgriAcademie",
+    type: "IFU Ecosystem",
+    summary: "Placeholder hub tab for training, certification, courses, and learning pathways.",
+    description:
+      "AgriAcademie will organize member learning, certification progress, course recommendations, and training records in the dashboard hub.",
+    details: [
+      "Training and certification placeholder",
+      "Future course recommendations and progress tracking",
+      "Saved learning actions can move into the workspace",
+    ],
+    actions: ["Save Ecosystem", "Move to Workspace"],
+    iconKey: "graduationCap",
+    dashboardType: "TRAINING",
+    group: "menu",
+    order: 4,
+  },
+  {
+    id: "agriexchange-dashboard",
+    title: "AgriExchange",
+    type: "IFU Ecosystem",
+    summary: "Placeholder hub tab for marketplace, buyer, seller, trade, and export workflows.",
+    description:
+      "AgriExchange will bring marketplace listings, buyer requests, export lanes, and trade coordination into the dashboard hub.",
+    details: [
+      "Marketplace placeholder",
+      "Future buyer, seller, and exporter flows",
+      "Saved trade opportunities can move into the workspace",
+    ],
+    actions: ["Save Ecosystem", "Move to Workspace"],
+    iconKey: "shoppingBasket",
+    dashboardType: "MARKETPLACE",
+    group: "menu",
+    order: 5,
+  },
+  {
+    id: "agricapital-dashboard",
+    title: "AgriCapital",
+    type: "IFU Ecosystem",
+    summary: "Placeholder hub tab for investment readiness, project scoring, and capital pathways.",
+    description:
+      "AgriCapital will organize investment-ready projects, investor matching signals, capital pathways, and readiness actions in the dashboard hub.",
+    details: [
+      "Capital readiness placeholder",
+      "Future investor and project-scoring workflows",
+      "Saved capital actions can move into the workspace",
+    ],
+    actions: ["Save Ecosystem", "Move to Workspace"],
+    iconKey: "badgeDollarSign",
+    dashboardType: "FUNDING",
+    group: "menu",
+    order: 6,
+  },
+  {
+    id: "agrifunds-dashboard",
+    title: "AgriFunds",
+    type: "IFU Ecosystem",
+    summary: "Placeholder hub tab for grants, donor programs, funding criteria, and application tracking.",
+    description:
+      "AgriFunds will route funding opportunities, donor programs, eligibility requirements, document requests, and application status into the dashboard hub.",
+    details: [
+      "Funding placeholder",
+      "Future grant and donor-program workflows",
+      "Saved funding actions can move into the workspace",
+    ],
+    actions: ["Save Ecosystem", "Move to Workspace"],
+    iconKey: "fileText",
+    dashboardType: "FUNDING",
+    group: "menu",
+    order: 7,
+  },
+  {
+    id: "agrifinance-dashboard",
+    title: "AgriFinance",
+    type: "IFU Ecosystem",
+    summary: "Placeholder hub tab for payments, accounting, financial tools, and finance readiness.",
+    description:
+      "AgriFinance will organize financial workflows, payment readiness, accounting tools, records, and operational finance signals in the dashboard hub.",
+    details: [
+      "Finance placeholder",
+      "Future payment, accounting, and finance workflows",
+      "Saved finance actions can move into the workspace",
+    ],
+    actions: ["Save Ecosystem", "Move to Workspace"],
+    iconKey: "briefcaseBusiness",
+    dashboardType: "FUNDING",
+    group: "menu",
+    order: 8,
+  },
+  {
+    id: "agrishield-dashboard",
+    title: "AgriShield",
+    type: "IFU Ecosystem",
+    summary: "Placeholder hub tab for compliance, quality assurance, traceability, and risk workflows.",
+    description:
+      "AgriShield will organize compliance checks, quality assurance, traceability signals, audit needs, and risk workflows in the dashboard hub.",
+    details: [
+      "Compliance placeholder",
+      "Future quality, traceability, and risk workflows",
+      "Saved compliance actions can move into the workspace",
+    ],
+    actions: ["Save Ecosystem", "Move to Workspace"],
+    iconKey: "shieldCheck",
+    dashboardType: "RESOURCE",
+    group: "menu",
+    order: 9,
+  },
+  {
+    id: "agricentral-dashboard",
+    title: "AgriCentral",
+    type: "IFU Ecosystem",
+    summary: "Placeholder hub tab for operations, monitoring, support, and administration signals.",
+    description:
+      "AgriCentral will organize platform activity, operational monitoring, support needs, audit history, and administration signals in the dashboard hub.",
+    details: [
+      "Operations placeholder",
+      "Future support and monitoring workflows",
+      "Saved operational actions can move into the workspace",
+    ],
+    actions: ["Save Ecosystem", "Move to Workspace"],
+    iconKey: "panelsTopLeft",
+    dashboardType: "RESOURCE",
+    group: "menu",
+    order: 10,
+  },
+  {
+    id: "data-engine-dashboard",
+    title: "Data Engine",
+    type: "IFU Ecosystem",
+    summary: "Placeholder hub tab for analytics, country dashboards, intelligence, and reporting.",
+    description:
+      "Data Engine will power agricultural intelligence, country dashboards, recommendation signals, analytics, and future reporting inside the dashboard hub.",
+    details: [
+      "Analytics placeholder",
+      "Future dashboard, intelligence, and reporting workflows",
+      "Saved data requests can move into the workspace",
+    ],
+    actions: ["Save Ecosystem", "Move to Workspace"],
+    iconKey: "network",
+    dashboardType: "RESOURCE",
+    group: "menu",
+    order: 11,
   },
   {
     id: "workspace",
@@ -121,7 +264,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "briefcaseBusiness",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 3,
+    order: 12,
   },
   {
     id: "daily-journey",
@@ -134,7 +277,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "route",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 4,
+    order: 13,
   },
   {
     id: "recommended-pathway",
@@ -147,7 +290,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "searchCheck",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 5,
+    order: 14,
   },
   {
     id: "top-opportunities",
@@ -160,7 +303,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "star",
     dashboardType: "OPPORTUNITY",
     group: "menu",
-    order: 6,
+    order: 15,
   },
   {
     id: "recommended-training",
@@ -173,7 +316,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "graduationCap",
     dashboardType: "TRAINING",
     group: "menu",
-    order: 7,
+    order: 16,
   },
   {
     id: "funding-opportunities",
@@ -186,7 +329,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "badgeDollarSign",
     dashboardType: "FUNDING",
     group: "menu",
-    order: 8,
+    order: 17,
   },
   {
     id: "marketplace-opportunities",
@@ -199,7 +342,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "shoppingBasket",
     dashboardType: "MARKETPLACE",
     group: "menu",
-    order: 9,
+    order: 18,
   },
   {
     id: "expert-network",
@@ -212,12 +355,12 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "network",
     dashboardType: "EXPERT",
     group: "menu",
-    order: 10,
+    order: 19,
   },
   {
     id: "agrinexus-community",
-    title: "AgriNexus Community",
-    type: "Community",
+    title: "AgriNexus",
+    type: "IFU Ecosystem",
     summary: "IFU member groups, discussions, and regional collaboration spaces.",
     description:
       "AgriNexus Community supports discussions, peer introductions, group coordination, and country or regional collaboration.",
@@ -225,7 +368,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "usersRound",
     dashboardType: "COMMUNITY",
     group: "menu",
-    order: 11,
+    order: 3,
   },
   {
     id: "agritourism",
@@ -238,7 +381,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "tractor",
     dashboardType: "MARKETPLACE",
     group: "menu",
-    order: 12,
+    order: 20,
   },
   {
     id: "global-map",
@@ -251,7 +394,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "map",
     dashboardType: "MAP_COUNTRY",
     group: "menu",
-    order: 13,
+    order: 21,
   },
   {
     id: "intelligence-hub",
@@ -264,7 +407,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "panelsTopLeft",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 14,
+    order: 22,
   },
   {
     id: "bookmarks",
@@ -277,7 +420,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "archive",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 15,
+    order: 23,
   },
   {
     id: "applications",
@@ -290,7 +433,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "checkSquare",
     dashboardType: "APPLICATION",
     group: "menu",
-    order: 16,
+    order: 24,
   },
   {
     id: "messages",
@@ -303,7 +446,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "messageSquareText",
     dashboardType: "MESSAGE",
     group: "menu",
-    order: 17,
+    order: 25,
   },
   {
     id: "documents",
@@ -316,7 +459,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "fileText",
     dashboardType: "DOCUMENT",
     group: "menu",
-    order: 18,
+    order: 26,
   },
   {
     id: "settings",
@@ -329,7 +472,7 @@ export const dashboardMenuSeeds: DashboardSeedItem[] = [
     iconKey: "settings",
     dashboardType: "RESOURCE",
     group: "menu",
-    order: 19,
+    order: 27,
   },
 ];
 
@@ -469,6 +612,19 @@ export const ecosystemSeeds: DashboardSeedItem[] = [
     order: 6,
   },
   {
+    id: "agrifinance",
+    title: "AgriFinance",
+    type: "IFU Ecosystem",
+    summary: "Payments, accounting, financial tools, and member finance readiness.",
+    description:
+      "AgriFinance supports payment readiness, accounting workflows, operating finance records, and practical financial tools for members.",
+    actions: ["Open Finance", "Save", "Move to Workspace"],
+    iconKey: "sprout",
+    dashboardType: "ECOSYSTEM",
+    group: "ecosystem",
+    order: 7,
+  },
+  {
     id: "agrishield",
     title: "AgriShield",
     type: "IFU Ecosystem",
@@ -479,7 +635,7 @@ export const ecosystemSeeds: DashboardSeedItem[] = [
     iconKey: "sprout",
     dashboardType: "ECOSYSTEM",
     group: "ecosystem",
-    order: 7,
+    order: 8,
   },
   {
     id: "agricentral",
@@ -492,7 +648,7 @@ export const ecosystemSeeds: DashboardSeedItem[] = [
     iconKey: "sprout",
     dashboardType: "ECOSYSTEM",
     group: "ecosystem",
-    order: 8,
+    order: 9,
   },
   {
     id: "data-engine",
@@ -505,7 +661,7 @@ export const ecosystemSeeds: DashboardSeedItem[] = [
     iconKey: "sprout",
     dashboardType: "ECOSYSTEM",
     group: "ecosystem",
-    order: 9,
+    order: 10,
   },
 ];
 

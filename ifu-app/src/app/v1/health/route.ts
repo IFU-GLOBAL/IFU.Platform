@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export function GET() {
   return NextResponse.json({
     ok: true,
-    service: "agrisphere-public-discovery",
+    service: "agrisphere-discovery",
     version: agrisphereSource.version,
     checkedAt: new Date().toISOString(),
     checks: {

@@ -33,7 +33,12 @@ try {
 
 const routes = [
   { path: "/", expect: "ok", label: "Public homepage" },
-  { path: "/agrisphere", expect: "ok", label: "AgriSphere public discovery" },
+  {
+    path: "/agrisphere",
+    expect: "login-redirect",
+    label: "AgriSphere auth guard",
+    locationIncludes: "/login",
+  },
   { path: "/discovery", expect: "ok", label: "Discovery Center" },
   { path: "/register", expect: "ok", label: "Registration page" },
   { path: "/login", expect: "ok", label: "Login page" },
@@ -59,12 +64,12 @@ const routes = [
 
 routes.push(
   { path: "/v1/health", expect: "ok", label: "AgriSphere v1 health" },
-  { path: "/v1/agrisphere/map", expect: "ok", label: "AgriSphere map API" },
-  { path: "/v1/agrisphere/search?q=coffee", expect: "ok", label: "AgriSphere search API" },
-  { path: "/v1/stats/live", expect: "ok", label: "AgriSphere live stats API" },
-  { path: "/v1/countries/US", expect: "ok", label: "AgriSphere country API" },
-  { path: "/v1/continents/africa/countries", expect: "ok", label: "AgriSphere continent countries API" },
-  { path: "/v1/producers/top", expect: "ok", label: "AgriSphere top producers API" },
+  { path: "/v1/agrisphere/map", expect: "unauthorized", label: "AgriSphere map API auth guard" },
+  { path: "/v1/agrisphere/search?q=coffee", expect: "unauthorized", label: "AgriSphere search API auth guard" },
+  { path: "/v1/stats/live", expect: "unauthorized", label: "AgriSphere live stats API auth guard" },
+  { path: "/v1/countries/US", expect: "unauthorized", label: "AgriSphere country API auth guard" },
+  { path: "/v1/continents/africa/countries", expect: "unauthorized", label: "AgriSphere continent countries API auth guard" },
+  { path: "/v1/producers/top", expect: "unauthorized", label: "AgriSphere top producers API auth guard" },
 );
 
 if (includeDb) {
@@ -109,6 +114,14 @@ function evaluate(route, response) {
 
     return {
       ok: isRedirect && pointsToLogin,
+      status: response.status,
+      location,
+    };
+  }
+
+  if (route.expect === "unauthorized") {
+    return {
+      ok: response.status === 401,
       status: response.status,
       location,
     };

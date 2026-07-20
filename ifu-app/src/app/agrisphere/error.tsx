@@ -8,7 +8,7 @@ export default function AgriSphereError({ reset }: { reset: () => void }) {
       <IFUContainer size="wide" className="py-10">
         <div className="agrisphere-route-state agrisphere-route-state-error">
           <strong>AgriSphere could not load</strong>
-          <span>Retry the public discovery workspace.</span>
+          <span>Retry the authenticated dashboard hub.</span>
           <IFUActionButton type="button" onClick={reset}>
             Retry
           </IFUActionButton>

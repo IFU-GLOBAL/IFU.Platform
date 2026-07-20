@@ -26,9 +26,11 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { AgriSphereDiscoveryHub } from "@/components/agrisphere-discovery-hub";
 import { IFUActionLink, cn } from "@/components/ifu-ui";
 import { MiniGeoGlobalMap } from "@/components/mini-geo-global-map";
 import { SlideOverDrawer } from "@/components/slide-over-drawer";
+import { getAgriSphereSnapshot } from "@/lib/agrisphere-data";
 import type {
   DashboardDrawerItem,
   DashboardIconKey,
@@ -61,6 +63,7 @@ const iconMap = {
 
 type IFUPersonalCommandCenterProps = {
   view: DashboardViewModel;
+  initialSectionId?: string;
 };
 
 type SectionPageConfig = {
@@ -116,13 +119,75 @@ function getRelatedItems(
   return (matches.length > 0 ? matches : items).slice(0, limit);
 }
 
+const ecosystemPlaceholderSteps = [
+  "Confirm the ecosystem data model",
+  "Connect saved actions to the workspace",
+  "Replace this placeholder with the full workflow",
+];
+
 const sectionPages: Record<string, SectionPageConfig> = {
-  [AGRISPHERE_SECTION_ID]: {
-    eyebrow: "AgriSphere",
-    title: "AgriSphere Discovery Hub",
+  "agrinexus-community": {
+    eyebrow: "Ecosystem placeholder",
+    title: "AgriNexus",
     description:
-      "Move from the private dashboard into IFU's global agricultural intelligence layer for map discovery, country signals, crops, producers, and ecosystem destinations.",
-    steps: ["Open the global discovery map", "Search country and crop signals", "Save the best pathway to your workspace"],
+      "Placeholder dashboard surface for IFU community, regional groups, member networking, and expert collaboration.",
+    steps: ecosystemPlaceholderSteps,
+  },
+  "agriacademie-dashboard": {
+    eyebrow: "Ecosystem placeholder",
+    title: "AgriAcademie",
+    description:
+      "Placeholder dashboard surface for training, certification, learning pathways, courses, and member progress.",
+    steps: ecosystemPlaceholderSteps,
+  },
+  "agriexchange-dashboard": {
+    eyebrow: "Ecosystem placeholder",
+    title: "AgriExchange",
+    description:
+      "Placeholder dashboard surface for marketplace listings, buyer requests, seller flows, trade, and export coordination.",
+    steps: ecosystemPlaceholderSteps,
+  },
+  "agricapital-dashboard": {
+    eyebrow: "Ecosystem placeholder",
+    title: "AgriCapital",
+    description:
+      "Placeholder dashboard surface for investment readiness, project scoring, capital pathways, and investor matching.",
+    steps: ecosystemPlaceholderSteps,
+  },
+  "agrifunds-dashboard": {
+    eyebrow: "Ecosystem placeholder",
+    title: "AgriFunds",
+    description:
+      "Placeholder dashboard surface for grants, donor programs, funding eligibility, document requests, and application tracking.",
+    steps: ecosystemPlaceholderSteps,
+  },
+  "agrifinance-dashboard": {
+    eyebrow: "Ecosystem placeholder",
+    title: "AgriFinance",
+    description:
+      "Placeholder dashboard surface for payments, accounting tools, operating finance records, and financial readiness.",
+    steps: ecosystemPlaceholderSteps,
+  },
+  "agrishield-dashboard": {
+    eyebrow: "Ecosystem placeholder",
+    title: "AgriShield",
+    description:
+      "Placeholder dashboard surface for compliance, quality assurance, traceability, audit needs, and risk workflows.",
+    steps: ecosystemPlaceholderSteps,
+  },
+  "agricentral-dashboard": {
+    eyebrow: "Ecosystem placeholder",
+    title: "AgriCentral",
+    description:
+      "Placeholder dashboard surface for operations, monitoring, support needs, activity signals, and administration workflows.",
+    steps: ecosystemPlaceholderSteps,
+  },
+  "data-engine-dashboard": {
+    eyebrow: "Ecosystem placeholder",
+    title: "Data Engine",
+    description:
+      "Placeholder dashboard surface for analytics, country dashboards, recommendation signals, reporting, and agricultural intelligence.",
+    steps: ecosystemPlaceholderSteps,
   },
   [WORKSPACE_SECTION_ID]: {
     eyebrow: "Workspace",
@@ -332,13 +397,21 @@ function DashboardSectionPage({
   );
 }
 
-export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps) {
-  const [activeSectionId, setActiveSectionId] = useState(view.menu[0]?.id ?? HOME_SECTION_ID);
+export function IFUPersonalCommandCenter({
+  view,
+  initialSectionId,
+}: IFUPersonalCommandCenterProps) {
+  const initialSection = view.menu.some((item) => item.id === initialSectionId)
+    ? initialSectionId
+    : view.menu[0]?.id;
+  const [activeSectionId, setActiveSectionId] = useState(initialSection ?? HOME_SECTION_ID);
   const [drawerItem, setDrawerItem] = useState<DashboardDrawerItem | null>(null);
   const [actionStatus, setActionStatus] = useState<string | null>(null);
+  const agrisphereSnapshot = useMemo(() => getAgriSphereSnapshot(), []);
   const { profile } = view;
   const activeSection =
     view.menu.find((item) => item.id === activeSectionId) ?? view.menu[0];
+  const activeIsAgriSphere = activeSection?.id === AGRISPHERE_SECTION_ID;
   const activeSectionPage = activeSection ? sectionPages[activeSection.id] : undefined;
   const activeCards = activeSection
     ? getRelatedItems(
@@ -557,7 +630,9 @@ export function IFUPersonalCommandCenter({ view }: IFUPersonalCommandCenterProps
               </div>
             </section>
 
-            {activeSectionPage ? (
+            {activeIsAgriSphere ? (
+              <AgriSphereDiscoveryHub snapshot={agrisphereSnapshot} variant="dashboard" />
+            ) : activeSectionPage ? (
               <DashboardSectionPage
                 page={activeSectionPage}
                 cards={activeCards}

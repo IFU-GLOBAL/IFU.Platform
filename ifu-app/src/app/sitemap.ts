@@ -4,7 +4,6 @@ import { getAbsoluteUrl } from "@/lib/site-url";
 
 const staticRoutes = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
-  { path: "/agrisphere", changeFrequency: "weekly", priority: 0.95 },
   { path: "/discovery", changeFrequency: "weekly", priority: 0.9 },
   { path: "/register", changeFrequency: "monthly", priority: 0.8 },
   { path: "/login", changeFrequency: "monthly", priority: 0.5 },

@@ -163,7 +163,7 @@ const legacyPathRedirects: Record<string, string> = {
   "/platforms/agrifunds": "/platforms",
   "/platforms/agrinexus": "/platforms",
   "/platforms/agrishield": "/platforms",
-  "/platforms/agrisphere": "/agrisphere",
+  "/platforms/agrisphere": "/dashboard?section=agrisphere-dashboard",
   "/platforms/agrisphere/agrisphere-login": "/login",
   "/platforms/agrisphere/agrisphere-registration": "/register",
   "/platforms/agrisphere/password-reset": "/forgot-password",
