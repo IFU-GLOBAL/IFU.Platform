@@ -158,9 +158,9 @@ assertContains({
 });
 assertContains({
   file: "public/index.html",
-  id: "homepage:role-catalog-hidden",
-  label: "Generated homepage role catalog section is commented out for the current review.",
-  expected: '<!--\n<section class="ifu-home-role-catalog"',
+  id: "homepage:role-catalog-visible",
+  label: "Generated homepage role catalog section is visible for the current review.",
+  expected: '<section class="ifu-home-role-catalog"',
 });
 assertContains({
   file: "public/index.html",
