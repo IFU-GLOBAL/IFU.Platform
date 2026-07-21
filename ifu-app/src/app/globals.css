@@ -1976,6 +1976,19 @@ html {
   color: var(--ifu-heading);
 }
 
+.ifu-role-selection-notice {
+  margin-top: 0.875rem;
+  border: 1px solid #e4c26a;
+  border-left: 4px solid #b4832f;
+  border-radius: var(--ifu-radius);
+  background: #fff8e6;
+  padding: 0.75rem 0.875rem;
+  color: #6d5200;
+  font-size: 0.875rem;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
 .ifu-role-table-scroll {
   max-height: min(52vh, 520px);
   overflow: auto;

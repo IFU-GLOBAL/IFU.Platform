@@ -48,7 +48,7 @@ export default async function ProfilePage() {
     }),
     getDiscoveryCategories(),
   ]);
-  const selectedRoleSlugs = user.selectedRoles.map(({ role }) => role.slug);
+  const selectedRoleSlugs = user.selectedRoles.slice(0, 1).map(({ role }) => role.slug);
   const profileCompletion = mergeProfileCompletion(
     user.profile?.profileCompletion,
     {

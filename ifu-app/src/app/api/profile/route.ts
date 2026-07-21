@@ -52,6 +52,20 @@ export async function POST(request: NextRequest) {
   const interests = cleanStringArray(body.interests, 12);
   const selectedRoleSlugs = cleanStringArray(body.selectedRoleSlugs, 12);
 
+  if (selectedRoleSlugs.length === 0) {
+    return NextResponse.json(
+      { ok: false, error: "Select one IFU role before saving your profile." },
+      { status: 400 },
+    );
+  }
+
+  if (selectedRoleSlugs.length > 1) {
+    return NextResponse.json(
+      { ok: false, error: "Your profile can have only one IFU role." },
+      { status: 400 },
+    );
+  }
+
   const prisma = getPrisma();
   const user = await syncAuthenticatedUser(session);
   const roles = selectedRoleSlugs.length
@@ -73,13 +87,15 @@ export async function POST(request: NextRequest) {
   const orderedRoles = selectedRoleSlugs
     .map((slug) => rolesBySlug.get(slug))
     .filter((role): role is SelectedRole => Boolean(role));
-  const unmatchedRoleSlugs = selectedRoleSlugs.filter((slug) => !rolesBySlug.has(slug));
+  const primaryRole = orderedRoles[0];
 
-  if (unmatchedRoleSlugs.length > 0) {
-    console.warn("Profile update received role slugs that are not seeded in the database:", unmatchedRoleSlugs);
+  if (!primaryRole) {
+    return NextResponse.json(
+      { ok: false, error: "Select a valid IFU role before saving your profile." },
+      { status: 400 },
+    );
   }
 
-  const primaryRole = orderedRoles[0];
   const profileCompletion = mergeProfileCompletion(
     user.profile?.profileCompletion,
     {
@@ -137,19 +153,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    if (orderedRoles.length > 0) {
-      await transaction.userSelectedRole.deleteMany({
-        where: { userId: user.id },
-      });
-      await transaction.userSelectedRole.createMany({
-        data: orderedRoles.map((role, index) => ({
-          userId: user.id,
-          roleId: role.id,
-          isPrimary: index === 0,
-        })),
-        skipDuplicates: true,
-      });
-    }
+    await transaction.userSelectedRole.deleteMany({
+      where: { userId: user.id },
+    });
+    await transaction.userSelectedRole.create({
+      data: {
+        userId: user.id,
+        roleId: primaryRole.id,
+        isPrimary: true,
+      },
+    });
   });
 
   const workspaceUpdate = await prisma.workspaceItem.updateMany({

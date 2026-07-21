@@ -115,7 +115,10 @@ export function ProfileCompletionForm({
   roleCategories,
 }: ProfileCompletionFormProps) {
   const router = useRouter();
-  const [formState, setFormState] = useState(initial);
+  const [formState, setFormState] = useState({
+    ...initial,
+    selectedRoleSlugs: initial.selectedRoleSlugs.slice(0, 1),
+  });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
   const profileIsComplete = profileCompletion >= 100;
@@ -164,6 +167,13 @@ export function ProfileCompletionForm({
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (formState.selectedRoleSlugs.length !== 1) {
+      setStatus("error");
+      setStatusMessage("Select one IFU role before saving your profile.");
+      return;
+    }
+
     setStatus("submitting");
     setStatusMessage("");
 
@@ -226,6 +236,7 @@ export function ProfileCompletionForm({
               value={formState.selectedRoleSlugs[0] ?? ""}
               onChange={(event) => updatePrimaryRole(event.target.value)}
               className="ifu-field-control ifu-select mt-2"
+              required
             >
               <option value="">Select your primary IFU role</option>
               {roleCategories.map((category) => (
@@ -239,7 +250,7 @@ export function ProfileCompletionForm({
               ))}
             </select>
             <span className="mt-1 block text-xs text-[var(--ifu-muted)]">
-              This controls the role shown in the dashboard and helps IFU match your pathway.
+              You can change this role at any time. Your profile can have only one IFU role.
             </span>
           </label>
           <TextInput

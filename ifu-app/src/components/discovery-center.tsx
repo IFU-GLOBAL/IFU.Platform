@@ -231,7 +231,8 @@ export function DiscoveryCenter({
   );
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [visibleRoleCount, setVisibleRoleCount] = useState(rolePageSize);
-  const [selectedRoleSlugs, setSelectedRoleSlugs] = useState<string[]>(initialRoleSlugs);
+  const [selectedRoleSlugs, setSelectedRoleSlugs] = useState<string[]>(initialRoleSlugs.slice(0, 1));
+  const [roleSelectionNotice, setRoleSelectionNotice] = useState<string | null>(null);
 
   const roles = useMemo(() => categories.flatMap((category) => category.roles), [categories]);
   const rolesBySlug = useMemo(() => new Map(roles.map((role) => [role.slug, role])), [roles]);
@@ -267,10 +268,12 @@ export function DiscoveryCenter({
     },
   ];
 
+  const normalizedQuery = query.trim();
   const filteredRoles = roles.filter((role) => {
-    const matchesPersona = selectedPersonaSlug === "all" || role.personaSlug === selectedPersonaSlug;
+    const matchesPersona =
+      normalizedQuery !== "" || selectedPersonaSlug === "all" || role.personaSlug === selectedPersonaSlug;
     const matchesCategory = categoryFilter === "all" || role.categorySlug === categoryFilter;
-    const matchesQuery = query.trim() === "" || includesSearch(role, query.trim());
+    const matchesQuery = normalizedQuery === "" || includesSearch(role, normalizedQuery);
 
     return matchesPersona && matchesCategory && matchesQuery;
   });
@@ -282,9 +285,21 @@ export function DiscoveryCenter({
   }, [categoryFilter, query, selectedPersonaSlug]);
 
   function toggleRole(slug: string) {
-    setSelectedRoleSlugs((current) =>
-      current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug],
-    );
+    if (selectedRoleSlugs.includes(slug)) {
+      setSelectedRoleSlugs([]);
+      setRoleSelectionNotice(null);
+      return;
+    }
+
+    if (selectedRoleSlugs.length > 0) {
+      setRoleSelectionNotice(
+        "You can only pick one role. Clear your current role before choosing another.",
+      );
+      return;
+    }
+
+    setSelectedRoleSlugs([slug]);
+    setRoleSelectionNotice(null);
   }
 
   function selectPersona(slug: string) {
@@ -470,7 +485,7 @@ export function DiscoveryCenter({
                 <p>Real-Time Intelligence &bull; Global Connections &bull; Local Opportunities</p>
                 <p className="ifu-home-role-start">&#10145;&#65039; Choose your role to get started.</p>
               </div>
-              <h3>Search and select your IFU roles below</h3>
+              <h3>Search and select your IFU role below</h3>
             </div>
           </div>
         </IFUContainer>
@@ -548,19 +563,31 @@ export function DiscoveryCenter({
               </div>
 
               <div className="ifu-role-filter-summary">
-                <p>
-                  Showing <strong>{visibleRoles.length}</strong> of <strong>{filteredRoles.length}</strong> roles for <strong>{selectedPersona.label}</strong>
-                </p>
+                {normalizedQuery ? (
+                  <p>
+                    Showing <strong>{visibleRoles.length}</strong> of <strong>{filteredRoles.length}</strong> roles matching <strong>&ldquo;{normalizedQuery}&rdquo;</strong> across the full role catalog
+                  </p>
+                ) : (
+                  <p>
+                    Showing <strong>{visibleRoles.length}</strong> of <strong>{filteredRoles.length}</strong> roles for <strong>{selectedPersona.label}</strong>
+                  </p>
+                )}
                 <p>
                   Search and filters still cover the full 260-role catalog.
                 </p>
               </div>
 
+              {roleSelectionNotice ? (
+                <div className="ifu-role-selection-notice" role="alert" aria-live="assertive">
+                  {roleSelectionNotice}
+                </div>
+              ) : null}
+
               <div className="ifu-table-shell mt-4">
                 <div className="ifu-role-table-scroll">
                   <table className="ifu-table ifu-role-table">
                     <caption className="sr-only">
-                      IFU role selection table. Select one or more roles before registration.
+                      IFU role selection table. Select one role before registration.
                     </caption>
                     <thead className="sticky top-0 z-10">
                       <tr>
@@ -658,10 +685,13 @@ export function DiscoveryCenter({
                 {selectedRoles.length > 0 ? (
                   <div className="mt-5">
                     <div className="flex items-center justify-between gap-4">
-                      <h4 className="text-sm font-bold text-[var(--ifu-heading)]">Selected roles</h4>
+                      <h4 className="text-sm font-bold text-[var(--ifu-heading)]">Selected role</h4>
                       <IFUActionButton
                         type="button"
-                        onClick={() => setSelectedRoleSlugs([])}
+                        onClick={() => {
+                          setSelectedRoleSlugs([]);
+                          setRoleSelectionNotice(null);
+                        }}
                         variant="outline"
                         className="ifu-button-compact"
                       >
@@ -747,12 +777,12 @@ export function DiscoveryCenter({
                 {selectedRoles.length > 0 ? (
                   <>
                     <span className="font-semibold text-[var(--ifu-heading)]">
-                      {selectedRoles.length} selected role{selectedRoles.length === 1 ? "" : "s"}
+                      Selected role
                     </span>{" "}
-                    will be attached to this account: {selectedRoles.map((role) => role.title).join(", ")}.
+                    attached to this account: {primarySelectedRole?.title}.
                   </>
                 ) : (
-                  "Select one or more Discovery roles above before registering to attach them to your account."
+                  "Select one Discovery role above before registering to attach it to your account."
                 )}
               </IFUInset>
             </div>
