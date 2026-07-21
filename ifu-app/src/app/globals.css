@@ -100,22 +100,58 @@ html {
 .ifu-static-socials {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 2px;
 }
 
 .ifu-static-socials a {
   display: inline-flex;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  overflow: hidden;
+  border-radius: 2px;
   background: #ffffff;
-  color: var(--ifu-navy);
-  font-size: 0.6875rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  box-shadow: 0 6px 18px rgba(8, 41, 71, 0.08);
+  color: #212226;
+  transition: all 500ms ease;
+}
+
+.ifu-static-social-icon {
+  display: inline-flex;
+  width: 10px;
+  height: 10px;
+  color: currentColor;
+  transition: all 500ms ease;
+}
+
+.ifu-static-social-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.ifu-static-socials a:hover {
+  background: #e23b33;
+  color: #ffffff;
+}
+
+.ifu-static-socials a:hover .ifu-static-social-icon {
+  animation: ifu-social-slide-top 400ms ease;
+}
+
+@keyframes ifu-social-slide-top {
+  49% {
+    transform: translateY(-120%);
+  }
+  50% {
+    opacity: 0;
+    transform: translateY(120%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ifu-static-language {

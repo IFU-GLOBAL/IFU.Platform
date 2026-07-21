@@ -1,6 +1,5 @@
 import { DiscoveryCenter } from "@/components/discovery-center";
 import { getDiscoveryCategories } from "@/lib/discovery-data";
-import { discoveryMetrics } from "@/lib/role-catalog";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -41,7 +40,6 @@ export default async function DiscoveryPage({ searchParams }: DiscoveryPageProps
   }
 
   const categories = await getDiscoveryCategories();
-  const roleCount = categories.reduce((total, category) => total + category.roles.length, 0);
   const persona = typeof params.persona === "string" ? params.persona : undefined;
   const roleParam = params.role;
   const initialRoleSlugs = Array.isArray(roleParam)
@@ -55,12 +53,6 @@ export default async function DiscoveryPage({ searchParams }: DiscoveryPageProps
       categories={categories}
       initialPersonaSlug={persona}
       initialRoleSlugs={initialRoleSlugs}
-      metrics={{
-        categories: categories.length || discoveryMetrics.categories,
-        roles: roleCount || discoveryMetrics.roles,
-        countries: discoveryMetrics.countries,
-        ecosystems: discoveryMetrics.ecosystems,
-      }}
     />
   );
 }

@@ -2,7 +2,6 @@
 
 import {
   ArrowRight,
-  BadgeCheck,
   Globe2,
   Handshake,
   Mail,
@@ -21,7 +20,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   IFUActionButton,
   IFUActionLink,
-  IFUCard,
   IFUContainer,
   IFUInset,
   IFUPage,
@@ -38,16 +36,8 @@ import {
   type DiscoveryRole,
 } from "@/lib/role-catalog";
 
-type Metrics = {
-  categories: number;
-  roles: number;
-  countries: string;
-  ecosystems: number;
-};
-
 type DiscoveryCenterProps = {
   categories: DiscoveryCategory[];
-  metrics: Metrics;
   initialPersonaSlug?: string;
   initialRoleSlugs?: string[];
 };
@@ -67,11 +57,45 @@ const invitationShareText =
   "You are invited to preview the International Farm Union platform and choose the IFU role pathway that fits you.";
 
 const socialLinks = [
-  { label: "Facebook", shortLabel: "f", href: "https://facebook.com/IFUPlatform" },
-  { label: "X", shortLabel: "x", href: "https://x.com/IFUPlatform" },
-  { label: "Instagram", shortLabel: "ig", href: "https://instagram.com/IFUPlatform" },
-  { label: "YouTube", shortLabel: "yt", href: "https://youtube.com/@IFUPlatform" },
-];
+  { label: "Facebook", icon: "facebook", href: "https://facebook.com/IFUPlatform" },
+  { label: "X", icon: "x", href: "https://x.com/IFUPlatform" },
+  { label: "Instagram", icon: "instagram", href: "https://instagram.com/IFUPlatform" },
+  { label: "YouTube", icon: "youtube", href: "https://youtube.com/@IFUPlatform" },
+] as const;
+
+type SocialIconName = (typeof socialLinks)[number]["icon"];
+
+function SocialIcon({ name }: { name: SocialIconName }) {
+  if (name === "facebook") {
+    return (
+      <svg viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M11.4 18v-7h2.35l.35-2.74h-2.7V6.51c0-.79.22-1.33 1.36-1.33h1.45V2.74a19.5 19.5 0 0 0-2.11-.11c-2.09 0-3.52 1.28-3.52 3.62v2.01H6.22V11h2.36v7h2.82Z" />
+      </svg>
+    );
+  }
+
+  if (name === "x") {
+    return (
+      <svg viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M3.2 3h3.65l3.77 5.04L15.06 3h1.74l-5.37 6.39L16.8 17h-3.64l-4.1-5.48L4.45 17H2.7l5.55-6.82L3.2 3Zm3.05 1.36 7.57 11.28h1.92L8.17 4.36H6.25Z" />
+      </svg>
+    );
+  }
+
+  if (name === "instagram") {
+    return (
+      <svg viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M10 5.58A4.42 4.42 0 1 0 10 14.42 4.42 4.42 0 0 0 10 5.58Zm0 7.29a2.87 2.87 0 1 1 0-5.74 2.87 2.87 0 0 1 0 5.74Zm5.64-7.47a1.03 1.03 0 1 1-2.06 0 1.03 1.03 0 0 1 2.06 0ZM18 6.45c-.06-1.3-.36-2.45-1.31-3.39-.94-.94-2.09-1.24-3.39-1.31C11.96 1.68 7.94 1.68 6.6 1.75c-1.3.07-2.45.36-3.39 1.31-.94.94-1.24 2.09-1.31 3.39-.07 1.34-.07 5.36 0 6.7.07 1.3.36 2.45 1.31 3.39.94.94 2.09 1.24 3.39 1.31 1.34.07 5.36.07 6.7 0 1.3-.07 2.45-.36 3.39-1.31.94-.94 1.24-2.09 1.31-3.39.07-1.34.07-5.36 0-6.7Zm-1.78 8.13a2.9 2.9 0 0 1-1.63 1.63c-1.13.45-3.81.35-4.59.35s-3.47.1-4.59-.35a2.9 2.9 0 0 1-1.63-1.63c-.45-1.13-.35-3.81-.35-4.59s-.1-3.47.35-4.59A2.9 2.9 0 0 1 5.41 3.8c1.13-.45 3.81-.35 4.59-.35s3.47-.1 4.59.35a2.9 2.9 0 0 1 1.63 1.63c.45 1.13.35 3.81.35 4.59s.1 3.47-.35 4.59Z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M19.1 5.37a2.4 2.4 0 0 0-1.69-1.7C15.92 3.27 10 3.27 10 3.27s-5.92 0-7.41.4A2.4 2.4 0 0 0 .9 5.37C.5 6.86.5 9.99.5 9.99s0 3.13.4 4.62a2.4 2.4 0 0 0 1.69 1.7c1.49.4 7.41.4 7.41.4s5.92 0 7.41-.4a2.4 2.4 0 0 0 1.69-1.7c.4-1.49.4-4.62.4-4.62s0-3.13-.4-4.62ZM8.06 12.86V7.12L13 9.99l-4.94 2.87Z" />
+    </svg>
+  );
+}
 
 const impactStats = [
   { target: 190, suffix: "+", label: "Countries", icon: Globe2 },
@@ -90,29 +114,6 @@ const allRolesPersona: DiscoveryPersona = {
 
 const roleJourneySteps = ["Your role", "Your value", "Register"];
 const rolePageSize = 40;
-
-const whyItems = [
-  {
-    title: "Connect the whole agricultural cycle",
-    text: "IFU links production, learning, data, trade, funding, and impact so participants can move through one coordinated ecosystem.",
-    icon: Sprout,
-  },
-  {
-    title: "Match people to the right role",
-    text: "Role-based discovery helps farmers, institutions, buyers, educators, and partners find the most useful starting point.",
-    icon: Users,
-  },
-  {
-    title: "Make collaboration more actionable",
-    text: "Selected roles give IFU a practical signal for introductions, invitations, leadership interest, and follow-up priorities.",
-    icon: Handshake,
-  },
-  {
-    title: "Build trust before launch",
-    text: "Registrations create an early map of contributors, referrals, and implementation partners across regions.",
-    icon: BadgeCheck,
-  },
-];
 
 function includesSearch(role: DiscoveryRole, query: string) {
   const haystack = `${role.title} ${role.summary} ${role.pathway} ${role.categoryName} ${role.level} ${role.ecosystems.join(" ")} ${role.personaLabel}`.toLowerCase();
@@ -216,7 +217,6 @@ function CountUpMetric({
 
 export function DiscoveryCenter({
   categories,
-  metrics,
   initialPersonaSlug,
   initialRoleSlugs = [],
 }: DiscoveryCenterProps) {
@@ -305,7 +305,9 @@ export function DiscoveryCenter({
                 target="_blank"
                 rel="noreferrer"
               >
-                {link.shortLabel}
+                <span className="ifu-static-social-icon">
+                  <SocialIcon name={link.icon} />
+                </span>
               </a>
             ))}
           </div>
@@ -469,41 +471,6 @@ export function DiscoveryCenter({
                 <p className="ifu-home-role-start">&#10145;&#65039; Choose your role to get started.</p>
               </div>
               <h3>Search and select your IFU roles below</h3>
-            </div>
-          </div>
-        </IFUContainer>
-      </IFUSection>
-
-      <IFUSection>
-        <IFUContainer size="wide" className="py-12 lg:py-16">
-          <IFUSectionHeader
-            eyebrow="Role-based preview"
-            title="A coordinated ecosystem for agriculture"
-            description={`This app currently includes ${metrics.categories} role categories, ${metrics.roles} seeded roles, ${metrics.countries} official placeholder country reach, and ${metrics.ecosystems} ecosystem pathways for early access discovery.`}
-          />
-
-          <div className="mt-8 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-            <IFUCard tone="muted" className="p-6">
-              <BadgeCheck className="ifu-icon h-6 w-6" aria-hidden="true" />
-              <h2 className="mt-4 text-2xl font-bold text-[var(--ifu-heading)]">
-                You are invited to preview the IFU ecosystem before public rollout.
-              </h2>
-              <p className="ifu-copy mt-4">
-                This center helps IFU understand where each person, organization, or partner fits: learning, leadership, coordination, funding, data, marketplace participation, or community impact.
-              </p>
-              <IFUActionLink href="/invitation" variant="outline" icon={ArrowRight} className="mt-6">
-                Read invitation letter
-              </IFUActionLink>
-            </IFUCard>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {whyItems.map((item) => (
-                <IFUCard key={item.title} className="p-5">
-                  <item.icon className="ifu-icon h-5 w-5" aria-hidden="true" />
-                  <h3 className="mt-4 text-base font-bold text-[var(--ifu-heading)]">{item.title}</h3>
-                  <p className="ifu-copy mt-2 text-sm">{item.text}</p>
-                </IFUCard>
-              ))}
             </div>
           </div>
         </IFUContainer>
