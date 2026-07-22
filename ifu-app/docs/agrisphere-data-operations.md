@@ -1,6 +1,6 @@
 # AgriSphere Data Operations
 
-This document defines the Sprint 1.5 ownership, validation, refresh, and recovery contract for AgriSphere discovery data.
+This document defines the Sprint 1.5–2.5 ownership, validation, refresh, and recovery contract for AgriSphere discovery, personalization, and security-audit data.
 
 ## Sources Of Truth
 
@@ -10,6 +10,8 @@ This document defines the Sprint 1.5 ownership, validation, refresh, and recover
 - `prisma/seed.ts` owns repeatable database seeding.
 - The configured OpenSearch index is derived data and can be recreated with `npm run agrisphere:index`.
 - Redis values are disposable caches and must never be treated as records of truth.
+- `AgriSpherePersonaCluster` stores versioned, reproducible TF-IDF models and K-Means centroids built only from real profiles. Seed scripts do not create synthetic centroids.
+- `AgriSphereSecurityEvent` is the append-only application audit foundation with a 90-day expiry timestamp. The production owner must confirm whether it remains the audit store/outbox or is delivered into the planned DynamoDB table.
 
 ## Responsibility Model
 
@@ -54,12 +56,28 @@ Warnings identify incomplete representative coverage without blocking local deve
 7. Allow Redis keys to expire or flush only the `ifu:agrisphere:` namespace through an approved operational procedure.
 8. Run the local and deployed smoke suites and capture `/v1/health` output.
 
+## Persona Cluster Refresh
+
+After at least six real user profiles and active opportunities exist, invoke the protected refresh handler. Use a secret held by the deployment environment; never paste it into source, documentation, or shell history.
+
+```bash
+curl --fail-with-body \
+  --request POST \
+  --header "Authorization: Bearer ${INTERNAL_JOB_SECRET}" \
+  "${IFU_BASE_URL}/v1/internal/dashboard-feed/refresh-clusters"
+```
+
+The handler is retry-safe and deterministic for the same profiles/opportunities. A valid run reports six refreshed clusters. Configure the production scheduler for hourly invocation only after the route is VPC/private-origin restricted.
+
 ## Dependency Failure Behavior
 
 - PostgreSQL read failures fall back to the representative corpus for read-only discovery endpoints.
 - OpenSearch failures fall back to ranked PostgreSQL search, then to the representative search corpus.
 - Redis failures fall back to the process-local TTL cache.
 - Opportunity saves and personalized feeds require PostgreSQL and do not write to fallback data.
+- Persona-cluster cache failures fall back to persisted cluster rankings, then direct TF-IDF/cosine ranking.
+- Rate-limit counters prefer Redis and fall back to a process-local request window. Multi-instance production enforcement therefore requires Redis.
+- Security-event persistence failures never fail map/search requests; operators must alarm on the generic persistence error and confirm the production audit destination.
 
 ## Required Environment Configuration
 
@@ -68,6 +86,10 @@ Warnings identify incomplete representative coverage without blocking local deve
 - `OPENSEARCH_INDEX`
 - `OPENSEARCH_REGION` and `OPENSEARCH_SERVICE` for AWS SigV4, or `OPENSEARCH_USERNAME` and `OPENSEARCH_PASSWORD` for basic authentication
 - `REDIS_URL`
+- `INTERNAL_JOB_SECRET` (minimum 32 characters)
+- `AGRISPHERE_AUDIT_HASH_SECRET` (separate high-entropy secret recommended)
+- `AGRISPHERE_SEARCH_RATE_LIMIT` and `AGRISPHERE_SEARCH_ALERT_RATE`
+- `AGRISPHERE_MAP_RATE_LIMIT` and `AGRISPHERE_MAP_ALERT_RATE`
 
 Use `OPENSEARCH_SERVICE=aoss` for Amazon OpenSearch Serverless and `es` for a managed domain.
 

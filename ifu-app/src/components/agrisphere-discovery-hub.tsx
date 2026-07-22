@@ -3,6 +3,8 @@
 import {
   ArrowRight,
   BarChart3,
+  Bookmark,
+  BookmarkCheck,
   Globe2,
   Layers,
   MapPin,
@@ -29,11 +31,18 @@ import {
   type AgriSphereSearchCategory,
   type AgriSphereSearchResult,
   type AgriSphereSnapshot,
+  type AgriSphereOpportunity,
 } from "@/lib/agrisphere-data";
 
 type AgriSphereDiscoveryHubProps = {
   snapshot: AgriSphereSnapshot;
   variant?: "page" | "dashboard" | "sample";
+};
+
+type RecommendationOpportunity = AgriSphereOpportunity & {
+  matchScore: number;
+  matchReasons: string[];
+  saved: boolean;
 };
 
 const statIcons = [Globe2, Users, Sprout, BarChart3, Search, Layers];
@@ -61,6 +70,50 @@ export function AgriSphereDiscoveryHub({
   const [selectedCountryCode, setSelectedCountryCode] = useState(snapshot.countries[0]?.code ?? "");
   const [selectedContinentCode, setSelectedContinentCode] = useState("all");
   const [remoteSearch, setRemoteSearch] = useState<ReturnType<typeof searchAgriSphere> | null>(null);
+  const [recommendations, setRecommendations] = useState<RecommendationOpportunity[]>([]);
+  const [recommendationState, setRecommendationState] = useState<
+    "idle" | "loading" | "ready" | "error"
+  >("idle");
+  const [recommendationMode, setRecommendationMode] = useState<
+    "persona-cluster" | "tfidf-cosine" | null
+  >(null);
+  const [recommendationColdStart, setRecommendationColdStart] = useState(false);
+  const [pendingSaveId, setPendingSaveId] = useState<string | null>(null);
+
+  const loadRecommendations = useCallback(async () => {
+    if (!embedded || isSample) {
+      return;
+    }
+
+    setRecommendationState("loading");
+
+    try {
+      const response = await fetch("/v1/dashboard/feed");
+
+      if (!response.ok) {
+        throw new Error("Recommendation feed unavailable");
+      }
+
+      const result = (await response.json()) as {
+        opportunities: RecommendationOpportunity[];
+        meta: {
+          ranking: "persona-cluster" | "tfidf-cosine";
+          coldStart: boolean;
+        };
+      };
+
+      setRecommendations(result.opportunities);
+      setRecommendationMode(result.meta.ranking);
+      setRecommendationColdStart(result.meta.coldStart);
+      setRecommendationState("ready");
+    } catch {
+      setRecommendationState("error");
+    }
+  }, [embedded, isSample]);
+
+  useEffect(() => {
+    void loadRecommendations();
+  }, [loadRecommendations]);
 
   useEffect(() => {
     if (isSample) {
@@ -232,6 +285,27 @@ export function AgriSphereDiscoveryHub({
     }
   }
 
+  async function handleOpportunitySave(opportunity: RecommendationOpportunity) {
+    setPendingSaveId(opportunity.id);
+
+    try {
+      const response = await fetch(
+        `/v1/opportunities/${encodeURIComponent(opportunity.id)}/save`,
+        { method: opportunity.saved ? "DELETE" : "POST" },
+      );
+
+      if (!response.ok) {
+        throw new Error("Save action failed");
+      }
+
+      await loadRecommendations();
+    } catch {
+      setRecommendationState("error");
+    } finally {
+      setPendingSaveId(null);
+    }
+  }
+
   const content = (
     <>
       {!embedded ? (
@@ -390,6 +464,87 @@ export function AgriSphereDiscoveryHub({
           })}
         </IFUContainer>
       </section>
+
+      {embedded ? (
+        <section
+          className="agrisphere-section agrisphere-recommendations"
+          aria-labelledby="agrisphere-recommendation-heading"
+        >
+          <IFUContainer size="wide">
+            <div className="agrisphere-section-heading">
+              <div>
+                <p className="ifu-eyebrow text-[var(--ifu-primary)]">Recommended For You</p>
+                <h2 id="agrisphere-recommendation-heading">Profile-aware opportunity signals.</h2>
+              </div>
+              {recommendationMode ? (
+                <p>
+                  {recommendationMode === "persona-cluster"
+                    ? "Cold-start recommendations from your nearest IFU persona cluster."
+                    : recommendationColdStart
+                      ? "A starter feed from the profile signals available now. Complete your profile or save an opportunity to sharpen it."
+                      : "Ranked from your role, profile, crops, interests, and saved history."}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="agrisphere-recommendation-status" aria-live="polite">
+              {recommendationState === "loading" || recommendationState === "idle"
+                ? "Ranking active opportunities…"
+                : recommendationState === "error"
+                  ? "Personalized recommendations need the connected AgriSphere database. Discovery remains available below."
+                  : recommendations.length === 0
+                    ? "No active opportunities are available right now."
+                    : null}
+            </div>
+
+            {recommendationState === "ready" && recommendations.length > 0 ? (
+              <div className="agrisphere-recommendation-grid">
+                {recommendations.slice(0, 6).map((opportunity) => (
+                  <article key={opportunity.id} className="agrisphere-recommendation-card">
+                    <div className="agrisphere-recommendation-card-heading">
+                      <span>{opportunity.category}</span>
+                      <strong>
+                        {recommendationColdStart && opportunity.matchScore === 0
+                          ? "Starter"
+                          : `${Math.round(opportunity.matchScore * 100)}% match`}
+                      </strong>
+                    </div>
+                    <h3>{opportunity.title}</h3>
+                    <p>{opportunity.description}</p>
+                    {opportunity.matchReasons.length > 0 ? (
+                      <ul aria-label="Recommendation reasons">
+                        {opportunity.matchReasons.map((reason) => (
+                          <li key={reason}>{reason}</li>
+                        ))}
+                      </ul>
+                    ) : null}
+                    <div className="agrisphere-recommendation-actions">
+                      <Link href={opportunity.href}>Open signal</Link>
+                      <button
+                        type="button"
+                        onClick={() => void handleOpportunitySave(opportunity)}
+                        disabled={pendingSaveId === opportunity.id}
+                        aria-pressed={opportunity.saved}
+                      >
+                        {opportunity.saved ? (
+                          <BookmarkCheck className="h-4 w-4" aria-hidden="true" />
+                        ) : (
+                          <Bookmark className="h-4 w-4" aria-hidden="true" />
+                        )}
+                        {pendingSaveId === opportunity.id
+                          ? "Updating…"
+                          : opportunity.saved
+                            ? "Saved"
+                            : "Save"}
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : null}
+          </IFUContainer>
+        </section>
+      ) : null}
 
       <section id="search" className="agrisphere-section">
         <IFUContainer size="wide">

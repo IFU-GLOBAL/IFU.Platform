@@ -102,9 +102,9 @@ export type AgriSphereSearchResult = {
 
 export const agrisphereSource = {
   module: "AgriSphere",
-  version: "sprint-1.5",
-  lastUpdated: "2026-07-20",
-  status: "Sprint 1.5 seed corpus with database-backed migration path",
+  version: "sprint-2.5-foundation",
+  lastUpdated: "2026-07-22",
+  status: "Sprint 2 personalization and Sprint 2.5 security/audit foundation",
   refreshCadence: "Database-backed when seeded, static fallback when unavailable",
   localeReadyPath: "/{locale}/dashboard?section=agrisphere-dashboard",
 };

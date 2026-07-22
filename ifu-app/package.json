@@ -14,7 +14,7 @@
     "roles:audit": "tsx scripts/audit-role-catalog.ts",
     "agrisphere:audit": "tsx scripts/audit-agrisphere-data.ts",
     "agrisphere:index": "tsx scripts/index-agrisphere-search.ts",
-    "test:agrisphere": "tsx --test tests/agrisphere-data.test.ts",
+    "test:agrisphere": "tsx --test tests/agrisphere-data.test.ts tests/agrisphere-algorithms.test.ts",
     "review:audit": "node scripts/review-audit.mjs",
     "review:smoke": "node scripts/review-smoke.mjs",
     "db:generate": "prisma generate",

@@ -71,6 +71,12 @@ Required runtime values:
 - `OPENSEARCH_REGION`
 - `OPENSEARCH_SERVICE`
 - `REDIS_URL`
+- `INTERNAL_JOB_SECRET`
+- `AGRISPHERE_AUDIT_HASH_SECRET`
+- `AGRISPHERE_SEARCH_RATE_LIMIT`
+- `AGRISPHERE_SEARCH_ALERT_RATE`
+- `AGRISPHERE_MAP_RATE_LIMIT`
+- `AGRISPHERE_MAP_ALERT_RATE`
 - `SES_FROM_EMAIL`
 - `SES_REGION`
 - `SES_REPLY_TO_EMAIL`
@@ -112,6 +118,9 @@ Confirm in build logs:
 - Routes include `/dashboard`, `/discovery`, `/register`, `/profile`, `/country/[slug]`, `/robots.txt`, and `/sitemap.xml`.
 - Routes include the complete authenticated AgriSphere `/v1` API inventory.
 - `/v1/health` reports PostgreSQL, OpenSearch, and Redis as available before Sprint 1.5 sign-off.
+- The Sprint 2 persona-cluster refresh returns six refreshed clusters after at least six real profiles exist.
+- Search/map rate-limit headers are present and the configured thresholds match the approved production values.
+- The Sprint 2.5 audit destination, retention, and AgriShield consumption path have owner/security approval.
 
 ## 6. Post-Deploy Smoke Test
 

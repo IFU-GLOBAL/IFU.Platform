@@ -1,6 +1,7 @@
 import { AgriSphereOpportunityStatus } from "@/generated/prisma/enums";
-import type { PrismaClient } from "@/generated/prisma/client";
+import type { Prisma, PrismaClient } from "@/generated/prisma/client";
 import type { AuthSession } from "@/lib/auth/session";
+import { KMeans } from "@/lib/agrisphere-algorithms";
 import {
   activityTierMeta,
   agrisphereContinents,
@@ -31,6 +32,14 @@ import {
   type AgriSphereSearchResult,
   type AgriSphereStat,
 } from "@/lib/agrisphere-data";
+import {
+  buildAgriSphereProfileTokens,
+  fitAgriSphereOpportunityVectorizer,
+  rankAgriSphereOpportunities,
+  rankAgriSphereOpportunitiesAgainstVector,
+  vectorizeAgriSphereProfile,
+  type AgriSpherePersonalizationProfile,
+} from "@/lib/agrisphere-personalization";
 import { syncAuthenticatedUser } from "@/lib/dashboardData";
 import { getPrisma } from "@/lib/prisma";
 import {
@@ -91,6 +100,8 @@ type StaticSector = {
 const FALLBACK_SEARCH_HREF = "/dashboard?section=agrisphere-dashboard#search";
 const DISCOVERY_CACHE_TTL_MS = 30_000;
 const SEARCH_CACHE_TTL_MS = 15_000;
+const PERSONA_CLUSTER_COUNT = 6;
+const PERSONA_CLUSTER_CACHE_TTL_MS = 60 * 60 * 1_000;
 
 const globalForAgriSphere = globalThis as unknown as {
   agriSphereCache?: Map<string, CachedRecord<unknown>>;
@@ -1088,7 +1099,7 @@ export async function searchAgriSphereData(input: SearchInput) {
   };
 }
 
-function scoreOpportunity(opportunity: AgriSphereOpportunity, user: {
+type PersonalizationUser = {
   profile: {
     country: string | null;
     region: string | null;
@@ -1103,35 +1114,127 @@ function scoreOpportunity(opportunity: AgriSphereOpportunity, user: {
       };
     };
   }>;
-}) {
-  const profile = user.profile;
-  const profileCountry = normalize(profile?.country ?? "");
-  const profileRegion = normalize(profile?.region ?? "");
-  const selectedCategory = normalize(user.selectedRoles[0]?.role.category.name ?? "");
-  const interests = new Set((profile?.interests ?? []).map(normalize));
-  const crops = new Set((profile?.primaryCropsLivestock ?? []).map(normalize));
-  const opportunityText = normalize(
-    `${opportunity.title} ${opportunity.description} ${opportunity.category} ${opportunity.metadata.join(" ")}`,
+  agriSphereSavedItems: Array<{
+    opportunity: {
+      id: string;
+      slug: string;
+      title: string;
+      description: string;
+      category: string;
+      countryCode: string | null;
+      region: string | null;
+      crops: string[];
+      status: string;
+      href: string | null;
+      metadata: string[];
+    };
+  }>;
+};
+
+type StoredPersonaCluster = {
+  schemaVersion: 1;
+  model: {
+    terms: string[];
+    idf: number[];
+    documentCount: number;
+  };
+  centroid: number[];
+  opportunityIds: string[];
+};
+
+function personalizationProfile(user: PersonalizationUser): AgriSpherePersonalizationProfile {
+  return {
+    role: user.selectedRoles[0]?.role.title,
+    category: user.selectedRoles[0]?.role.category.name,
+    country: user.profile?.country,
+    region: user.profile?.region,
+    interests: user.profile?.interests ?? [],
+    crops: user.profile?.primaryCropsLivestock ?? [],
+    savedOpportunities: user.agriSphereSavedItems.map(({ opportunity }) =>
+      opportunityFromStored(opportunity),
+    ),
+  };
+}
+
+function storedPersonaCluster(value: Prisma.JsonValue): StoredPersonaCluster | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const cluster = value as Record<string, unknown>;
+  const model = cluster.model;
+
+  if (!model || typeof model !== "object" || Array.isArray(model)) {
+    return null;
+  }
+
+  const modelRecord = model as Record<string, unknown>;
+
+  if (
+    cluster.schemaVersion !== 1 ||
+    !Array.isArray(cluster.centroid) ||
+    !cluster.centroid.every((item) => typeof item === "number" && Number.isFinite(item)) ||
+    !Array.isArray(cluster.opportunityIds) ||
+    !cluster.opportunityIds.every((item) => typeof item === "string") ||
+    !Array.isArray(modelRecord.terms) ||
+    !modelRecord.terms.every((item) => typeof item === "string") ||
+    !Array.isArray(modelRecord.idf) ||
+    !modelRecord.idf.every((item) => typeof item === "number" && Number.isFinite(item)) ||
+    typeof modelRecord.documentCount !== "number"
+  ) {
+    return null;
+  }
+
+  return cluster as StoredPersonaCluster;
+}
+
+async function coldStartClusterRanking(
+  prisma: PrismaClient,
+  profile: AgriSpherePersonalizationProfile,
+  opportunities: AgriSphereOpportunity[],
+) {
+  const records = await prisma.agriSpherePersonaCluster.findMany({
+    orderBy: { clusterId: "asc" },
+  });
+  const clusters = records
+    .map((record) => ({
+      clusterId: record.clusterId,
+      cluster: storedPersonaCluster(record.centroidVector),
+    }))
+    .filter(
+      (record): record is { clusterId: number; cluster: StoredPersonaCluster } =>
+        Boolean(record.cluster),
+    );
+
+  if (clusters.length !== PERSONA_CLUSTER_COUNT) {
+    return null;
+  }
+
+  const model = clusters[0].cluster.model;
+  const profileVector = vectorizeAgriSphereProfile(profile, model);
+  const clusterIndex = new KMeans(PERSONA_CLUSTER_COUNT).predict(
+    profileVector,
+    clusters.map(({ cluster }) => cluster.centroid),
   );
+  const selected = clusters[clusterIndex];
+  const cachedIds = await getRedisJson<string[]>(
+    `ifu:agrisphere:sprint-2:persona-cluster:${selected.clusterId}`,
+  );
+  const opportunityIds = cachedIds ?? selected.cluster.opportunityIds;
+  const directRanking = rankAgriSphereOpportunities(opportunities, profile, 50);
+  const recommendationsById = new Map(
+    directRanking.map((recommendation) => [recommendation.opportunity.id, recommendation]),
+  );
+  const ranked = opportunityIds
+    .map((opportunityId) => recommendationsById.get(opportunityId))
+    .filter((recommendation): recommendation is NonNullable<typeof recommendation> =>
+      Boolean(recommendation),
+    );
 
-  let score = 1;
-
-  if (profileCountry && opportunity.metadata.some((value) => normalize(value) === profileCountry)) {
-    score += 6;
-  }
-
-  if (profileRegion && normalize(opportunity.region ?? "") === profileRegion) {
-    score += 3;
-  }
-
-  if (selectedCategory && opportunityText.includes(selectedCategory)) {
-    score += 2;
-  }
-
-  score += opportunity.crops.filter((crop) => crops.has(normalize(crop))).length * 2;
-  score += [...interests].filter((interest) => opportunityText.includes(interest)).length;
-
-  return score;
+  return {
+    clusterId: selected.clusterId,
+    recommendations: ranked.length > 0 ? ranked.slice(0, 20) : directRanking.slice(0, 20),
+  };
 }
 
 export async function getAgriSphereDashboardFeed(session: AuthSession) {
@@ -1164,31 +1267,166 @@ export async function getAgriSphereDashboardFeed(session: AuthSession) {
           },
         },
       },
+      agriSphereSavedItems: {
+        orderBy: { savedAt: "desc" },
+        select: {
+          opportunity: true,
+        },
+      },
     },
   });
   const opportunities =
     (await dbOpportunities(prisma)) ??
     agrisphereOpportunities.filter((opportunity) => opportunity.status === "active");
-  const ranked = opportunities
-    .map((opportunity) => ({
-      opportunity,
-      score: scoreOpportunity(opportunity, user),
-    }))
-    .sort((a, b) => b.score - a.score || a.opportunity.title.localeCompare(b.opportunity.title))
-    .slice(0, 20);
+  const profile = personalizationProfile(user);
+  const coldStart = profile.savedOpportunities.length === 0;
+  const clusterRanking = coldStart
+    ? await coldStartClusterRanking(prisma, profile, opportunities)
+    : null;
+  const ranked =
+    clusterRanking?.recommendations ?? rankAgriSphereOpportunities(opportunities, profile, 20);
+  const savedIds = new Set(profile.savedOpportunities.map((opportunity) => opportunity.id));
 
   return {
-    source: sourceFor("database", "Ranked from active AgriSphere opportunities and member profile signals."),
+    source: sourceFor(
+      "database",
+      "Ranked from active AgriSphere opportunities, member profile signals, and saved history.",
+    ),
     count: ranked.length,
-    opportunities: ranked.map(({ opportunity, score }) => ({
+    opportunities: ranked.map(({ opportunity, matchScore, matchReasons }) => ({
       ...opportunity,
-      score,
+      matchScore: Number(matchScore.toFixed(4)),
+      matchReasons,
+      saved: savedIds.has(opportunity.id),
     })),
     meta: {
-      ranking: "profile-signal",
+      ranking: clusterRanking ? "persona-cluster" : "tfidf-cosine",
       limit: 20,
-      coldStart: user.selectedRoles.length === 0 && !user.profile?.country,
+      coldStart,
+      personaCluster: clusterRanking?.clusterId ?? null,
+      savedSignalCount: profile.savedOpportunities.length,
     },
+  };
+}
+
+export async function refreshAgriSpherePersonaClusters() {
+  const prisma = getPrisma();
+  const [storedOpportunities, users] = await Promise.all([
+    dbOpportunities(prisma),
+    prisma.user.findMany({
+      orderBy: { id: "asc" },
+      select: {
+        profile: {
+          select: {
+            country: true,
+            region: true,
+            interests: true,
+            primaryCropsLivestock: true,
+          },
+        },
+        selectedRoles: {
+          orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
+          take: 1,
+          select: {
+            role: {
+              select: {
+                title: true,
+                category: {
+                  select: { name: true },
+                },
+              },
+            },
+          },
+        },
+        agriSphereSavedItems: {
+          orderBy: { savedAt: "desc" },
+          select: { opportunity: true },
+        },
+      },
+    }),
+  ]);
+  const opportunities = storedOpportunities ?? [];
+
+  if (opportunities.length === 0) {
+    return {
+      status: "skipped" as const,
+      reason: "No active opportunities are available.",
+      userCount: users.length,
+      opportunityCount: 0,
+    };
+  }
+
+  if (users.length < PERSONA_CLUSTER_COUNT) {
+    return {
+      status: "skipped" as const,
+      reason: `At least ${PERSONA_CLUSTER_COUNT} user profiles are required for clustering.`,
+      userCount: users.length,
+      opportunityCount: opportunities.length,
+    };
+  }
+
+  const vectorizer = fitAgriSphereOpportunityVectorizer(opportunities);
+  const model = vectorizer.exportModel();
+  const vectors = users.map((user) =>
+    vectorizer.transform(buildAgriSphereProfileTokens(personalizationProfile(user))),
+  );
+  const kmeans = new KMeans(PERSONA_CLUSTER_COUNT, 100, 1e-4, "agrisphere-personas-v1");
+  const result = kmeans.fit(vectors);
+  const refreshedAt = new Date();
+  const clusterPayloads = result.centroids.map((centroid, clusterId) => {
+    const ranking = rankAgriSphereOpportunitiesAgainstVector(
+      opportunities,
+      centroid,
+      model,
+      50,
+    );
+    const opportunityIds = ranking.map(({ opportunity }) => opportunity.id);
+
+    return {
+      clusterId,
+      opportunityIds,
+      stored: {
+        schemaVersion: 1,
+        model,
+        centroid,
+        opportunityIds,
+      } satisfies StoredPersonaCluster,
+    };
+  });
+
+  await prisma.$transaction(
+    clusterPayloads.map(({ clusterId, stored }) =>
+      prisma.agriSpherePersonaCluster.upsert({
+        where: { clusterId },
+        update: {
+          centroidVector: stored as unknown as Prisma.InputJsonValue,
+          lastRefreshedAt: refreshedAt,
+        },
+        create: {
+          clusterId,
+          centroidVector: stored as unknown as Prisma.InputJsonValue,
+          lastRefreshedAt: refreshedAt,
+        },
+      }),
+    ),
+  );
+  await Promise.all(
+    clusterPayloads.map(({ clusterId, opportunityIds }) =>
+      setRedisJson(
+        `ifu:agrisphere:sprint-2:persona-cluster:${clusterId}`,
+        opportunityIds,
+        PERSONA_CLUSTER_CACHE_TTL_MS,
+      ),
+    ),
+  );
+
+  return {
+    status: "refreshed" as const,
+    clusterCount: clusterPayloads.length,
+    userCount: users.length,
+    opportunityCount: opportunities.length,
+    iterations: result.iterations,
+    refreshedAt: refreshedAt.toISOString(),
   };
 }
 

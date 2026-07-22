@@ -1,6 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth/session";
 import { searchAgriSphereData } from "@/lib/agrisphere-repository";
+import {
+  agriSphereRateLimitHeaders,
+  evaluateAgriSphereRequest,
+  parseAgriSphereSearchParams,
+  processAgriSphereObservation,
+} from "@/lib/agrisphere-security";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,15 +19,40 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = request.nextUrl;
-  const limit = Number(searchParams.get("limit") ?? 24);
+  const parsed = parseAgriSphereSearchParams(searchParams);
+  const observation = await evaluateAgriSphereRequest(request, session, "search", {
+    queryLength: (searchParams.get("q") ?? "").length,
+    category: searchParams.get("category") ?? "all",
+  });
+  const rateHeaders = agriSphereRateLimitHeaders(observation.rateLimit);
+
+  after(() => processAgriSphereObservation(observation));
+
+  if (!observation.rateLimit.allowed) {
+    return NextResponse.json(
+      { ok: false, error: "Too many search requests. Try again shortly." },
+      { status: 429, headers: rateHeaders },
+    );
+  }
+
+  if (!parsed.ok) {
+    return NextResponse.json(
+      { ok: false, error: parsed.error },
+      { status: 400, headers: rateHeaders },
+    );
+  }
+
   const search = await searchAgriSphereData({
-    query: searchParams.get("q"),
-    category: searchParams.get("category"),
-    limit: Number.isFinite(limit) ? limit : 24,
+    query: parsed.value.query,
+    category: parsed.value.category,
+    limit: parsed.value.limit,
   });
 
-  return NextResponse.json({
-    ok: true,
-    ...search,
-  });
+  return NextResponse.json(
+    {
+      ok: true,
+      ...search,
+    },
+    { headers: rateHeaders },
+  );
 }

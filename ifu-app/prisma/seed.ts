@@ -455,36 +455,6 @@ async function main() {
     });
   }
 
-  for (let clusterId = 0; clusterId < 6; clusterId += 1) {
-    await prisma.agriSpherePersonaCluster.upsert({
-      where: { clusterId },
-      update: {
-        centroidVector: {
-          clusterId,
-          seed: "agrisphere-sprint-1.5",
-          weights: {
-            country: clusterId % 2 === 0 ? 0.34 : 0.2,
-            crops: 0.33,
-            category: clusterId % 2 === 0 ? 0.33 : 0.47,
-          },
-        },
-        lastRefreshedAt: new Date(),
-      },
-      create: {
-        clusterId,
-        centroidVector: {
-          clusterId,
-          seed: "agrisphere-sprint-1.5",
-          weights: {
-            country: clusterId % 2 === 0 ? 0.34 : 0.2,
-            crops: 0.33,
-            category: clusterId % 2 === 0 ? 0.33 : 0.47,
-          },
-        },
-      },
-    });
-  }
-
   const statsSnapshotCount = await prisma.agriSpherePlatformStatsSnapshot.count();
 
   if (statsSnapshotCount === 0) {

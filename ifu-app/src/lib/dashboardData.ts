@@ -250,7 +250,7 @@ function workspaceItemToDrawerItem(item: {
 async function ensureDashboardItems() {
   const prisma = getPrisma();
 
-  await Promise.all(
+  await prisma.$transaction(
     dashboardItemSeeds.map((seed) =>
       prisma.dashboardItem.upsert({
         where: { slug: seed.id },

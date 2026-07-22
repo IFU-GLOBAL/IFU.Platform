@@ -175,6 +175,31 @@ export async function setRedisJson(key: string, value: unknown, ttlMs: number) {
   }
 }
 
+export async function incrementRedisWindow(key: string, ttlMs: number) {
+  const client = await connectRedis();
+
+  if (!client) {
+    return null;
+  }
+
+  try {
+    const result = (await client.eval(
+      "local count = redis.call('INCR', KEYS[1]); if count == 1 then redis.call('PEXPIRE', KEYS[1], ARGV[1]); end; return {count, redis.call('PTTL', KEYS[1])}",
+      {
+        keys: [key],
+        arguments: [String(Math.max(1_000, Math.round(ttlMs)))],
+      },
+    )) as [number, number];
+
+    return {
+      count: Number(result[0]),
+      resetInMs: Math.max(0, Number(result[1])),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function searchOpenSearch(input: SearchInput) {
   const client = getOpenSearchClient();
 

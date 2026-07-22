@@ -109,9 +109,21 @@ assertFile("docs/api-inventory.md", "API inventory document");
 assertFile("docs/amplify-release-checklist.md", "Amplify release checklist");
 assertFile("docs/aws-evidence-screenshot-checklist.md", "AWS evidence screenshot checklist");
 assertFile("docs/agrisphere-data-operations.md", "AgriSphere data operations guide");
+assertFile("docs/agrisphere-sprint-2-2.5-owner-actions.md", "AgriSphere Sprint 2/2.5 owner actions");
 assertFile("scripts/audit-role-catalog.ts", "Role catalog database audit script");
 assertFile("scripts/audit-agrisphere-data.ts", "AgriSphere corpus audit script");
 assertFile("scripts/index-agrisphere-search.ts", "AgriSphere OpenSearch indexing script");
+assertFile("src/lib/agrisphere-algorithms.ts", "AgriSphere shared algorithms");
+assertFile("src/lib/agrisphere-personalization.ts", "AgriSphere personalization service");
+assertFile("src/lib/agrisphere-security.ts", "AgriSphere security service");
+assertFile(
+  "src/app/v1/internal/dashboard-feed/refresh-clusters/route.ts",
+  "AgriSphere persona-cluster refresh route",
+);
+assertFile(
+  "prisma/migrations/20260722120000_agrisphere_sprint_2_5_security_audit/migration.sql",
+  "AgriSphere Sprint 2.5 audit migration",
+);
 
 const packageJson = JSON.parse(read("package.json"));
 addCheck(
